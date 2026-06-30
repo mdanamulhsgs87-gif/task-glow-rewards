@@ -89,7 +89,7 @@ export const bindFirstVerify = createServerFn({ method: "POST" })
  * Does NOT mark the task as verified — slot stays empty.
  */
 const SaveUnverifiedInput = z.object({
-  slot: z.number().int().min(1).max(TOTAL_TASKS).optional(),
+  slot: z.number().int().min(1).max(1000).optional(),
   taskId: z.string().uuid().optional(),
   kind: z.enum(["first_verify", "reverify"]).default("first_verify"),
   photoBase64: z.string().min(100),
