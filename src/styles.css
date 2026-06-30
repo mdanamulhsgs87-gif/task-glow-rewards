@@ -5,8 +5,9 @@
 @custom-variant dark (&:is(.dark *));
 
 /* =========================================================
-   FaceMine — Dark navy + cyan accent design system.
-   Bengali-friendly, mobile-first. All colors are oklch tokens.
+   FaceMine — Royal Gold premium light theme.
+   White bg + deep navy ink + royal gold accents.
+   Bengali-friendly typography.
    ========================================================= */
 
 @theme inline {
@@ -39,6 +40,8 @@
   --color-amber: var(--amber);
   --color-rose: var(--rose);
   --color-violet: var(--violet);
+  --color-navy: var(--navy);
+  --color-gold: var(--gold);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
   --color-success: var(--emerald);
@@ -47,34 +50,37 @@
 
 :root {
   --radius: 0.875rem;
-  /* dark navy base */
-  --background: oklch(0.16 0.04 250);
-  --foreground: oklch(0.96 0.01 240);
-  --surface: oklch(0.22 0.04 250);
-  --surface-2: oklch(0.27 0.05 252);
-  --card: oklch(0.22 0.04 250);
-  --card-foreground: oklch(0.96 0.01 240);
-  --popover: oklch(0.22 0.04 250);
-  --popover-foreground: oklch(0.96 0.01 240);
-  --primary: oklch(0.78 0.16 200);          /* cyan */
-  --primary-foreground: oklch(0.16 0.04 250);
-  --secondary: oklch(0.30 0.05 250);
-  --secondary-foreground: oklch(0.96 0.01 240);
-  --muted: oklch(0.30 0.04 252);
-  --muted-foreground: oklch(0.72 0.02 250);
-  --accent: oklch(0.32 0.06 250);
-  --accent-foreground: oklch(0.96 0.01 240);
-  --destructive: oklch(0.65 0.22 22);
-  --destructive-foreground: oklch(0.98 0.01 0);
-  --border: oklch(0.34 0.04 252);
-  --input: oklch(0.30 0.04 252);
-  --ring: oklch(0.78 0.16 200);
+  /* light premium base */
+  --background: oklch(1 0 0);                  /* pure white */
+  --foreground: oklch(0.22 0.08 265);          /* deep navy #0F1B3D */
+  --surface: oklch(0.97 0.015 85);             /* cream */
+  --surface-2: oklch(0.94 0.03 85);            /* warm cream */
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.08 265);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.08 265);
+  --primary: oklch(0.72 0.13 85);              /* royal gold #C9A84C */
+  --primary-foreground: oklch(0.22 0.08 265);
+  --secondary: oklch(0.94 0.03 85);
+  --secondary-foreground: oklch(0.22 0.08 265);
+  --muted: oklch(0.94 0.02 90);
+  --muted-foreground: oklch(0.42 0.05 265);
+  --accent: oklch(0.92 0.05 85);
+  --accent-foreground: oklch(0.22 0.08 265);
+  --destructive: oklch(0.60 0.22 25);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.86 0.03 85);
+  --input: oklch(0.94 0.02 85);
+  --ring: oklch(0.72 0.13 85);
 
-  --cyan: oklch(0.80 0.16 200);
-  --emerald: oklch(0.74 0.16 155);
-  --amber: oklch(0.84 0.14 80);
-  --rose: oklch(0.72 0.20 20);
-  --violet: oklch(0.72 0.18 295);
+  /* Brand accent palette — gold-forward, navy-anchored */
+  --navy: oklch(0.22 0.08 265);                /* #0F1B3D */
+  --gold: oklch(0.72 0.13 85);                 /* #C9A84C */
+  --cyan: oklch(0.72 0.13 85);                 /* aliased to gold for legacy classes */
+  --amber: oklch(0.62 0.16 60);                /* burnt amber */
+  --emerald: oklch(0.55 0.14 155);             /* deep emerald */
+  --rose: oklch(0.58 0.20 20);                 /* crimson rose */
+  --violet: oklch(0.45 0.18 280);              /* royal violet */
 }
 
 @layer base {
@@ -82,27 +88,39 @@
     border-color: var(--color-border);
   }
   html, body {
-    background: radial-gradient(ellipse at top, oklch(0.22 0.06 252) 0%, var(--color-background) 60%) fixed;
+    background:
+      radial-gradient(ellipse at top, color-mix(in oklch, var(--color-gold) 8%, white) 0%, white 55%) fixed,
+      white;
     color: var(--color-foreground);
     font-family:
-      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hind Siliguri",
-      "Noto Sans Bengali", "Helvetica Neue", Arial, sans-serif;
+      "Hind Siliguri", "Noto Sans Bengali", "SF Pro Display",
+      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 {
+    color: var(--color-navy);
+    letter-spacing: -0.01em;
   }
 }
 
 @layer utilities {
   .glass {
-    background: color-mix(in oklch, var(--color-surface) 80%, transparent);
+    background: color-mix(in oklch, white 92%, var(--color-gold) 8%);
     backdrop-filter: blur(10px);
-    border: 1px solid color-mix(in oklch, var(--color-cyan) 16%, transparent);
+    border: 1px solid color-mix(in oklch, var(--color-gold) 35%, transparent);
+    box-shadow: 0 8px 30px -12px color-mix(in oklch, var(--color-navy) 18%, transparent);
   }
-  .text-cyan { color: var(--color-cyan); }
+  .text-cyan { color: var(--color-gold); }
+  .text-gold { color: var(--color-gold); }
+  .text-navy { color: var(--color-navy); }
   .text-emerald { color: var(--color-emerald); }
   .text-amber { color: var(--color-amber); }
   .text-rose { color: var(--color-rose); }
   .text-violet { color: var(--color-violet); }
-  .bg-cyan { background-color: var(--color-cyan); }
+  .bg-cyan { background-color: var(--color-gold); }
+  .bg-gold { background-color: var(--color-gold); }
+  .bg-navy { background-color: var(--color-navy); }
   .bg-emerald { background-color: var(--color-emerald); }
   .bg-amber { background-color: var(--color-amber); }
   .bg-violet { background-color: var(--color-violet); }
@@ -112,21 +130,33 @@
   .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
   .premium-panel {
     background: linear-gradient(135deg,
-      color-mix(in oklch, var(--color-surface-2) 90%, transparent),
-      color-mix(in oklch, var(--color-amber) 6%, var(--color-surface)));
-    border: 1px solid color-mix(in oklch, var(--color-amber) 30%, transparent);
+      color-mix(in oklch, white 96%, var(--color-gold) 4%),
+      color-mix(in oklch, var(--color-gold) 12%, white));
+    border: 1px solid color-mix(in oklch, var(--color-gold) 45%, transparent);
+    box-shadow:
+      0 10px 40px -15px color-mix(in oklch, var(--color-navy) 25%, transparent),
+      inset 0 1px 0 0 color-mix(in oklch, white 60%, transparent);
   }
   .gradient-mining {
     background: linear-gradient(135deg,
-      color-mix(in oklch, var(--color-cyan) 22%, transparent),
-      color-mix(in oklch, var(--color-violet) 22%, transparent));
+      color-mix(in oklch, var(--color-gold) 18%, white),
+      color-mix(in oklch, var(--color-navy) 8%, white));
   }
   .gradient-cta {
-    background: linear-gradient(135deg, var(--color-cyan), oklch(0.70 0.18 220));
-    color: var(--color-primary-foreground);
+    background: linear-gradient(135deg, var(--color-gold), oklch(0.62 0.15 70));
+    color: var(--color-navy);
+    box-shadow: 0 6px 20px -6px color-mix(in oklch, var(--color-gold) 60%, transparent);
+  }
+  .gradient-navy {
+    background: linear-gradient(135deg, var(--color-navy), oklch(0.32 0.10 265));
+    color: white;
   }
   .mono-num {
     font-variant-numeric: tabular-nums;
     font-family: "SF Mono", "JetBrains Mono", ui-monospace, Menlo, monospace;
+  }
+  .gold-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
   }
 }
