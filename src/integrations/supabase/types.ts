@@ -14,16 +14,186 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      mining_state: {
+        Row: {
+          accrued_amount: number
+          activated_at: string | null
+          is_active: boolean
+          last_credited_at: string | null
+          user_id: string
+          withdrawn_amount: number
+        }
+        Insert: {
+          accrued_amount?: number
+          activated_at?: string | null
+          is_active?: boolean
+          last_credited_at?: string | null
+          user_id: string
+          withdrawn_amount?: number
+        }
+        Update: {
+          accrued_amount?: number
+          activated_at?: string | null
+          is_active?: boolean
+          last_credited_at?: string | null
+          user_id?: string
+          withdrawn_amount?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          email: string | null
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      tasks: {
+        Row: {
+          created_at: string
+          done_at: string | null
+          face_photo_url: string | null
+          id: string
+          initial_verify_at: string | null
+          reverify_due_at: string | null
+          slot: number
+          status: Database["public"]["Enums"]["task_status"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          done_at?: string | null
+          face_photo_url?: string | null
+          id?: string
+          initial_verify_at?: string | null
+          reverify_due_at?: string | null
+          slot: number
+          status?: Database["public"]["Enums"]["task_status"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          done_at?: string | null
+          face_photo_url?: string | null
+          id?: string
+          initial_verify_at?: string | null
+          reverify_due_at?: string | null
+          slot?: number
+          status?: Database["public"]["Enums"]["task_status"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wallets: {
+        Row: {
+          created_at: string
+          number: string
+          provider: Database["public"]["Enums"]["wallet_provider"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          number: string
+          provider: Database["public"]["Enums"]["wallet_provider"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          number?: string
+          provider?: Database["public"]["Enums"]["wallet_provider"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      withdrawals: {
+        Row: {
+          admin_note: string | null
+          amount: number
+          created_at: string
+          id: string
+          processed_at: string | null
+          provider: Database["public"]["Enums"]["wallet_provider"]
+          status: Database["public"]["Enums"]["withdrawal_status"]
+          user_id: string
+          wallet_number: string
+        }
+        Insert: {
+          admin_note?: string | null
+          amount: number
+          created_at?: string
+          id?: string
+          processed_at?: string | null
+          provider: Database["public"]["Enums"]["wallet_provider"]
+          status?: Database["public"]["Enums"]["withdrawal_status"]
+          user_id: string
+          wallet_number: string
+        }
+        Update: {
+          admin_note?: string | null
+          amount?: number
+          created_at?: string
+          id?: string
+          processed_at?: string | null
+          provider?: Database["public"]["Enums"]["wallet_provider"]
+          status?: Database["public"]["Enums"]["withdrawal_status"]
+          user_id?: string
+          wallet_number?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
+      task_status: "empty" | "verified" | "done"
+      wallet_provider: "bkash" | "nagad"
+      withdrawal_status: "pending" | "paid" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +320,11 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+      task_status: ["empty", "verified", "done"],
+      wallet_provider: ["bkash", "nagad"],
+      withdrawal_status: ["pending", "paid", "rejected"],
+    },
   },
 } as const
