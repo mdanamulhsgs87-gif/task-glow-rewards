@@ -1,7 +1,12 @@
 import { createFileRoute, Outlet, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
+import { useQuery } from "@tanstack/react-query";
 import { adminCheck, adminLogout } from "@/lib/admin-auth.functions";
-import { Users, ArrowDownToLine, ScanFace, LogOut, Loader2, AlertTriangle } from "lucide-react";
+import { adminStats } from "@/lib/admin.functions";
+import {
+  Users, ArrowDownToLine, ScanFace, LogOut, Loader2, AlertTriangle,
+  LayoutDashboard, Clock, Wallet, ShieldCheck,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/admin")({
@@ -18,14 +23,8 @@ function AdminLayout() {
     let active = true;
     check().then((res) => {
       if (!active) return;
-      if (!res.unlocked) {
-        setStatus("locked");
-        return;
-      }
-      setStatus("unlocked");
-    }).catch(() => {
-      if (active) setStatus("locked");
-    });
+      setStatus(res.unlocked ? "unlocked" : "locked");
+    }).catch(() => active && setStatus("locked"));
     return () => { active = false; };
   }, [check]);
 
@@ -49,7 +48,8 @@ function AdminLayout() {
     return (
       <div className="min-h-screen flex items-center justify-center px-4 py-10">
         <div className="glass w-full max-w-sm rounded-2xl p-6 text-center">
-          <h1 className="text-lg font-black text-amber">Admin locked</h1>
+          <ShieldCheck className="mx-auto mb-2 h-8 w-8 text-amber" />
+          <h1 className="text-lg font-black text-amber">Admin Locked</h1>
           <p className="mt-2 text-xs text-muted-foreground">Admin password diye unlock korte hobe.</p>
           <Link to="/admin-login" className="gradient-cta mt-4 inline-flex rounded-xl px-4 py-2 text-xs font-black">
             Admin login
@@ -60,20 +60,62 @@ function AdminLayout() {
   }
 
   return (
-    <div className="space-y-4 pt-2">
-      <div className="flex items-center justify-between">
-        <h1 className="font-black text-lg text-amber">Admin Panel</h1>
-        <button onClick={onLogout} className="text-[11px] text-muted-foreground flex items-center gap-1">
+    <div className="space-y-4 pt-2 pb-10">
+      <PremiumHeader onLogout={onLogout} />
+      <nav className="flex gap-2 overflow-x-auto -mx-4 px-4 pb-1 scrollbar-none">
+        <AdminTab to="/admin" icon={<LayoutDashboard className="w-3.5 h-3.5" />} label="Dashboard" exact />
+        <AdminTab to="/admin/users" icon={<Users className="w-3.5 h-3.5" />} label="Users" />
+        <AdminTab to="/admin/withdrawals" icon={<ArrowDownToLine className="w-3.5 h-3.5" />} label="Withdrawals" />
+        <AdminTab to="/admin/faces" icon={<ScanFace className="w-3.5 h-3.5" />} label="Faces" />
+        <AdminTab to="/admin/reverify" icon={<Clock className="w-3.5 h-3.5" />} label="Re-verify" />
+        <AdminTab to="/admin/wallets" icon={<Wallet className="w-3.5 h-3.5" />} label="Wallets" />
+        <AdminTab to="/admin/unverified" icon={<AlertTriangle className="w-3.5 h-3.5" />} label="Not whitelisted" />
+      </nav>
+      <Outlet />
+    </div>
+  );
+}
+
+function PremiumHeader({ onLogout }: { onLogout: () => void }) {
+  const { data } = useQuery({
+    queryKey: ["admin-stats-mini"],
+    queryFn: () => adminStats(),
+    refetchInterval: 30_000,
+  });
+
+  return (
+    <div className="relative overflow-hidden rounded-2xl p-4 border border-amber/30"
+         style={{
+           background: "linear-gradient(135deg, hsl(var(--surface-1)) 0%, color-mix(in oklab, hsl(var(--amber)) 8%, hsl(var(--surface-1))) 100%)",
+         }}>
+      <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full opacity-20"
+           style={{ background: "radial-gradient(circle, hsl(var(--amber)) 0%, transparent 70%)" }} />
+      <div className="relative flex items-start justify-between">
+        <div>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-amber/80 font-bold">Master control</p>
+          <h1 className="font-black text-xl text-amber mt-0.5">Admin Panel</h1>
+          <p className="text-[10px] text-muted-foreground mt-0.5">FaceMine · full control</p>
+        </div>
+        <button onClick={onLogout}
+          className="px-3 py-1.5 rounded-lg bg-surface-2 text-muted-foreground text-[10px] font-bold flex items-center gap-1 border border-border hover:text-amber transition">
           <LogOut className="w-3 h-3" /> Lock
         </button>
       </div>
-      <div className="flex gap-2 overflow-x-auto -mx-4 px-4">
-        <AdminTab to="/admin" icon={<Users className="w-4 h-4" />} label="Users" exact />
-        <AdminTab to="/admin/withdrawals" icon={<ArrowDownToLine className="w-4 h-4" />} label="Withdrawals" />
-        <AdminTab to="/admin/faces" icon={<ScanFace className="w-4 h-4" />} label="Faces" />
-        <AdminTab to="/admin/unverified" icon={<AlertTriangle className="w-4 h-4" />} label="Not whitelisted" />
+      <div className="relative mt-4 grid grid-cols-4 gap-2">
+        <MiniStat label="Users" value={data?.users ?? "—"} accent="cyan" />
+        <MiniStat label="Pending" value={data?.withdrawals.pending ?? "—"} accent="amber" pulse={!!data?.withdrawals.pending} />
+        <MiniStat label="Done" value={data?.tasks.done ?? "—"} accent="emerald" />
+        <MiniStat label="Wait" value={data?.tasks.verified ?? "—"} accent="violet" />
       </div>
-      <Outlet />
+    </div>
+  );
+}
+
+function MiniStat({ label, value, accent, pulse }: { label: string; value: any; accent: string; pulse?: boolean }) {
+  return (
+    <div className={`rounded-xl bg-background/60 border border-border p-2 text-center ${pulse ? "animate-pulse" : ""}`}>
+      <p className={`mono-num font-black text-base text-${accent}`}>{value}</p>
+      <p className="text-[9px] uppercase tracking-wider text-muted-foreground font-bold">{label}</p>
     </div>
   );
 }
@@ -83,9 +125,9 @@ function AdminTab({ to, icon, label, exact }: { to: string; icon: React.ReactNod
     <Link
       to={to as any}
       activeOptions={{ exact: !!exact }}
-      activeProps={{ className: "gradient-cta" }}
+      activeProps={{ className: "gradient-cta text-background shadow-[0_4px_16px_-4px_rgba(34,211,238,0.5)]" }}
       inactiveProps={{ className: "bg-surface-2 text-muted-foreground border border-border" }}
-      className="px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap"
+      className="px-3 py-1.5 rounded-xl text-[11px] font-bold flex items-center gap-1.5 whitespace-nowrap transition"
     >
       {icon}
       {label}
