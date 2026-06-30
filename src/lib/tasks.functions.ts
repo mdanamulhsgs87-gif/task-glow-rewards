@@ -25,7 +25,7 @@ async function uploadFace(adminClient: any, userId: string, slot: number, base64
  * photo + wallet_address + private_key + face_label on the task row.
  */
 const BindInput = z.object({
-  slot: z.number().int().min(1).max(TOTAL_TASKS),
+  slot: z.number().int().min(1).max(1000),
   photoBase64: z.string().min(100),
   privateKey: z.string().min(10),
   walletAddress: z.string().min(10),
@@ -89,7 +89,7 @@ export const bindFirstVerify = createServerFn({ method: "POST" })
  * Does NOT mark the task as verified — slot stays empty.
  */
 const SaveUnverifiedInput = z.object({
-  slot: z.number().int().min(1).max(TOTAL_TASKS).optional(),
+  slot: z.number().int().min(1).max(1000).optional(),
   taskId: z.string().uuid().optional(),
   kind: z.enum(["first_verify", "reverify"]).default("first_verify"),
   photoBase64: z.string().min(100),
@@ -228,4 +228,32 @@ export const completeReverify = createServerFn({ method: "POST" })
     }
 
     return { ok: true, miningActivated };
+  });
+
+
+/**
+ * Add 10 more task slots after the user has completed all existing ones.
+ */
+export const addMoreSlots = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { userId } = context;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: existing } = await supabaseAdmin
+      .from("tasks").select("slot, status").eq("user_id", userId).order("slot");
+    const all = existing ?? [];
+    if (all.length === 0) throw new Error("Kono slot pawa jay nai");
+    const anyOpen = all.some((t) => t.status !== "done");
+    if (anyOpen) throw new Error("Age sob slot complete koren, tarpor 10 ta notun slot khulte parben");
+
+    const maxSlot = Math.max(...all.map((t) => t.slot));
+    const rows = Array.from({ length: 10 }, (_, i) => ({
+      user_id: userId,
+      slot: maxSlot + i + 1,
+      status: "empty" as const,
+    }));
+    const { error } = await supabaseAdmin.from("tasks").insert(rows);
+    if (error) throw new Error(error.message);
+    return { ok: true, added: 10, total: all.length + 10 };
   });
