@@ -1,31 +1,52 @@
-import { createFileRoute, Outlet, redirect, Link, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Outlet, Link, useRouter } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { Home, Wallet, ArrowDownToLine, LogOut } from "lucide-react";
-import { useEffect } from "react";
+import { Home, Wallet, ArrowDownToLine, LogOut, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
-  beforeLoad: async () => {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) throw redirect({ to: "/auth" });
-  },
   component: AuthedLayout,
 });
 
 function AuthedLayout() {
   const router = useRouter();
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    let active = true;
+    supabase.auth.getUser().then(({ data, error }) => {
+      if (!active) return;
+      if (error || !data.user) {
+        router.navigate({ to: "/auth", replace: true });
+        return;
+      }
+      setReady(true);
+    });
+
     const sub = supabase.auth.onAuthStateChange((_e, session) => {
       if (!session) router.navigate({ to: "/auth" });
     });
-    return () => { sub.data.subscription.unsubscribe(); };
+    return () => {
+      active = false;
+      sub.data.subscription.unsubscribe();
+    };
   }, [router]);
 
   const logout = async () => {
     await supabase.auth.signOut();
     router.navigate({ to: "/auth" });
   };
+
+  if (!ready) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4 py-10">
+        <div className="glass w-full max-w-sm rounded-2xl p-6 text-center">
+          <Loader2 className="mx-auto mb-3 h-6 w-6 animate-spin text-cyan" />
+          <p className="text-sm font-bold">Account check hocche...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pb-24">
