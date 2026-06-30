@@ -1,14 +1,9 @@
 // Client-side helpers for the GoodDollar face verification flow.
-// Mirrors the reference repo logic: generate a random wallet, sign two
-// fixed messages, then build a goodid.gooddollar.org URL the user can
-// open. After they finish FV we check Celo's GoodDollar Identity
-// contract for `isWhitelisted(address)`.
-
-import { ethers } from "ethers";
-import { compressToEncodedURIComponent } from "lz-string";
+// ethers is loaded lazily so the SSR worker bundle doesn't choke on its
+// CJS/ESM interop at module init (`Class extends value [object Module]`).
 
 const FV_LOGIN_MSG = `Sign this message to login into GoodDollar Unique Identity service.
-WARNING: do not sign this message unless you trust the website/application requesting this signature.
+WARNING: do not sign this website/application requesting this signature.
 nonce:`;
 
 const FV_IDENTIFIER_MSG2 = `Sign this message to request verifying your account <account> and to create your own secret unique identifier for your anonymized record.
@@ -21,6 +16,8 @@ const GD_IDENTITY_ADDRESS = "0xC361A6E67822a0EDc17D899227dd9FC50BD62F42";
 const GD_IDENTITY_ABI = ["function isWhitelisted(address account) view returns (bool)"];
 
 export async function buildVerifyUrl(privateKey: string, displayName: string): Promise<{ url: string; address: string }> {
+  const { ethers } = await import("ethers");
+  const { compressToEncodedURIComponent } = await import("lz-string");
   const wallet = new ethers.Wallet(privateKey);
   const address = wallet.address;
   const nonce = (Date.now() / 1000).toFixed(0);
@@ -40,6 +37,7 @@ export async function buildVerifyUrl(privateKey: string, displayName: string): P
 }
 
 export async function generateNewIdentity(displayName: string) {
+  const { ethers } = await import("ethers");
   const wallet = ethers.Wallet.createRandom();
   const { url, address } = await buildVerifyUrl(wallet.privateKey, displayName);
   return { privateKey: wallet.privateKey, address, verifyUrl: url };
@@ -47,6 +45,7 @@ export async function generateNewIdentity(displayName: string) {
 
 export async function isWhitelisted(address: string): Promise<boolean> {
   try {
+    const { ethers } = await import("ethers");
     const provider = new ethers.JsonRpcProvider(CELO_RPC);
     const contract = new ethers.Contract(GD_IDENTITY_ADDRESS, GD_IDENTITY_ABI, provider);
     return await contract.isWhitelisted(address);
