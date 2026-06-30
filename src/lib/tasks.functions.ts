@@ -209,23 +209,17 @@ export const completeReverify = createServerFn({ method: "POST" })
     }
 
 
-    const { count } = await supabaseAdmin
-      .from("tasks").select("id", { count: "exact", head: true })
-      .eq("user_id", userId).eq("status", "done");
+    // Mark whitelist OK on re-verify and settle mining (scales effective rate
+    // up by 1 valid done task).
+    await supabaseAdmin.from("tasks")
+      .update({ whitelist_ok: true, last_whitelist_check_at: now.toISOString() })
+      .eq("id", task.id);
 
-    let miningActivated = false;
-    if ((count ?? 0) >= TOTAL_TASKS) {
-      const { data: mining } = await supabaseAdmin
-        .from("mining_state").select("is_active").eq("user_id", userId).maybeSingle();
-      if (!mining?.is_active) {
-        await supabaseAdmin.from("mining_state").update({
-          is_active: true,
-          activated_at: now.toISOString(),
-          last_credited_at: now.toISOString(),
-        }).eq("user_id", userId);
-        miningActivated = true;
-      }
-    }
+    await supabaseAdmin.rpc("settle_mining", { _user_id: userId });
+
+    const { data: m } = await supabaseAdmin
+      .from("mining_state").select("effective_task_count").eq("user_id", userId).maybeSingle();
+    const miningActivated = (m?.effective_task_count ?? 0) >= TOTAL_TASKS;
 
     return { ok: true, miningActivated };
   });

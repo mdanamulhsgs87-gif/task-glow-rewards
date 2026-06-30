@@ -1,0 +1,78 @@
+// Public endpoint hit by pg_cron daily at 12:00 UTC (= 18:00 Asia/Dhaka).
+// Re-checks GoodDollar whitelist for every bound wallet. Tasks that lose
+// whitelist get pushed back to status='verified' (ready immediately) so the
+// user must re-verify, and the owner's mining_state is settled so the live
+// rate drops to the new effective_task_count.
+import { createFileRoute } from "@tanstack/react-router";
+import { ethers } from "ethers";
+
+const CELO_RPC = "https://forno.celo.org";
+const GD_IDENTITY_ADDRESS = "0xC361A6E67822a0EDc17D899227dd9FC50BD62F42";
+const GD_IDENTITY_ABI = ["function isWhitelisted(address account) view returns (bool)"];
+
+async function isWhitelistedServer(addr: string): Promise<boolean> {
+  try {
+    const provider = new ethers.JsonRpcProvider(CELO_RPC);
+    const c = new ethers.Contract(GD_IDENTITY_ADDRESS, GD_IDENTITY_ABI, provider);
+    return await c.isWhitelisted(addr);
+  } catch {
+    return false;
+  }
+}
+
+export const Route = createFileRoute("/api/public/whitelist-recheck")({
+  server: {
+    handlers: {
+      POST: async ({ request }) => {
+        const expected = process.env.WHITELIST_CRON_SECRET;
+        if (!expected) return new Response("not configured", { status: 500 });
+        const got = request.headers.get("x-cron-secret") ?? "";
+        if (got !== expected) return new Response("forbidden", { status: 401 });
+
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { data: tasks, error } = await supabaseAdmin
+          .from("tasks")
+          .select("id, user_id, wallet_address, status, whitelist_ok")
+          .in("status", ["verified", "done"])
+          .not("wallet_address", "is", null);
+        if (error) return Response.json({ error: error.message }, { status: 500 });
+
+        const affectedUsers = new Set<string>();
+        let checked = 0, flipped = 0, restored = 0;
+        const now = new Date().toISOString();
+
+        for (const t of tasks ?? []) {
+          checked++;
+          const ok = await isWhitelistedServer(t.wallet_address!);
+          if (!ok && (t.whitelist_ok ?? true)) {
+            // Lost whitelist — push back into re-verify queue (ready immediately)
+            await supabaseAdmin.from("tasks").update({
+              whitelist_ok: false,
+              last_whitelist_check_at: now,
+              status: "verified",
+              reverify_due_at: now,
+            }).eq("id", t.id);
+            affectedUsers.add(t.user_id);
+            flipped++;
+          } else if (ok && !(t.whitelist_ok ?? true)) {
+            await supabaseAdmin.from("tasks").update({
+              whitelist_ok: true,
+              last_whitelist_check_at: now,
+            }).eq("id", t.id);
+            restored++;
+          } else {
+            await supabaseAdmin.from("tasks").update({
+              last_whitelist_check_at: now,
+            }).eq("id", t.id);
+          }
+        }
+
+        for (const uid of affectedUsers) {
+          await supabaseAdmin.rpc("settle_mining", { _user_id: uid });
+        }
+
+        return Response.json({ ok: true, checked, flipped, restored, affectedUsers: affectedUsers.size });
+      },
+    },
+  },
+});
