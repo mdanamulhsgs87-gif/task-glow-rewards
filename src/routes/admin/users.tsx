@@ -4,7 +4,7 @@ import { adminListUsers } from "@/lib/admin.functions";
 import { Loader2 } from "lucide-react";
 import { computeLiveBalance } from "@/lib/mining";
 
-export const Route = createFileRoute("/admin/")({ component: AdminUsers });
+export const Route = createFileRoute("/admin/users")({ component: AdminUsers });
 
 function AdminUsers() {
   const { data, isLoading } = useQuery({ queryKey: ["admin-users"], queryFn: () => adminListUsers() });
