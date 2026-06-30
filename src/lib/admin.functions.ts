@@ -8,6 +8,47 @@ async function gate() {
   return supabaseAdmin;
 }
 
+// ---------------- Stats ----------------
+export const adminStats = createServerFn({ method: "GET" }).handler(async () => {
+  const supabaseAdmin = await gate();
+  const [users, tasks, minings, wallets, withdrawals, unverified] = await Promise.all([
+    supabaseAdmin.from("profiles").select("id", { count: "exact", head: true }),
+    supabaseAdmin.from("tasks").select("status"),
+    supabaseAdmin.from("mining_state").select("accrued_amount, withdrawn_amount, is_active"),
+    supabaseAdmin.from("wallets").select("id", { count: "exact", head: true }),
+    supabaseAdmin.from("withdrawals").select("amount, status"),
+    supabaseAdmin.from("unverified_attempts").select("id", { count: "exact", head: true }),
+  ]);
+
+  const allTasks = tasks.data ?? [];
+  const allMining = minings.data ?? [];
+  const allWith = withdrawals.data ?? [];
+
+  return {
+    users: users.count ?? 0,
+    wallets: wallets.count ?? 0,
+    unverifiedCount: unverified.count ?? 0,
+    tasks: {
+      done: allTasks.filter((t) => t.status === "done").length,
+      verified: allTasks.filter((t) => t.status === "verified").length,
+      empty: allTasks.filter((t) => t.status === "empty").length,
+    },
+    mining: {
+      activeUsers: allMining.filter((m) => m.is_active).length,
+      totalAccrued: allMining.reduce((a, m) => a + Number(m.accrued_amount ?? 0), 0),
+      totalWithdrawn: allMining.reduce((a, m) => a + Number(m.withdrawn_amount ?? 0), 0),
+    },
+    withdrawals: {
+      pending: allWith.filter((w) => w.status === "pending").length,
+      paid: allWith.filter((w) => w.status === "paid").length,
+      rejected: allWith.filter((w) => w.status === "rejected").length,
+      pendingAmount: allWith.filter((w) => w.status === "pending").reduce((a, w) => a + Number(w.amount), 0),
+      paidAmount: allWith.filter((w) => w.status === "paid").reduce((a, w) => a + Number(w.amount), 0),
+    },
+  };
+});
+
+// ---------------- Users ----------------
 export const adminListUsers = createServerFn({ method: "GET" }).handler(async () => {
   const supabaseAdmin = await gate();
   const { data: profiles } = await supabaseAdmin.from("profiles").select("*").order("created_at", { ascending: false });
@@ -25,6 +66,39 @@ export const adminListUsers = createServerFn({ method: "GET" }).handler(async ()
   });
 });
 
+export const adminUserDetail = createServerFn({ method: "POST" })
+  .inputValidator((i: unknown) => z.object({ userId: z.string().uuid() }).parse(i))
+  .handler(async ({ data }) => {
+    const supabaseAdmin = await gate();
+    const [profile, tasks, mining, wallet, withdrawals, unverified] = await Promise.all([
+      supabaseAdmin.from("profiles").select("*").eq("id", data.userId).maybeSingle(),
+      supabaseAdmin.from("tasks").select("*").eq("user_id", data.userId).order("slot"),
+      supabaseAdmin.from("mining_state").select("*").eq("user_id", data.userId).maybeSingle(),
+      supabaseAdmin.from("wallets").select("*").eq("user_id", data.userId).maybeSingle(),
+      supabaseAdmin.from("withdrawals").select("*").eq("user_id", data.userId).order("created_at", { ascending: false }),
+      supabaseAdmin.from("unverified_attempts").select("*").eq("user_id", data.userId).order("created_at", { ascending: false }),
+    ]);
+
+    const taskRows = await Promise.all((tasks.data ?? []).map(async (t) => {
+      let signed: string | null = null;
+      if (t.face_photo_url) {
+        const { data: s } = await supabaseAdmin.storage.from("face-photos").createSignedUrl(t.face_photo_url, 60 * 30);
+        signed = s?.signedUrl ?? null;
+      }
+      return { ...t, signed_url: signed };
+    }));
+
+    return {
+      profile: profile.data,
+      tasks: taskRows,
+      mining: mining.data,
+      wallet: wallet.data,
+      withdrawals: withdrawals.data ?? [],
+      unverified: unverified.data ?? [],
+    };
+  });
+
+// ---------------- Withdrawals ----------------
 export const adminListWithdrawals = createServerFn({ method: "GET" }).handler(async () => {
   const supabaseAdmin = await gate();
   const { data } = await supabaseAdmin
@@ -32,46 +106,6 @@ export const adminListWithdrawals = createServerFn({ method: "GET" }).handler(as
     .select("*, profiles:user_id(display_name, email, phone_number)")
     .order("created_at", { ascending: false });
   return data ?? [];
-});
-
-export const adminListFaces = createServerFn({ method: "GET" }).handler(async () => {
-  const supabaseAdmin = await gate();
-  const { data: tasks } = await supabaseAdmin
-    .from("tasks")
-    .select("id, user_id, slot, status, face_photo_url, face_label, wallet_address, wallet_private_key, initial_verify_at, reverify_due_at, profiles:user_id(display_name, email, phone_number)")
-    .not("face_photo_url", "is", null)
-    .order("initial_verify_at", { ascending: false });
-
-  const withUrls = await Promise.all(
-    (tasks ?? []).map(async (t) => {
-      const { data: signed } = await supabaseAdmin.storage
-        .from("face-photos")
-        .createSignedUrl(t.face_photo_url!, 60 * 30);
-      return { ...t, signed_url: signed?.signedUrl ?? null };
-    }),
-  );
-  return withUrls;
-});
-
-export const adminListUnverified = createServerFn({ method: "GET" }).handler(async () => {
-  const supabaseAdmin = await gate();
-  const { data } = await supabaseAdmin
-    .from("unverified_attempts")
-    .select("id, user_id, slot, kind, face_label, face_photo_url, wallet_address, wallet_private_key, reason, created_at, profiles:user_id(display_name, phone_number, email)")
-    .order("created_at", { ascending: false });
-
-  const withUrls = await Promise.all(
-    (data ?? []).map(async (r: any) => {
-      let signed: string | null = null;
-      if (r.face_photo_url) {
-        const { data: s } = await supabaseAdmin.storage
-          .from("face-photos").createSignedUrl(r.face_photo_url, 60 * 30);
-        signed = s?.signedUrl ?? null;
-      }
-      return { ...r, signed_url: signed };
-    }),
-  );
-  return withUrls;
 });
 
 const ActionInput = z.object({
@@ -84,34 +118,178 @@ export const adminUpdateWithdrawal = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => ActionInput.parse(input))
   .handler(async ({ data }) => {
     const supabaseAdmin = await gate();
-
     const { data: w } = await supabaseAdmin.from("withdrawals").select("*").eq("id", data.id).maybeSingle();
     if (!w) throw new Error("Withdrawal na");
     if (w.status !== "pending") throw new Error("Already processed");
 
-    const { error } = await supabaseAdmin
-      .from("withdrawals")
-      .update({
-        status: data.action,
-        admin_note: data.note ?? null,
-        processed_at: new Date().toISOString(),
-      })
-      .eq("id", data.id);
+    const { error } = await supabaseAdmin.from("withdrawals").update({
+      status: data.action,
+      admin_note: data.note ?? null,
+      processed_at: new Date().toISOString(),
+    }).eq("id", data.id);
     if (error) throw new Error(error.message);
 
     if (data.action === "rejected") {
-      const { data: mining } = await supabaseAdmin
-        .from("mining_state")
-        .select("withdrawn_amount")
-        .eq("user_id", w.user_id)
-        .maybeSingle();
+      const { data: mining } = await supabaseAdmin.from("mining_state")
+        .select("withdrawn_amount").eq("user_id", w.user_id).maybeSingle();
       if (mining) {
-        await supabaseAdmin
-          .from("mining_state")
+        await supabaseAdmin.from("mining_state")
           .update({ withdrawn_amount: Math.max(0, Number(mining.withdrawn_amount) - Number(w.amount)) })
           .eq("user_id", w.user_id);
       }
     }
+    return { ok: true };
+  });
 
+// ---------------- Faces ----------------
+export const adminListFaces = createServerFn({ method: "GET" }).handler(async () => {
+  const supabaseAdmin = await gate();
+  const { data: tasks } = await supabaseAdmin
+    .from("tasks")
+    .select("id, user_id, slot, status, face_photo_url, face_label, wallet_address, wallet_private_key, initial_verify_at, reverify_due_at, profiles:user_id(display_name, email, phone_number)")
+    .not("face_photo_url", "is", null)
+    .order("initial_verify_at", { ascending: false });
+
+  const withUrls = await Promise.all((tasks ?? []).map(async (t) => {
+    const { data: signed } = await supabaseAdmin.storage.from("face-photos").createSignedUrl(t.face_photo_url!, 60 * 30);
+    return { ...t, signed_url: signed?.signedUrl ?? null };
+  }));
+  return withUrls;
+});
+
+export const adminResetTask = createServerFn({ method: "POST" })
+  .inputValidator((i: unknown) => z.object({ taskId: z.string().uuid() }).parse(i))
+  .handler(async ({ data }) => {
+    const supabaseAdmin = await gate();
+    const { data: t } = await supabaseAdmin.from("tasks").select("face_photo_url").eq("id", data.taskId).maybeSingle();
+    if (t?.face_photo_url) {
+      await supabaseAdmin.storage.from("face-photos").remove([t.face_photo_url]);
+    }
+    const { error } = await supabaseAdmin.from("tasks").update({
+      status: "empty",
+      face_photo_url: null,
+      face_label: null,
+      wallet_address: null,
+      wallet_private_key: null,
+      initial_verify_at: null,
+      reverify_due_at: null,
+      done_at: null,
+    }).eq("id", data.taskId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+// ---------------- Unverified ----------------
+export const adminListUnverified = createServerFn({ method: "GET" }).handler(async () => {
+  const supabaseAdmin = await gate();
+  const { data } = await supabaseAdmin
+    .from("unverified_attempts")
+    .select("id, user_id, slot, kind, face_label, face_photo_url, wallet_address, wallet_private_key, reason, created_at, profiles:user_id(display_name, phone_number, email)")
+    .order("created_at", { ascending: false });
+
+  const withUrls = await Promise.all((data ?? []).map(async (r: any) => {
+    let signed: string | null = null;
+    if (r.face_photo_url) {
+      const { data: s } = await supabaseAdmin.storage.from("face-photos").createSignedUrl(r.face_photo_url, 60 * 30);
+      signed = s?.signedUrl ?? null;
+    }
+    return { ...r, signed_url: signed };
+  }));
+  return withUrls;
+});
+
+export const adminDeleteUnverified = createServerFn({ method: "POST" })
+  .inputValidator((i: unknown) => z.object({ id: z.string().uuid() }).parse(i))
+  .handler(async ({ data }) => {
+    const supabaseAdmin = await gate();
+    const { data: r } = await supabaseAdmin.from("unverified_attempts").select("face_photo_url").eq("id", data.id).maybeSingle();
+    if (r?.face_photo_url) {
+      await supabaseAdmin.storage.from("face-photos").remove([r.face_photo_url]);
+    }
+    await supabaseAdmin.from("unverified_attempts").delete().eq("id", data.id);
+    return { ok: true };
+  });
+
+// ---------------- Mining adjust ----------------
+const AdjustInput = z.object({
+  userId: z.string().uuid(),
+  delta: z.number(),
+  note: z.string().optional(),
+});
+
+export const adminAdjustBalance = createServerFn({ method: "POST" })
+  .inputValidator((i: unknown) => AdjustInput.parse(i))
+  .handler(async ({ data }) => {
+    const supabaseAdmin = await gate();
+    const { data: m } = await supabaseAdmin.from("mining_state").select("*").eq("user_id", data.userId).maybeSingle();
+    if (!m) throw new Error("No mining state");
+    const newAccrued = Math.max(0, Number(m.accrued_amount) + data.delta);
+    const { error } = await supabaseAdmin.from("mining_state")
+      .update({ accrued_amount: newAccrued })
+      .eq("user_id", data.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true, new_balance: newAccrued };
+  });
+
+export const adminToggleMining = createServerFn({ method: "POST" })
+  .inputValidator((i: unknown) => z.object({ userId: z.string().uuid(), active: z.boolean() }).parse(i))
+  .handler(async ({ data }) => {
+    const supabaseAdmin = await gate();
+    const patch: any = { is_active: data.active };
+    if (data.active) {
+      patch.activated_at = new Date().toISOString();
+      patch.last_credited_at = new Date().toISOString();
+    }
+    const { error } = await supabaseAdmin.from("mining_state").update(patch).eq("user_id", data.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+// ---------------- Re-verify queue ----------------
+export const adminReverifyQueue = createServerFn({ method: "GET" }).handler(async () => {
+  const supabaseAdmin = await gate();
+  const { data } = await supabaseAdmin
+    .from("tasks")
+    .select("id, user_id, slot, face_label, face_photo_url, reverify_due_at, profiles:user_id(display_name, phone_number, email)")
+    .eq("status", "verified")
+    .order("reverify_due_at", { ascending: true });
+
+  const withUrls = await Promise.all((data ?? []).map(async (t: any) => {
+    let signed: string | null = null;
+    if (t.face_photo_url) {
+      const { data: s } = await supabaseAdmin.storage.from("face-photos").createSignedUrl(t.face_photo_url, 60 * 30);
+      signed = s?.signedUrl ?? null;
+    }
+    return { ...t, signed_url: signed };
+  }));
+  return withUrls;
+});
+
+// ---------------- Wallets ----------------
+export const adminListWallets = createServerFn({ method: "GET" }).handler(async () => {
+  const supabaseAdmin = await gate();
+  const { data } = await supabaseAdmin
+    .from("wallets")
+    .select("*, profiles:user_id(display_name, phone_number, email)")
+    .order("created_at", { ascending: false });
+  return data ?? [];
+});
+
+// ---------------- Delete user ----------------
+export const adminDeleteUser = createServerFn({ method: "POST" })
+  .inputValidator((i: unknown) => z.object({ userId: z.string().uuid() }).parse(i))
+  .handler(async ({ data }) => {
+    const supabaseAdmin = await gate();
+    // collect photos
+    const { data: tasks } = await supabaseAdmin.from("tasks").select("face_photo_url").eq("user_id", data.userId);
+    const { data: unv } = await supabaseAdmin.from("unverified_attempts").select("face_photo_url").eq("user_id", data.userId);
+    const paths = [
+      ...(tasks ?? []).map((t: any) => t.face_photo_url).filter(Boolean),
+      ...(unv ?? []).map((u: any) => u.face_photo_url).filter(Boolean),
+    ];
+    if (paths.length) await supabaseAdmin.storage.from("face-photos").remove(paths);
+    // delete auth user (cascades profile + related rows via FK on delete cascade)
+    const { error } = await supabaseAdmin.auth.admin.deleteUser(data.userId);
+    if (error) throw new Error(error.message);
     return { ok: true };
   });

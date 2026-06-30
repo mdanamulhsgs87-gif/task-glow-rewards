@@ -1,13 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { adminListFaces } from "@/lib/admin.functions";
-import { Copy, Loader2 } from "lucide-react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { adminListFaces, adminResetTask } from "@/lib/admin.functions";
+import { Copy, Loader2, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/faces")({ component: AdminFaces });
 
 function AdminFaces() {
-  const { data, isLoading } = useQuery({ queryKey: ["admin-faces"], queryFn: () => adminListFaces() });
+  const { data, isLoading, refetch } = useQuery({ queryKey: ["admin-faces"], queryFn: () => adminListFaces() });
+  const reset = useMutation({
+    mutationFn: (taskId: string) => adminResetTask({ data: { taskId } }),
+    onSuccess: () => { toast.success("Slot reset"); refetch(); },
+    onError: (e: any) => toast.error(e.message),
+  });
   const copy = async (value?: string | null, label = "Copied") => {
     if (!value) return;
     await navigator.clipboard.writeText(value);
@@ -47,6 +52,10 @@ function AdminFaces() {
               <p className="text-[9px] text-muted-foreground">
                 {t.initial_verify_at ? new Date(t.initial_verify_at).toLocaleDateString() : "—"}
               </p>
+              <button onClick={() => { if (confirm(`Reset slot #${t.slot}? Face + key permanently deleted.`)) reset.mutate(t.id); }}
+                className="w-full text-[9px] text-rose flex items-center justify-center gap-1 py-1 rounded bg-rose/10 border border-rose/20 mt-1">
+                <RefreshCw className="w-2.5 h-2.5" /> Reset slot
+              </button>
             </div>
           </div>
         ))}

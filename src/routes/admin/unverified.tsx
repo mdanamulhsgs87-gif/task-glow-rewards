@@ -1,15 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { adminListUnverified } from "@/lib/admin.functions";
-import { Loader2, AlertTriangle, Copy } from "lucide-react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { adminListUnverified, adminDeleteUnverified } from "@/lib/admin.functions";
+import { Loader2, AlertTriangle, Copy, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/unverified")({ component: UnverifiedPage });
 
 function UnverifiedPage() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ["admin-unverified"],
     queryFn: () => adminListUnverified(),
+  });
+
+  const del = useMutation({
+    mutationFn: (id: string) => adminDeleteUnverified({ data: { id } }),
+    onSuccess: () => { toast.success("Deleted"); refetch(); },
+    onError: (e: any) => toast.error(e.message),
   });
 
   if (isLoading) {
@@ -55,6 +61,10 @@ function UnverifiedPage() {
           <p className="text-[10px] text-muted-foreground">
             ⚠️ {r.reason} · {new Date(r.created_at).toLocaleString()}
           </p>
+          <button onClick={() => { if (confirm("Delete this attempt?")) del.mutate(r.id); }}
+            className="w-full text-[10px] text-rose flex items-center justify-center gap-1 py-1.5 rounded bg-rose/10 border border-rose/20">
+            <Trash2 className="w-3 h-3" /> Delete attempt
+          </button>
         </div>
       ))}
       {(!data || data.length === 0) && (

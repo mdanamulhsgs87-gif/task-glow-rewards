@@ -16,12 +16,16 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminWithdrawalsRouteImport } from './routes/admin/withdrawals'
+import { Route as AdminWalletsRouteImport } from './routes/admin/wallets'
+import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminUnverifiedRouteImport } from './routes/admin/unverified'
+import { Route as AdminReverifyRouteImport } from './routes/admin/reverify'
 import { Route as AdminFacesRouteImport } from './routes/admin/faces'
 import { Route as AuthenticatedWithdrawRouteImport } from './routes/_authenticated/withdraw'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
 import { Route as AuthenticatedReverifyRouteImport } from './routes/_authenticated/reverify'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
+import { Route as AdminUserUserIdRouteImport } from './routes/admin/user.$userId'
 import { Route as AuthenticatedTaskSlotRouteImport } from './routes/_authenticated/task.$slot'
 
 const AuthRoute = AuthRouteImport.update({
@@ -58,9 +62,24 @@ const AdminWithdrawalsRoute = AdminWithdrawalsRouteImport.update({
   path: '/withdrawals',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminWalletsRoute = AdminWalletsRouteImport.update({
+  id: '/wallets',
+  path: '/wallets',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminUnverifiedRoute = AdminUnverifiedRouteImport.update({
   id: '/unverified',
   path: '/unverified',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminReverifyRoute = AdminReverifyRouteImport.update({
+  id: '/reverify',
+  path: '/reverify',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminFacesRoute = AdminFacesRouteImport.update({
@@ -88,6 +107,11 @@ const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
   path: '/home',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AdminUserUserIdRoute = AdminUserUserIdRouteImport.update({
+  id: '/user/$userId',
+  path: '/user/$userId',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AuthenticatedTaskSlotRoute = AuthenticatedTaskSlotRouteImport.update({
   id: '/task/$slot',
   path: '/task/$slot',
@@ -104,10 +128,14 @@ export interface FileRoutesByFullPath {
   '/wallet': typeof AuthenticatedWalletRoute
   '/withdraw': typeof AuthenticatedWithdrawRoute
   '/admin/faces': typeof AdminFacesRoute
+  '/admin/reverify': typeof AdminReverifyRoute
   '/admin/unverified': typeof AdminUnverifiedRoute
+  '/admin/users': typeof AdminUsersRoute
+  '/admin/wallets': typeof AdminWalletsRoute
   '/admin/withdrawals': typeof AdminWithdrawalsRoute
   '/admin/': typeof AdminIndexRoute
   '/task/$slot': typeof AuthenticatedTaskSlotRoute
+  '/admin/user/$userId': typeof AdminUserUserIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -118,10 +146,14 @@ export interface FileRoutesByTo {
   '/wallet': typeof AuthenticatedWalletRoute
   '/withdraw': typeof AuthenticatedWithdrawRoute
   '/admin/faces': typeof AdminFacesRoute
+  '/admin/reverify': typeof AdminReverifyRoute
   '/admin/unverified': typeof AdminUnverifiedRoute
+  '/admin/users': typeof AdminUsersRoute
+  '/admin/wallets': typeof AdminWalletsRoute
   '/admin/withdrawals': typeof AdminWithdrawalsRoute
   '/admin': typeof AdminIndexRoute
   '/task/$slot': typeof AuthenticatedTaskSlotRoute
+  '/admin/user/$userId': typeof AdminUserUserIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -135,10 +167,14 @@ export interface FileRoutesById {
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
   '/_authenticated/withdraw': typeof AuthenticatedWithdrawRoute
   '/admin/faces': typeof AdminFacesRoute
+  '/admin/reverify': typeof AdminReverifyRoute
   '/admin/unverified': typeof AdminUnverifiedRoute
+  '/admin/users': typeof AdminUsersRoute
+  '/admin/wallets': typeof AdminWalletsRoute
   '/admin/withdrawals': typeof AdminWithdrawalsRoute
   '/admin/': typeof AdminIndexRoute
   '/_authenticated/task/$slot': typeof AuthenticatedTaskSlotRoute
+  '/admin/user/$userId': typeof AdminUserUserIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -152,10 +188,14 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/withdraw'
     | '/admin/faces'
+    | '/admin/reverify'
     | '/admin/unverified'
+    | '/admin/users'
+    | '/admin/wallets'
     | '/admin/withdrawals'
     | '/admin/'
     | '/task/$slot'
+    | '/admin/user/$userId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -166,10 +206,14 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/withdraw'
     | '/admin/faces'
+    | '/admin/reverify'
     | '/admin/unverified'
+    | '/admin/users'
+    | '/admin/wallets'
     | '/admin/withdrawals'
     | '/admin'
     | '/task/$slot'
+    | '/admin/user/$userId'
   id:
     | '__root__'
     | '/'
@@ -182,10 +226,14 @@ export interface FileRouteTypes {
     | '/_authenticated/wallet'
     | '/_authenticated/withdraw'
     | '/admin/faces'
+    | '/admin/reverify'
     | '/admin/unverified'
+    | '/admin/users'
+    | '/admin/wallets'
     | '/admin/withdrawals'
     | '/admin/'
     | '/_authenticated/task/$slot'
+    | '/admin/user/$userId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -247,11 +295,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminWithdrawalsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/wallets': {
+      id: '/admin/wallets'
+      path: '/wallets'
+      fullPath: '/admin/wallets'
+      preLoaderRoute: typeof AdminWalletsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/unverified': {
       id: '/admin/unverified'
       path: '/unverified'
       fullPath: '/admin/unverified'
       preLoaderRoute: typeof AdminUnverifiedRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/reverify': {
+      id: '/admin/reverify'
+      path: '/reverify'
+      fullPath: '/admin/reverify'
+      preLoaderRoute: typeof AdminReverifyRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/faces': {
@@ -289,6 +358,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHomeRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/admin/user/$userId': {
+      id: '/admin/user/$userId'
+      path: '/user/$userId'
+      fullPath: '/admin/user/$userId'
+      preLoaderRoute: typeof AdminUserUserIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/_authenticated/task/$slot': {
       id: '/_authenticated/task/$slot'
       path: '/task/$slot'
@@ -320,16 +396,24 @@ const AuthenticatedRouteRouteWithChildren =
 
 interface AdminRouteChildren {
   AdminFacesRoute: typeof AdminFacesRoute
+  AdminReverifyRoute: typeof AdminReverifyRoute
   AdminUnverifiedRoute: typeof AdminUnverifiedRoute
+  AdminUsersRoute: typeof AdminUsersRoute
+  AdminWalletsRoute: typeof AdminWalletsRoute
   AdminWithdrawalsRoute: typeof AdminWithdrawalsRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminUserUserIdRoute: typeof AdminUserUserIdRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminFacesRoute: AdminFacesRoute,
+  AdminReverifyRoute: AdminReverifyRoute,
   AdminUnverifiedRoute: AdminUnverifiedRoute,
+  AdminUsersRoute: AdminUsersRoute,
+  AdminWalletsRoute: AdminWalletsRoute,
   AdminWithdrawalsRoute: AdminWithdrawalsRoute,
   AdminIndexRoute: AdminIndexRoute,
+  AdminUserUserIdRoute: AdminUserUserIdRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
