@@ -71,6 +71,7 @@ function AdminLayout() {
         <AdminTab to="/admin" icon={<Users className="w-4 h-4" />} label="Users" exact />
         <AdminTab to="/admin/withdrawals" icon={<ArrowDownToLine className="w-4 h-4" />} label="Withdrawals" />
         <AdminTab to="/admin/faces" icon={<ScanFace className="w-4 h-4" />} label="Faces" />
+        <AdminTab to="/admin/unverified" icon={<AlertTriangle className="w-4 h-4" />} label="Not whitelisted" />
       </div>
       <Outlet />
     </div>
