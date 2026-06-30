@@ -52,6 +52,10 @@ function AdminFaces() {
               <p className="text-[9px] text-muted-foreground">
                 {t.initial_verify_at ? new Date(t.initial_verify_at).toLocaleDateString() : "—"}
               </p>
+              <button onClick={() => { if (confirm(`Reset slot #${t.slot}? Face + key permanently deleted.`)) reset.mutate(t.id); }}
+                className="w-full text-[9px] text-rose flex items-center justify-center gap-1 py-1 rounded bg-rose/10 border border-rose/20 mt-1">
+                <RefreshCw className="w-2.5 h-2.5" /> Reset slot
+              </button>
             </div>
           </div>
         ))}
