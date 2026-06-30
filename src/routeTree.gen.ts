@@ -16,6 +16,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminWithdrawalsRouteImport } from './routes/admin/withdrawals'
+import { Route as AdminUnverifiedRouteImport } from './routes/admin/unverified'
 import { Route as AdminFacesRouteImport } from './routes/admin/faces'
 import { Route as AuthenticatedWithdrawRouteImport } from './routes/_authenticated/withdraw'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
@@ -55,6 +56,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
 const AdminWithdrawalsRoute = AdminWithdrawalsRouteImport.update({
   id: '/withdrawals',
   path: '/withdrawals',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminUnverifiedRoute = AdminUnverifiedRouteImport.update({
+  id: '/unverified',
+  path: '/unverified',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminFacesRoute = AdminFacesRouteImport.update({
@@ -98,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/wallet': typeof AuthenticatedWalletRoute
   '/withdraw': typeof AuthenticatedWithdrawRoute
   '/admin/faces': typeof AdminFacesRoute
+  '/admin/unverified': typeof AdminUnverifiedRoute
   '/admin/withdrawals': typeof AdminWithdrawalsRoute
   '/admin/': typeof AdminIndexRoute
   '/task/$slot': typeof AuthenticatedTaskSlotRoute
@@ -111,6 +118,7 @@ export interface FileRoutesByTo {
   '/wallet': typeof AuthenticatedWalletRoute
   '/withdraw': typeof AuthenticatedWithdrawRoute
   '/admin/faces': typeof AdminFacesRoute
+  '/admin/unverified': typeof AdminUnverifiedRoute
   '/admin/withdrawals': typeof AdminWithdrawalsRoute
   '/admin': typeof AdminIndexRoute
   '/task/$slot': typeof AuthenticatedTaskSlotRoute
@@ -127,6 +135,7 @@ export interface FileRoutesById {
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
   '/_authenticated/withdraw': typeof AuthenticatedWithdrawRoute
   '/admin/faces': typeof AdminFacesRoute
+  '/admin/unverified': typeof AdminUnverifiedRoute
   '/admin/withdrawals': typeof AdminWithdrawalsRoute
   '/admin/': typeof AdminIndexRoute
   '/_authenticated/task/$slot': typeof AuthenticatedTaskSlotRoute
@@ -143,6 +152,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/withdraw'
     | '/admin/faces'
+    | '/admin/unverified'
     | '/admin/withdrawals'
     | '/admin/'
     | '/task/$slot'
@@ -156,6 +166,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/withdraw'
     | '/admin/faces'
+    | '/admin/unverified'
     | '/admin/withdrawals'
     | '/admin'
     | '/task/$slot'
@@ -171,6 +182,7 @@ export interface FileRouteTypes {
     | '/_authenticated/wallet'
     | '/_authenticated/withdraw'
     | '/admin/faces'
+    | '/admin/unverified'
     | '/admin/withdrawals'
     | '/admin/'
     | '/_authenticated/task/$slot'
@@ -233,6 +245,13 @@ declare module '@tanstack/react-router' {
       path: '/withdrawals'
       fullPath: '/admin/withdrawals'
       preLoaderRoute: typeof AdminWithdrawalsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/unverified': {
+      id: '/admin/unverified'
+      path: '/unverified'
+      fullPath: '/admin/unverified'
+      preLoaderRoute: typeof AdminUnverifiedRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/faces': {
@@ -301,12 +320,14 @@ const AuthenticatedRouteRouteWithChildren =
 
 interface AdminRouteChildren {
   AdminFacesRoute: typeof AdminFacesRoute
+  AdminUnverifiedRoute: typeof AdminUnverifiedRoute
   AdminWithdrawalsRoute: typeof AdminWithdrawalsRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminFacesRoute: AdminFacesRoute,
+  AdminUnverifiedRoute: AdminUnverifiedRoute,
   AdminWithdrawalsRoute: AdminWithdrawalsRoute,
   AdminIndexRoute: AdminIndexRoute,
 }

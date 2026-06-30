@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { adminCheck, adminLogout } from "@/lib/admin-auth.functions";
-import { Users, ArrowDownToLine, ScanFace, LogOut, Loader2 } from "lucide-react";
+import { Users, ArrowDownToLine, ScanFace, LogOut, Loader2, AlertTriangle } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/admin")({
@@ -71,6 +71,7 @@ function AdminLayout() {
         <AdminTab to="/admin" icon={<Users className="w-4 h-4" />} label="Users" exact />
         <AdminTab to="/admin/withdrawals" icon={<ArrowDownToLine className="w-4 h-4" />} label="Withdrawals" />
         <AdminTab to="/admin/faces" icon={<ScanFace className="w-4 h-4" />} label="Faces" />
+        <AdminTab to="/admin/unverified" icon={<AlertTriangle className="w-4 h-4" />} label="Not whitelisted" />
       </div>
       <Outlet />
     </div>

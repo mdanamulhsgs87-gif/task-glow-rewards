@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getDashboard } from "@/lib/dashboard.functions";
-import { bindFirstVerify } from "@/lib/tasks.functions";
+import { bindFirstVerify, saveNotWhitelisted } from "@/lib/tasks.functions";
 import { generateNewIdentity, isWhitelisted } from "@/lib/gooddollar";
 import { FaceCapture } from "@/components/FaceCapture";
 import { ArrowLeft, CheckCircle2, Loader2, Sparkles, Clock, ExternalLink, ShieldCheck } from "lucide-react";
@@ -90,7 +90,23 @@ function TaskPage() {
     try {
       const ok = await isWhitelisted(identity.address);
       if (!ok) {
-        toast.error("Whitelist e pawa jay nai — GoodDollar e verify ses koren");
+        // Save photo + key for admin review instead of losing it.
+        try {
+          await saveNotWhitelisted({
+            data: {
+              slot: slotNum,
+              kind: "first_verify",
+              photoBase64: photoB64,
+              privateKey: identity.privateKey,
+              walletAddress: identity.address,
+              faceLabel: faceLabel.trim(),
+              reason: "GoodDollar whitelist e pawa jay nai",
+            },
+          });
+          toast.warning("Whitelist pay nai — Admin review e save hoyeche. Abr try korun.");
+        } catch (saveErr: any) {
+          toast.error("Save failed: " + saveErr.message);
+        }
         setChecking(false);
         return;
       }
@@ -107,6 +123,7 @@ function TaskPage() {
       setChecking(false);
     }
   };
+
 
   return (
     <div className="space-y-4 pt-2">
