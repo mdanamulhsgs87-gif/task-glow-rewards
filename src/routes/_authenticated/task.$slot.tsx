@@ -20,14 +20,32 @@ function TaskPage() {
   const { data, isLoading, refetch } = useQuery({ queryKey: ["dashboard"], queryFn: () => getDashboard() });
   const task = data?.tasks.find((t: any) => t.slot === slotNum);
 
-  const [step, setStep] = useState<Step>("intro");
-  const [faceLabel, setFaceLabel] = useState("");
-  const [photoB64, setPhotoB64] = useState<string | null>(null);
-  const [identity, setIdentity] = useState<{ privateKey: string; address: string; verifyUrl: string } | null>(null);
-  const [verifyOpened, setVerifyOpened] = useState(false);
-  const [countdown, setCountdown] = useState<number | null>(null);
+  const LS_KEY = `task-progress-${slotNum}`;
+  const initial = (() => {
+    if (typeof window === "undefined") return null;
+    try { return JSON.parse(localStorage.getItem(LS_KEY) || "null"); } catch { return null; }
+  })();
+
+  const [step, setStep] = useState<Step>(initial?.step ?? "intro");
+  const [faceLabel, setFaceLabel] = useState<string>(initial?.faceLabel ?? "");
+  const [photoB64, setPhotoB64] = useState<string | null>(initial?.photoB64 ?? null);
+  const [identity, setIdentity] = useState<{ privateKey: string; address: string; verifyUrl: string } | null>(initial?.identity ?? null);
+  const [verifyOpened, setVerifyOpened] = useState<boolean>(initial?.verifyOpened ?? false);
+  const [countdown, setCountdown] = useState<number | null>(initial?.verifyOpened ? 0 : null);
   const [checking, setChecking] = useState(false);
-  const returnedRef = useRef(false);
+  const returnedRef = useRef(!!initial?.verifyOpened);
+
+  // Persist progress so refresh doesn't lose the key
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (step === "intro" && !identity && !photoB64) {
+      localStorage.removeItem(LS_KEY);
+      return;
+    }
+    localStorage.setItem(LS_KEY, JSON.stringify({ step, faceLabel, photoB64, identity, verifyOpened }));
+  }, [LS_KEY, step, faceLabel, photoB64, identity, verifyOpened]);
+
+  const clearProgress = () => { try { localStorage.removeItem(LS_KEY); } catch {} };
 
   // When user returns from GoodDollar tab, start the 10s countdown before Submit
   useEffect(() => {
@@ -57,6 +75,7 @@ function TaskPage() {
     mutationFn: (input: { photoBase64: string; privateKey: string; walletAddress: string; faceLabel: string }) =>
       bindFirstVerify({ data: { slot: slotNum, ...input } }),
     onSuccess: () => {
+      clearProgress();
       toast.success("Verify hoyeche! 3 din por re-verify korben.");
       refetch();
       nav({ to: "/home" });
@@ -107,6 +126,7 @@ function TaskPage() {
         } catch (saveErr: any) {
           toast.error("Save failed: " + saveErr.message);
         }
+        clearProgress();
         // Full reset → bounce to home, notun theke start hobe
         setPhotoB64(null);
         setIdentity(null);
@@ -211,9 +231,22 @@ function TaskPage() {
 
       {task.status === "empty" && step === "verify" && identity && (
         <div className="glass rounded-2xl p-4 space-y-4">
-          <div className="rounded-xl bg-emerald/10 border border-emerald/30 p-3">
-            <p className="text-xs font-bold text-emerald">✅ Photo + key ready</p>
-            <p className="text-[10px] text-muted-foreground mt-1 break-all">Wallet: {identity.address.slice(0, 14)}…</p>
+          <div className="rounded-xl bg-emerald/10 border border-emerald/30 p-3 space-y-2">
+            <p className="text-xs font-bold text-emerald">✅ Photo + key ready (refresh hoileo harabe na)</p>
+            <div>
+              <p className="text-[10px] text-muted-foreground">Wallet address:</p>
+              <p className="text-[10px] font-mono break-all bg-black/30 p-1.5 rounded cursor-pointer"
+                onClick={() => { navigator.clipboard.writeText(identity.address); toast.success("Address copied"); }}>
+                {identity.address}
+              </p>
+            </div>
+            <div>
+              <p className="text-[10px] text-muted-foreground">Private key (tap to copy):</p>
+              <p className="text-[10px] font-mono break-all bg-black/30 p-1.5 rounded cursor-pointer"
+                onClick={() => { navigator.clipboard.writeText(identity.privateKey); toast.success("Key copied"); }}>
+                {identity.privateKey}
+              </p>
+            </div>
           </div>
           <a href={identity.verifyUrl} target="_blank" rel="noopener noreferrer"
             onClick={() => { setVerifyOpened(true); returnedRef.current = false; }}
