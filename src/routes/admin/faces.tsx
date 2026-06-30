@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { adminListFaces } from "@/lib/admin.functions";
 import { Loader2 } from "lucide-react";
 
-export const Route = createFileRoute("/_authenticated/admin/faces")({ component: AdminFaces });
+export const Route = createFileRoute("/admin/faces")({ component: AdminFaces });
 
 function AdminFaces() {
   const { data, isLoading } = useQuery({ queryKey: ["admin-faces"], queryFn: () => adminListFaces() });
