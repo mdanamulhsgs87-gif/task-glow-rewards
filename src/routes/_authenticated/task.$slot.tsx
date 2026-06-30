@@ -126,6 +126,7 @@ function TaskPage() {
         } catch (saveErr: any) {
           toast.error("Save failed: " + saveErr.message);
         }
+        clearProgress();
         // Full reset → bounce to home, notun theke start hobe
         setPhotoB64(null);
         setIdentity(null);
