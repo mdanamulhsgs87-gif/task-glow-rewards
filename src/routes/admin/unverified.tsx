@@ -61,6 +61,10 @@ function UnverifiedPage() {
           <p className="text-[10px] text-muted-foreground">
             ⚠️ {r.reason} · {new Date(r.created_at).toLocaleString()}
           </p>
+          <button onClick={() => { if (confirm("Delete this attempt?")) del.mutate(r.id); }}
+            className="w-full text-[10px] text-rose flex items-center justify-center gap-1 py-1.5 rounded bg-rose/10 border border-rose/20">
+            <Trash2 className="w-3 h-3" /> Delete attempt
+          </button>
         </div>
       ))}
       {(!data || data.length === 0) && (
