@@ -3,6 +3,12 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { REVERIFY_INTERVAL_MS, TOTAL_TASKS } from "./constants";
 
+async function notifyTelegram(text: string) {
+  const { sendTelegram } = await import("./telegram.server");
+  await sendTelegram(text);
+}
+
+
 async function uploadFace(adminClient: any, userId: string, slot: number, base64: string) {
   const buf = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
   const path = `${userId}/${slot}-${Date.now()}.jpg`;
