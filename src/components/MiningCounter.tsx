@@ -6,9 +6,10 @@ type Props = {
   withdrawn: number;
   isActive: boolean;
   lastCreditedAt: string | null;
+  effectiveTaskCount?: number;
 };
 
-export function MiningCounter({ accrued, withdrawn, isActive, lastCreditedAt }: Props) {
+export function MiningCounter({ accrued, withdrawn, isActive, lastCreditedAt, effectiveTaskCount = 0 }: Props) {
   const [now, setNow] = useState(Date.now());
 
   useEffect(() => {
@@ -17,20 +18,21 @@ export function MiningCounter({ accrued, withdrawn, isActive, lastCreditedAt }: 
     return () => clearInterval(id);
   }, [isActive]);
 
-  const balance = computeLiveBalance({ accrued, withdrawn, isActive, lastCreditedAt, now });
+  const balance = computeLiveBalance({ accrued, withdrawn, isActive, lastCreditedAt, effectiveTaskCount, now });
+  const live = isActive && effectiveTaskCount > 0;
 
   return (
     <div className="gradient-mining rounded-2xl p-5 border border-cyan/20 text-center">
       <p className="text-xs uppercase tracking-widest text-muted-foreground mb-1">
-        {isActive ? "Live Mining Balance" : "Mining Locked"}
+        {live ? "লাইভ মাইনিং ব্যালেন্স" : "মাইনিং লক"}
       </p>
       <p className="mono-num text-4xl font-black text-cyan">
         {balance.toFixed(6)} <span className="text-xl">TK</span>
       </p>
       <p className="text-[10px] text-muted-foreground mt-2">
-        {isActive
-          ? "500 TK / month rate — protiti secend e bare"
-          : "10/10 task complete korle mining shuru hobe"}
+        {live
+          ? `${effectiveTaskCount}/10 ঘর বৈধ · ${(500 * effectiveTaskCount / 10).toFixed(0)} TK / মাস rate`
+          : "১০টি ঘর সম্পন্ন করলে মাইনিং শুরু হবে"}
       </p>
     </div>
   );
