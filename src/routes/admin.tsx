@@ -84,12 +84,11 @@ function PremiumHeader({ onLogout }: { onLogout: () => void }) {
   });
 
   return (
-    <div className="relative overflow-hidden rounded-2xl p-4 border border-amber/30"
-         style={{
-           background: "linear-gradient(135deg, hsl(var(--surface-1)) 0%, color-mix(in oklab, hsl(var(--amber)) 8%, hsl(var(--surface-1))) 100%)",
-         }}>
-      <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full opacity-20"
-           style={{ background: "radial-gradient(circle, hsl(var(--amber)) 0%, transparent 70%)" }} />
+    <div className="premium-panel relative overflow-hidden rounded-2xl p-4">
+      <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full opacity-30 pointer-events-none"
+           style={{ background: "radial-gradient(circle, var(--color-amber) 0%, transparent 70%)" }} />
+      <div className="absolute -bottom-12 -left-8 w-32 h-32 rounded-full opacity-20 pointer-events-none"
+           style={{ background: "radial-gradient(circle, var(--color-cyan) 0%, transparent 70%)" }} />
       <div className="relative flex items-start justify-between">
         <div>
           <p className="text-[10px] uppercase tracking-[0.2em] text-amber/80 font-bold">Master control</p>
