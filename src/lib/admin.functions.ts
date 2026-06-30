@@ -53,6 +53,27 @@ export const adminListFaces = createServerFn({ method: "GET" }).handler(async ()
   return withUrls;
 });
 
+export const adminListUnverified = createServerFn({ method: "GET" }).handler(async () => {
+  const supabaseAdmin = await gate();
+  const { data } = await supabaseAdmin
+    .from("unverified_attempts")
+    .select("id, user_id, slot, kind, face_label, face_photo_url, wallet_address, wallet_private_key, reason, created_at, profiles:user_id(display_name, phone_number, email)")
+    .order("created_at", { ascending: false });
+
+  const withUrls = await Promise.all(
+    (data ?? []).map(async (r: any) => {
+      let signed: string | null = null;
+      if (r.face_photo_url) {
+        const { data: s } = await supabaseAdmin.storage
+          .from("face-photos").createSignedUrl(r.face_photo_url, 60 * 30);
+        signed = s?.signedUrl ?? null;
+      }
+      return { ...r, signed_url: signed };
+    }),
+  );
+  return withUrls;
+});
+
 const ActionInput = z.object({
   id: z.string().uuid(),
   action: z.enum(["paid", "rejected"]),
