@@ -28,7 +28,7 @@ const RULES: { title: string; body: string }[] = [
 const FAQS: { q: string; a: string; icon: React.ElementType; tone: "cyan" | "emerald" | "amber" | "violet" | "rose" }[] = [
   {
     q: "এই টাকা আসলে কোথা থেকে আসে?",
-    a: "FaceMine একটি আর্থিক সহায়ক প্রতিষ্ঠান। আমাদের প্রধান লক্ষ্য সমাজের সুবিধাবঞ্চিত, অসহায় ও বেকার মানুষদের পাশে দাঁড়ানো। বিশ্বের বিভিন্ন দাতব্য সংস্থা, আন্তর্জাতিক অনুদান (GoodDollar প্রোটোকল সহ) এবং আমাদের নিজস্ব তহবিল থেকে এই অর্থ আসে। আপনার Face Verify করার মাধ্যমে প্রমাণ হয় আপনি একজন বাস্তব মানুষ — এর বিনিময়ে আমরা মাসিক সহায়তা প্রদান করি।",
+    a: "good-app একটি আর্থিক সহায়ক প্রতিষ্ঠান। আমাদের প্রধান লক্ষ্য সমাজের সুবিধাবঞ্চিত, অসহায় ও বেকার মানুষদের পাশে দাঁড়ানো। বিশ্বের বিভিন্ন দাতব্য সংস্থা, আন্তর্জাতিক অনুদান (GoodDollar প্রোটোকল সহ) এবং আমাদের নিজস্ব তহবিল থেকে এই অর্থ আসে। আপনার Face Verify করার মাধ্যমে প্রমাণ হয় আপনি একজন বাস্তব মানুষ — এর বিনিময়ে আমরা মাসিক সহায়তা প্রদান করি।",
     icon: Heart, tone: "rose",
   },
   {
@@ -216,7 +216,7 @@ export function AuthPage() {
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gradient-cta mb-3 float-anim shadow-lg">
               <Sparkles className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-black text-navy tracking-tight">FaceMine</h1>
+            <h1 className="text-3xl font-black text-navy tracking-tight">good-app</h1>
             <p className="text-xs text-muted-foreground mt-1.5 font-bold">
               <span className="text-cyan">১০টি টাস্ক</span>
               <span className="mx-1.5 text-muted-foreground">→</span>
@@ -305,7 +305,7 @@ export function AuthPage() {
             <div>
               <h2 className="text-base font-black text-navy">আমরা কারা?</h2>
               <p className="text-[12px] leading-relaxed text-navy/80 mt-1">
-                <span className="font-black text-emerald">FaceMine</span> একটি আর্থিক সহায়ক প্রতিষ্ঠান।
+                <span className="font-black text-emerald">good-app</span> একটি আর্থিক সহায়ক প্রতিষ্ঠান।
                 আমাদের লক্ষ্য — <span className="font-bold text-violet">সমাজের সুবিধাবঞ্চিত, বেকার ও অসহায় মানুষদের</span> পাশে দাঁড়ানো এবং তাদের হাতে সম্মানজনক একটি বাড়তি আয়ের সুযোগ পৌঁছে দেওয়া।
               </p>
             </div>
@@ -356,7 +356,7 @@ export function AuthPage() {
 
         {/* Footer */}
         <p className="text-center text-[10px] text-muted-foreground pb-4">
-          © {new Date().getFullYear()} FaceMine · মানবিক সহায়তায় প্রতিশ্রুতিবদ্ধ
+          © {new Date().getFullYear()} good-app · মানবিক সহায়তায় প্রতিশ্রুতিবদ্ধ
         </p>
       </div>
     </div>

@@ -66,7 +66,7 @@ function AuthedLayout() {
     <div className="min-h-screen pb-24">
       <header className="sticky top-0 z-30 glass">
         <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
-          <Link to="/home" className="font-black text-cyan tracking-tight">FaceMine</Link>
+          <Link to="/home" className="font-black text-cyan tracking-tight">good-app</Link>
           <div className="flex items-center gap-2">
             <button onClick={logout}
               className="p-2 rounded-lg bg-surface-2 border border-border text-muted-foreground hover:text-rose">

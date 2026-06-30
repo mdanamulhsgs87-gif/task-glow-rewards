@@ -93,7 +93,7 @@ function PremiumHeader({ onLogout }: { onLogout: () => void }) {
         <div>
           <p className="text-[10px] uppercase tracking-[0.2em] text-amber/80 font-bold">Master control</p>
           <h1 className="font-black text-xl text-amber mt-0.5">Admin Panel</h1>
-          <p className="text-[10px] text-muted-foreground mt-0.5">FaceMine · full control</p>
+          <p className="text-[10px] text-muted-foreground mt-0.5">good-app · full control</p>
         </div>
         <button onClick={onLogout}
           className="px-3 py-1.5 rounded-lg bg-surface-2 text-muted-foreground text-[10px] font-bold flex items-center gap-1 border border-border hover:text-amber transition">
