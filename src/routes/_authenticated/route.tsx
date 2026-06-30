@@ -1,31 +1,66 @@
-import { createFileRoute, Outlet, redirect, Link, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Outlet, Link, useRouter } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { Home, Wallet, ArrowDownToLine, LogOut } from "lucide-react";
-import { useEffect } from "react";
+import { Home, Wallet, ArrowDownToLine, LogOut, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
-  beforeLoad: async () => {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) throw redirect({ to: "/auth" });
-  },
   component: AuthedLayout,
 });
 
 function AuthedLayout() {
   const router = useRouter();
+  const [authState, setAuthState] = useState<"checking" | "authenticated" | "unauthenticated">("checking");
 
   useEffect(() => {
-    const sub = supabase.auth.onAuthStateChange((_e, session) => {
-      if (!session) router.navigate({ to: "/auth" });
+    let active = true;
+    supabase.auth.getUser().then(({ data, error }) => {
+      if (!active) return;
+      if (error || !data.user) {
+        setAuthState("unauthenticated");
+        return;
+      }
+      setAuthState("authenticated");
     });
-    return () => { sub.data.subscription.unsubscribe(); };
+
+    const sub = supabase.auth.onAuthStateChange((_e, session) => {
+      if (!session) setAuthState("unauthenticated");
+    });
+    return () => {
+      active = false;
+      sub.data.subscription.unsubscribe();
+    };
   }, [router]);
 
   const logout = async () => {
     await supabase.auth.signOut();
     router.navigate({ to: "/auth" });
   };
+
+  if (authState === "checking") {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4 py-10">
+        <div className="glass w-full max-w-sm rounded-2xl p-6 text-center">
+          <Loader2 className="mx-auto mb-3 h-6 w-6 animate-spin text-cyan" />
+          <p className="text-sm font-bold">Account check hocche...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (authState === "unauthenticated") {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4 py-10">
+        <div className="glass w-full max-w-sm rounded-2xl p-6 text-center">
+          <h1 className="text-lg font-black text-cyan">Login korte hobe</h1>
+          <p className="mt-2 text-xs text-muted-foreground">Task korte age mobile number diye login korun.</p>
+          <Link to="/auth" className="gradient-cta mt-4 inline-flex rounded-xl px-4 py-2 text-xs font-black">
+            Login page
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pb-24">

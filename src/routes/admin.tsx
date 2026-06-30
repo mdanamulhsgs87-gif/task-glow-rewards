@@ -1,23 +1,64 @@
-import { createFileRoute, Outlet, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, Outlet, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { adminCheck, adminLogout } from "@/lib/admin-auth.functions";
-import { Users, ArrowDownToLine, ScanFace, LogOut } from "lucide-react";
+import { Users, ArrowDownToLine, ScanFace, LogOut, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/admin")({
   ssr: false,
-  beforeLoad: async () => {
-    const res = await adminCheck();
-    if (!res.unlocked) throw redirect({ to: "/admin-login" });
-  },
   component: AdminLayout,
 });
 
 function AdminLayout() {
+  const check = useServerFn(adminCheck);
   const logout = useServerFn(adminLogout);
+  const [status, setStatus] = useState<"checking" | "unlocked" | "locked">("checking");
+
+  useEffect(() => {
+    let active = true;
+    check().then((res) => {
+      if (!active) return;
+      if (!res.unlocked) {
+        setStatus("locked");
+        return;
+      }
+      setStatus("unlocked");
+    }).catch(() => {
+      if (active) setStatus("locked");
+    });
+    return () => { active = false; };
+  }, [check]);
+
   async function onLogout() {
     await logout();
     window.location.href = "/admin-login";
   }
+
+  if (status === "checking") {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4 py-10">
+        <div className="glass w-full max-w-sm rounded-2xl p-6 text-center">
+          <Loader2 className="mx-auto mb-3 h-6 w-6 animate-spin text-amber" />
+          <p className="text-sm font-bold">Admin panel check hocche...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (status === "locked") {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4 py-10">
+        <div className="glass w-full max-w-sm rounded-2xl p-6 text-center">
+          <h1 className="text-lg font-black text-amber">Admin locked</h1>
+          <p className="mt-2 text-xs text-muted-foreground">Admin password diye unlock korte hobe.</p>
+          <Link to="/admin-login" className="gradient-cta mt-4 inline-flex rounded-xl px-4 py-2 text-xs font-black">
+            Admin login
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4 pt-2">
       <div className="flex items-center justify-between">

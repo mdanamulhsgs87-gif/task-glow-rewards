@@ -12,7 +12,7 @@ function phoneToEmail(phone: string) {
   return `u${phone}@facemine.app`;
 }
 
-function AuthPage() {
+export function AuthPage() {
   const nav = useNavigate();
   const register = useServerFn(registerWithPhone);
   const [mode, setMode] = useState<"login" | "signup">("login");
