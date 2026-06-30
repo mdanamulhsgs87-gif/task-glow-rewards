@@ -1,15 +1,22 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Sparkles, Loader2 } from "lucide-react";
+import { registerWithPhone } from "@/lib/auth.functions";
 
-export const Route = createFileRoute("/auth")({ component: AuthPage });
+export const Route = createFileRoute("/auth")({ ssr: false, component: AuthPage });
+
+function phoneToEmail(phone: string) {
+  return `u${phone}@facemine.app`;
+}
 
 function AuthPage() {
   const nav = useNavigate();
+  const register = useServerFn(registerWithPhone);
   const [mode, setMode] = useState<"login" | "signup">("login");
-  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,18 +29,21 @@ function AuthPage() {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const cleanPhone = phone.replace(/\D/g, "").slice(0, 11);
+    if (!/^01\d{9}$/.test(cleanPhone)) {
+      toast.error("11 digit mobile number din (01 diye shuru)");
+      return;
+    }
     setLoading(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
-          email, password,
-          options: { data: { display_name: name }, emailRedirectTo: `${window.location.origin}/home` },
-        });
+        await register({ data: { name, phone: cleanPhone, password } });
+        const { error } = await supabase.auth.signInWithPassword({ email: phoneToEmail(cleanPhone), password });
         if (error) throw error;
-        toast.success("Account toiri hoyeche! Login korun.");
-        setMode("login");
+        toast.success("Account toiri hoyeche!");
+        nav({ to: "/home" });
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({ email: phoneToEmail(cleanPhone), password });
         if (error) throw error;
         toast.success("Welcome back!");
         nav({ to: "/home" });
@@ -76,9 +86,10 @@ function AuthPage() {
             </div>
           )}
           <div>
-            <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Email</label>
-            <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
-              className="w-full mt-1 px-4 py-3 bg-surface-2 border border-border rounded-xl text-sm outline-none focus:border-cyan" />
+            <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Mobile number</label>
+            <input inputMode="numeric" required value={phone} onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 11))}
+              placeholder="01XXXXXXXXX" maxLength={11}
+              className="w-full mt-1 px-4 py-3 bg-surface-2 border border-border rounded-xl text-sm outline-none focus:border-cyan mono-num" />
           </div>
           <div>
             <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Password</label>
@@ -93,7 +104,7 @@ function AuthPage() {
         </form>
 
         <p className="text-[10px] text-center text-muted-foreground mt-5">
-          Sign up korle apnar information protected thake. <Link to="/" className="text-cyan">Home</Link>
+          Sign up korle apnar information protected thake. <Link to="/admin-login" className="text-cyan">Admin</Link>
         </p>
       </div>
     </div>

@@ -1,29 +1,23 @@
 import { createFileRoute, Outlet, redirect, Link, useRouter } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { Home, Wallet, ArrowDownToLine, ShieldCheck, LogOut } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Home, Wallet, ArrowDownToLine, LogOut } from "lucide-react";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/_authenticated")({
+  ssr: false,
   beforeLoad: async () => {
-    if (typeof window === "undefined") return;
-    const { data } = await supabase.auth.getSession();
-    if (!data.session) throw redirect({ to: "/auth" });
+    const { data, error } = await supabase.auth.getUser();
+    if (error || !data.user) throw redirect({ to: "/auth" });
   },
   component: AuthedLayout,
 });
 
 function AuthedLayout() {
   const router = useRouter();
-  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const sub = supabase.auth.onAuthStateChange((_e, session) => {
       if (!session) router.navigate({ to: "/auth" });
-    });
-    supabase.auth.getUser().then(async ({ data }) => {
-      if (!data.user) return;
-      const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", data.user.id);
-      setIsAdmin((roles ?? []).some((r) => r.role === "admin"));
     });
     return () => { sub.data.subscription.unsubscribe(); };
   }, [router]);
@@ -39,12 +33,6 @@ function AuthedLayout() {
         <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/home" className="font-black text-cyan tracking-tight">FaceMine</Link>
           <div className="flex items-center gap-2">
-            {isAdmin && (
-              <Link to="/admin"
-                className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber/15 text-amber border border-amber/30">
-                ADMIN
-              </Link>
-            )}
             <button onClick={logout}
               className="p-2 rounded-lg bg-surface-2 border border-border text-muted-foreground hover:text-rose">
               <LogOut className="w-4 h-4" />
@@ -79,6 +67,3 @@ function NavItem({ to, icon, label }: { to: string; icon: React.ReactNode; label
     </Link>
   );
 }
-
-// silence unused import warning
-void ShieldCheck;
