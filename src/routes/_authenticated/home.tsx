@@ -126,6 +126,21 @@ function HomePage() {
           Refresh
         </button>
       </div>
+
+      {lightbox && (
+        <div onClick={() => setLightbox(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 animate-in fade-in">
+          <button onClick={() => setLightbox(null)}
+            className="absolute top-4 right-4 rounded-full bg-white/10 hover:bg-white/20 p-2 text-white">
+            <X className="w-5 h-5" />
+          </button>
+          <div className="flex flex-col items-center gap-3 max-w-full max-h-full" onClick={(e) => e.stopPropagation()}>
+            <img src={lightbox.url} alt={lightbox.label}
+              className="max-w-full max-h-[80vh] rounded-2xl border-2 border-white/20 shadow-2xl object-contain" />
+            <p className="text-white font-bold text-sm">{lightbox.label}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
