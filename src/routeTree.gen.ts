@@ -18,6 +18,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminWithdrawalsRouteImport } from './routes/admin/withdrawals'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminUnverifiedRouteImport } from './routes/admin/unverified'
+import { Route as AdminReverifyRouteImport } from './routes/admin/reverify'
 import { Route as AdminFacesRouteImport } from './routes/admin/faces'
 import { Route as AuthenticatedWithdrawRouteImport } from './routes/_authenticated/withdraw'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
@@ -70,6 +71,11 @@ const AdminUnverifiedRoute = AdminUnverifiedRouteImport.update({
   path: '/unverified',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminReverifyRoute = AdminReverifyRouteImport.update({
+  id: '/reverify',
+  path: '/reverify',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminFacesRoute = AdminFacesRouteImport.update({
   id: '/faces',
   path: '/faces',
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/wallet': typeof AuthenticatedWalletRoute
   '/withdraw': typeof AuthenticatedWithdrawRoute
   '/admin/faces': typeof AdminFacesRoute
+  '/admin/reverify': typeof AdminReverifyRoute
   '/admin/unverified': typeof AdminUnverifiedRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/withdrawals': typeof AdminWithdrawalsRoute
@@ -132,6 +139,7 @@ export interface FileRoutesByTo {
   '/wallet': typeof AuthenticatedWalletRoute
   '/withdraw': typeof AuthenticatedWithdrawRoute
   '/admin/faces': typeof AdminFacesRoute
+  '/admin/reverify': typeof AdminReverifyRoute
   '/admin/unverified': typeof AdminUnverifiedRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/withdrawals': typeof AdminWithdrawalsRoute
@@ -151,6 +159,7 @@ export interface FileRoutesById {
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
   '/_authenticated/withdraw': typeof AuthenticatedWithdrawRoute
   '/admin/faces': typeof AdminFacesRoute
+  '/admin/reverify': typeof AdminReverifyRoute
   '/admin/unverified': typeof AdminUnverifiedRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/withdrawals': typeof AdminWithdrawalsRoute
@@ -170,6 +179,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/withdraw'
     | '/admin/faces'
+    | '/admin/reverify'
     | '/admin/unverified'
     | '/admin/users'
     | '/admin/withdrawals'
@@ -186,6 +196,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/withdraw'
     | '/admin/faces'
+    | '/admin/reverify'
     | '/admin/unverified'
     | '/admin/users'
     | '/admin/withdrawals'
@@ -204,6 +215,7 @@ export interface FileRouteTypes {
     | '/_authenticated/wallet'
     | '/_authenticated/withdraw'
     | '/admin/faces'
+    | '/admin/reverify'
     | '/admin/unverified'
     | '/admin/users'
     | '/admin/withdrawals'
@@ -285,6 +297,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUnverifiedRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/reverify': {
+      id: '/admin/reverify'
+      path: '/reverify'
+      fullPath: '/admin/reverify'
+      preLoaderRoute: typeof AdminReverifyRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/faces': {
       id: '/admin/faces'
       path: '/faces'
@@ -358,6 +377,7 @@ const AuthenticatedRouteRouteWithChildren =
 
 interface AdminRouteChildren {
   AdminFacesRoute: typeof AdminFacesRoute
+  AdminReverifyRoute: typeof AdminReverifyRoute
   AdminUnverifiedRoute: typeof AdminUnverifiedRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminWithdrawalsRoute: typeof AdminWithdrawalsRoute
@@ -367,6 +387,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminFacesRoute: AdminFacesRoute,
+  AdminReverifyRoute: AdminReverifyRoute,
   AdminUnverifiedRoute: AdminUnverifiedRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminWithdrawalsRoute: AdminWithdrawalsRoute,
