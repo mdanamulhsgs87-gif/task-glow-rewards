@@ -11,6 +11,7 @@ export const Route = createFileRoute("/_authenticated/home")({ component: HomePa
 
 function HomePage() {
   const router = useRouter();
+  const [lightbox, setLightbox] = useState<{ url: string; label: string } | null>(null);
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["dashboard"],
     queryFn: () => getDashboard(),
