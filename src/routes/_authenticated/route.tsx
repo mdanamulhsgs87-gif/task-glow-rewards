@@ -82,10 +82,10 @@ function AuthedLayout() {
 
       <nav className="fixed bottom-0 inset-x-0 z-30 glass border-t border-cyan/15">
         <div className="max-w-md mx-auto px-4 py-2 grid grid-cols-4 gap-1">
-          <NavItem to="/home" icon={<Home className="w-5 h-5" />} label="Home" />
-          <NavItem to="/reverify" icon={<RefreshCcw className="w-5 h-5" />} label="Re-verify" />
-          <NavItem to="/wallet" icon={<Wallet className="w-5 h-5" />} label="Wallet" />
-          <NavItem to="/withdraw" icon={<ArrowDownToLine className="w-5 h-5" />} label="Withdraw" />
+          <NavItem to="/home" icon={<Home className="w-5 h-5" />} label="হোম" />
+          <NavItem to="/reverify" icon={<RefreshCcw className="w-5 h-5" />} label="রি-ভেরিফাই" />
+          <NavItem to="/wallet" icon={<Wallet className="w-5 h-5" />} label="ওয়ালেট" />
+          <NavItem to="/withdraw" icon={<ArrowDownToLine className="w-5 h-5" />} label="উইথড্র" />
         </div>
       </nav>
     </div>
