@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { getDashboard } from "@/lib/dashboard.functions";
 import { MiningCounter } from "@/components/MiningCounter";
-import { CheckCircle2, Clock, Camera, Lock, Sparkles, Loader2, Copy } from "lucide-react";
+import { CheckCircle2, Clock, Camera, Lock, Sparkles, Loader2, Copy, X } from "lucide-react";
 import { REVERIFY_INTERVAL_MS, TOTAL_TASKS } from "@/lib/constants";
 import { toast } from "sonner";
 
@@ -11,6 +11,7 @@ export const Route = createFileRoute("/_authenticated/home")({ component: HomePa
 
 function HomePage() {
   const router = useRouter();
+  const [lightbox, setLightbox] = useState<{ url: string; label: string } | null>(null);
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["dashboard"],
     queryFn: () => getDashboard(),
@@ -75,7 +76,9 @@ function HomePage() {
 
         <div className="grid grid-cols-4 gap-3">
           {tasks.map((t: any) => (
-            <TaskCell key={t.slot} task={t} onClick={() => router.navigate({ to: "/task/$slot", params: { slot: String(t.slot) } })} />
+            <TaskCell key={t.slot} task={t}
+              onClick={() => router.navigate({ to: "/task/$slot", params: { slot: String(t.slot) } })}
+              onOpenPhoto={(url) => setLightbox({ url, label: `Slot #${t.slot} · ${t.face_label || "Face"}` })} />
           ))}
         </div>
       </div>
@@ -96,7 +99,10 @@ function HomePage() {
             {savedTasks.map((t: any) => (
               <div key={t.id} className="flex gap-3 rounded-xl border border-border bg-surface-2 p-2">
                 {t.signed_face_url ? (
-                  <img src={t.signed_face_url} alt={`Slot ${t.slot} face`} className="h-16 w-16 shrink-0 rounded-lg object-cover" />
+                  <button onClick={() => setLightbox({ url: t.signed_face_url, label: `Slot #${t.slot} · ${t.face_label || "Face"}` })}
+                    className="h-16 w-16 shrink-0 rounded-lg overflow-hidden active:scale-95 transition">
+                    <img src={t.signed_face_url} alt={`Slot ${t.slot} face`} className="h-full w-full object-cover" />
+                  </button>
                 ) : (
                   <div className="h-16 w-16 shrink-0 rounded-lg bg-background" />
                 )}
@@ -120,11 +126,26 @@ function HomePage() {
           Refresh
         </button>
       </div>
+
+      {lightbox && (
+        <div onClick={() => setLightbox(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 animate-in fade-in">
+          <button onClick={() => setLightbox(null)}
+            className="absolute top-4 right-4 rounded-full bg-white/10 hover:bg-white/20 p-2 text-white">
+            <X className="w-5 h-5" />
+          </button>
+          <div className="flex flex-col items-center gap-3 max-w-full max-h-full" onClick={(e) => e.stopPropagation()}>
+            <img src={lightbox.url} alt={lightbox.label}
+              className="max-w-full max-h-[80vh] rounded-2xl border-2 border-white/20 shadow-2xl object-contain" />
+            <p className="text-white font-bold text-sm">{lightbox.label}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-function TaskCell({ task, onClick }: { task: any; onClick: () => void }) {
+function TaskCell({ task, onClick, onOpenPhoto }: { task: any; onClick: () => void; onOpenPhoto: (url: string) => void }) {
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
@@ -147,25 +168,25 @@ function TaskCell({ task, onClick }: { task: any; onClick: () => void }) {
     const m = Math.floor((totalSec % 3600) / 60);
     const s = totalSec % 60;
     return (
-      <button disabled
-        className="relative aspect-square rounded-2xl overflow-hidden border border-amber/50 shadow-[0_8px_24px_-8px_rgba(245,158,11,0.45)] disabled:opacity-100 group">
+      <button onClick={() => faceUrl && onOpenPhoto(faceUrl)}
+        className="relative aspect-square rounded-2xl overflow-hidden border-2 border-violet/60 shadow-[0_10px_30px_-10px_rgba(139,92,246,0.6)] group transition active:scale-95">
         {faceUrl ? (
           <img src={faceUrl} alt={`Slot ${task.slot}`} className="absolute inset-0 h-full w-full object-cover" />
         ) : (
           <div className="absolute inset-0 bg-surface-2" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/40" />
         <div className="absolute top-1.5 left-1.5 right-1.5 flex items-center justify-between">
-          <span className="text-[10px] font-black text-white/90 drop-shadow">#{task.slot}</span>
-          <span className="rounded-full bg-amber/90 p-0.5"><Lock className="w-2.5 h-2.5 text-black" /></span>
+          <span className="text-[10px] font-black text-white drop-shadow">#{task.slot}</span>
+          <span className="rounded-full bg-rose p-0.5 shadow"><Lock className="w-2.5 h-2.5 text-white" /></span>
         </div>
         <div className="absolute bottom-1 left-0 right-0 px-1">
-          <div className="flex items-end justify-center gap-0.5 mono-num text-amber leading-none">
-            <span className="text-sm font-black">{d}</span><span className="text-[8px] mb-0.5 opacity-70">d</span>
-            <span className="text-sm font-black ml-0.5">{String(h).padStart(2,"0")}</span><span className="text-[8px] mb-0.5 opacity-70">h</span>
-            <span className="text-sm font-black ml-0.5">{String(m).padStart(2,"0")}</span><span className="text-[8px] mb-0.5 opacity-70">m</span>
+          <div className="flex items-end justify-center gap-0.5 mono-num leading-none text-white drop-shadow">
+            <span className="text-sm font-black">{d}</span><span className="text-[8px] mb-0.5 opacity-80">d</span>
+            <span className="text-sm font-black ml-0.5">{String(h).padStart(2,"0")}</span><span className="text-[8px] mb-0.5 opacity-80">h</span>
+            <span className="text-sm font-black ml-0.5">{String(m).padStart(2,"0")}</span><span className="text-[8px] mb-0.5 opacity-80">m</span>
           </div>
-          <p className="mono-num text-[9px] text-amber/80 text-center mt-0.5">{String(s).padStart(2,"0")}s</p>
+          <p className="mono-num text-[10px] text-white text-center mt-0.5 drop-shadow font-bold">{String(s).padStart(2,"0")}s</p>
         </div>
       </button>
     );
