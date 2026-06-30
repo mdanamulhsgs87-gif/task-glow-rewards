@@ -137,36 +137,63 @@ function TaskCell({ task, onClick }: { task: any; onClick: () => void }) {
   const readyToReverify = isVerified && dueMs <= now;
   const remainingMs = Math.max(0, dueMs - now);
 
-  let bg = "bg-surface-2 border-border";
-  let icon = <Camera className="w-4 h-4" />;
+  const faceUrl: string | undefined = task.signed_face_url;
+
+  // Locked / waiting re-verify state — premium face card with live D H M S countdown
+  if (isVerified && !readyToReverify) {
+    const totalSec = Math.floor(remainingMs / 1000);
+    const d = Math.floor(totalSec / 86400);
+    const h = Math.floor((totalSec % 86400) / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = totalSec % 60;
+    return (
+      <button disabled
+        className="relative aspect-square rounded-2xl overflow-hidden border border-amber/50 shadow-[0_8px_24px_-8px_rgba(245,158,11,0.45)] disabled:opacity-100 group">
+        {faceUrl ? (
+          <img src={faceUrl} alt={`Slot ${task.slot}`} className="absolute inset-0 h-full w-full object-cover" />
+        ) : (
+          <div className="absolute inset-0 bg-surface-2" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
+        <div className="absolute top-1.5 left-1.5 right-1.5 flex items-center justify-between">
+          <span className="text-[10px] font-black text-white/90 drop-shadow">#{task.slot}</span>
+          <span className="rounded-full bg-amber/90 p-0.5"><Lock className="w-2.5 h-2.5 text-black" /></span>
+        </div>
+        <div className="absolute bottom-1 left-0 right-0 px-1">
+          <div className="flex items-end justify-center gap-0.5 mono-num text-amber leading-none">
+            <span className="text-sm font-black">{d}</span><span className="text-[8px] mb-0.5 opacity-70">d</span>
+            <span className="text-sm font-black ml-0.5">{String(h).padStart(2,"0")}</span><span className="text-[8px] mb-0.5 opacity-70">h</span>
+            <span className="text-sm font-black ml-0.5">{String(m).padStart(2,"0")}</span><span className="text-[8px] mb-0.5 opacity-70">m</span>
+          </div>
+          <p className="mono-num text-[9px] text-amber/80 text-center mt-0.5">{String(s).padStart(2,"0")}s</p>
+        </div>
+      </button>
+    );
+  }
+
+  let bg = "bg-gradient-to-br from-surface-2 to-background border-border/60";
+  let icon = <Camera className="w-5 h-5" />;
   let label = "Start";
   let labelColor = "text-cyan";
 
   if (isDone) {
-    bg = "bg-emerald/15 border-emerald/40";
-    icon = <CheckCircle2 className="w-4 h-4 text-emerald" />;
+    bg = "bg-gradient-to-br from-emerald/25 to-emerald/5 border-emerald/50 shadow-[0_8px_24px_-8px_rgba(16,185,129,0.5)]";
+    icon = <CheckCircle2 className="w-5 h-5 text-emerald" />;
     label = "Done";
     labelColor = "text-emerald";
-  } else if (isVerified && !readyToReverify) {
-    bg = "bg-amber/10 border-amber/30";
-    icon = <Lock className="w-4 h-4 text-amber" />;
-    const h = Math.floor(remainingMs / 3600000);
-    const m = Math.floor((remainingMs % 3600000) / 60000);
-    label = h > 0 ? `${h}h ${m}m` : `${m}m`;
-    labelColor = "text-amber";
   } else if (readyToReverify) {
-    bg = "bg-cyan/15 border-cyan/50 animate-pulse";
-    icon = <Sparkles className="w-4 h-4 text-cyan" />;
+    bg = "bg-gradient-to-br from-cyan/25 to-cyan/5 border-cyan/60 shadow-[0_8px_24px_-8px_rgba(34,211,238,0.6)] animate-pulse";
+    icon = <Sparkles className="w-5 h-5 text-cyan" />;
     label = "Re-verify";
     labelColor = "text-cyan";
   }
 
   return (
-    <button onClick={onClick} disabled={isVerified && !readyToReverify}
-      className={`aspect-square rounded-xl border-2 ${bg} flex flex-col items-center justify-center gap-1 transition disabled:opacity-90`}>
-      <span className="text-[10px] font-black text-muted-foreground">#{task.slot}</span>
+    <button onClick={onClick}
+      className={`relative aspect-square rounded-2xl border ${bg} flex flex-col items-center justify-center gap-1.5 transition hover:scale-[1.03] active:scale-95`}>
+      <span className="absolute top-1.5 left-2 text-[10px] font-black text-muted-foreground">#{task.slot}</span>
       {icon}
-      <span className={`text-[8px] font-bold ${labelColor} leading-tight text-center px-1`}>{label}</span>
+      <span className={`text-[10px] font-bold ${labelColor}`}>{label}</span>
     </button>
   );
 }
