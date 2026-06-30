@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { getDashboard } from "@/lib/dashboard.functions";
 import { MiningCounter } from "@/components/MiningCounter";
-import { CheckCircle2, Clock, Camera, Lock, Sparkles, Loader2, Copy } from "lucide-react";
+import { CheckCircle2, Clock, Camera, Lock, Sparkles, Loader2, Copy, X } from "lucide-react";
 import { REVERIFY_INTERVAL_MS, TOTAL_TASKS } from "@/lib/constants";
 import { toast } from "sonner";
 
