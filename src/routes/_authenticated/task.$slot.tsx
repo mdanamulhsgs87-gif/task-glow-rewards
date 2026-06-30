@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getDashboard } from "@/lib/dashboard.functions";
-import { bindFirstVerify } from "@/lib/tasks.functions";
+import { bindFirstVerify, saveNotWhitelisted } from "@/lib/tasks.functions";
 import { generateNewIdentity, isWhitelisted } from "@/lib/gooddollar";
 import { FaceCapture } from "@/components/FaceCapture";
 import { ArrowLeft, CheckCircle2, Loader2, Sparkles, Clock, ExternalLink, ShieldCheck } from "lucide-react";
