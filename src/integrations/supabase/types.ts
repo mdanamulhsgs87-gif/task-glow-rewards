@@ -21,6 +21,7 @@ export type Database = {
           effective_task_count: number
           is_active: boolean
           last_credited_at: string | null
+          qualifying_referees: number
           user_id: string
           withdrawn_amount: number
         }
@@ -30,6 +31,7 @@ export type Database = {
           effective_task_count?: number
           is_active?: boolean
           last_credited_at?: string | null
+          qualifying_referees?: number
           user_id: string
           withdrawn_amount?: number
         }
@@ -39,6 +41,7 @@ export type Database = {
           effective_task_count?: number
           is_active?: boolean
           last_credited_at?: string | null
+          qualifying_referees?: number
           user_id?: string
           withdrawn_amount?: number
         }
@@ -59,6 +62,8 @@ export type Database = {
           email: string | null
           id: string
           phone_number: string | null
+          referral_code: string
+          referred_by: string | null
         }
         Insert: {
           created_at?: string
@@ -66,6 +71,8 @@ export type Database = {
           email?: string | null
           id: string
           phone_number?: string | null
+          referral_code: string
+          referred_by?: string | null
         }
         Update: {
           created_at?: string
@@ -73,8 +80,18 @@ export type Database = {
           email?: string | null
           id?: string
           phone_number?: string | null
+          referral_code?: string
+          referred_by?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_referred_by_fkey"
+            columns: ["referred_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tasks: {
         Row: {
