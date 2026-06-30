@@ -1,9 +1,12 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Sparkles, Loader2, ShieldCheck, Check, ArrowRight } from "lucide-react";
+import {
+  Sparkles, Loader2, ShieldCheck, Check, ArrowRight,
+  HandHeart, HelpCircle, ChevronDown, Heart, Users, Gift, Coins,
+} from "lucide-react";
 import { registerWithPhone } from "@/lib/auth.functions";
 
 export const Route = createFileRoute("/auth")({ ssr: false, component: AuthPage });
@@ -22,6 +25,42 @@ const RULES: { title: string; body: string }[] = [
   { title: "অ্যাডমিনের সিদ্ধান্তই চূড়ান্ত", body: "যেকোনো বিতর্কিত বিষয়ে অ্যাডমিনের সিদ্ধান্তই চূড়ান্ত বলে গণ্য হবে।" },
 ];
 
+const FAQS: { q: string; a: string; icon: React.ElementType; tone: "cyan" | "emerald" | "amber" | "violet" | "rose" }[] = [
+  {
+    q: "এই টাকা আসলে কোথা থেকে আসে?",
+    a: "FaceMine একটি আর্থিক সহায়ক প্রতিষ্ঠান। আমাদের প্রধান লক্ষ্য সমাজের সুবিধাবঞ্চিত, অসহায় ও বেকার মানুষদের পাশে দাঁড়ানো। বিশ্বের বিভিন্ন দাতব্য সংস্থা, আন্তর্জাতিক অনুদান (GoodDollar প্রোটোকল সহ) এবং আমাদের নিজস্ব তহবিল থেকে এই অর্থ আসে। আপনার Face Verify করার মাধ্যমে প্রমাণ হয় আপনি একজন বাস্তব মানুষ — এর বিনিময়ে আমরা মাসিক সহায়তা প্রদান করি।",
+    icon: Heart, tone: "rose",
+  },
+  {
+    q: "আমাদের লক্ষ্য কী?",
+    a: "দেশের প্রতিটি সুবিধাবঞ্চিত মানুষের হাতে অন্তত একটু সম্মানজনক উপার্জনের সুযোগ পৌঁছে দেওয়া। বেকার ছাত্র, গৃহিণী, কৃষক, রিকশাচালক — যারা ছোট একটি বাড়তি আয়ের আশা রাখেন, তাদের জন্যই এই প্ল্যাটফর্ম।",
+    icon: HandHeart, tone: "emerald",
+  },
+  {
+    q: "এটা কি স্থায়ীভাবে চলবে?",
+    a: "হ্যাঁ। যতদিন আপনি প্রতি ৩ দিন পর পর Re-verify করে নিজের পরিচয় বজায় রাখবেন, ততদিন প্রতি মাসে ৫০০৳ হারে মাইনিং চলতেই থাকবে। কোনো লুকানো শর্ত নেই।",
+    icon: Coins, tone: "amber",
+  },
+  {
+    q: "কতজন মানুষ ইতিমধ্যে যুক্ত হয়েছেন?",
+    a: "প্রতিদিন হাজারো মানুষ আমাদের সাথে যুক্ত হচ্ছেন। আপনি একা নন — আপনি একটি বিশাল মানবিক পরিবারের অংশ হতে যাচ্ছেন।",
+    icon: Users, tone: "cyan",
+  },
+  {
+    q: "শুরু করতে কত খরচ?",
+    a: "সম্পূর্ণ বিনামূল্যে। কোনো রেজিস্ট্রেশন ফি, কোনো ডিপোজিট নেই। শুধু আপনার আসল মুখ দিয়ে Face Verify করুন — ব্যস।",
+    icon: Gift, tone: "violet",
+  },
+];
+
+const toneClass: Record<string, { bg: string; chip: string; ring: string }> = {
+  cyan:    { bg: "from-cyan/15 to-cyan/5",       chip: "bg-cyan",    ring: "ring-cyan/40" },
+  emerald: { bg: "from-emerald/15 to-emerald/5", chip: "bg-emerald", ring: "ring-emerald/40" },
+  amber:   { bg: "from-amber/15 to-amber/5",     chip: "bg-amber",   ring: "ring-amber/40" },
+  violet:  { bg: "from-violet/15 to-violet/5",   chip: "bg-violet",  ring: "ring-violet/40" },
+  rose:    { bg: "from-rose/15 to-rose/5",       chip: "bg-rose",    ring: "ring-rose/40" },
+};
+
 export function AuthPage() {
   const nav = useNavigate();
   const register = useServerFn(registerWithPhone);
@@ -32,6 +71,7 @@ export function AuthPage() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -60,28 +100,22 @@ export function AuthPage() {
     e.preventDefault();
     const ok = validateForm();
     if (!ok) return;
-    if (mode === "signup") {
-      setStep("agreement");
-    } else {
-      doLogin(ok);
-    }
+    if (mode === "signup") setStep("agreement");
+    else doLogin(ok);
   };
 
   async function doLogin(cleanPhone: string) {
     setLoading(true);
     try {
       const { error } = await supabase.auth.signInWithPassword({
-        email: phoneToEmail(cleanPhone),
-        password,
+        email: phoneToEmail(cleanPhone), password,
       });
       if (error) throw error;
       toast.success("স্বাগতম!");
       nav({ to: "/home" });
     } catch (e: any) {
       toast.error(e.message ?? "কিছু সমস্যা হয়েছে");
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   }
 
   async function doSignup() {
@@ -90,53 +124,50 @@ export function AuthPage() {
     try {
       await register({ data: { name, phone: cleanPhone, password } });
       const { error } = await supabase.auth.signInWithPassword({
-        email: phoneToEmail(cleanPhone),
-        password,
+        email: phoneToEmail(cleanPhone), password,
       });
       if (error) throw error;
       toast.success("একাউন্ট তৈরি হয়েছে!");
       nav({ to: "/home" });
     } catch (e: any) {
       toast.error(e.message ?? "কিছু সমস্যা হয়েছে");
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   }
 
   if (step === "agreement") {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4 py-8">
-        <div className="w-full max-w-md premium-panel rounded-3xl p-6">
+      <div className="min-h-screen gradient-aurora flex items-center justify-center px-4 py-8">
+        <div className="w-full max-w-md premium-panel rounded-3xl p-6 pop-in">
           <div className="text-center mb-5">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl gradient-navy mb-3">
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl gradient-navy mb-3 float-anim">
               <ShieldCheck className="w-7 h-7 text-gold" />
             </div>
             <h1 className="text-xl font-black text-navy">নিয়মাবলি ও শর্তাবলি</h1>
-            <p className="text-[11px] text-muted-foreground mt-1">
-              একাউন্ট তৈরি করার আগে অনুগ্রহ করে পড়ুন
-            </p>
+            <p className="text-[11px] text-muted-foreground mt-1">একাউন্ট তৈরি করার আগে অনুগ্রহ করে পড়ুন</p>
             <div className="gold-divider mt-3" />
           </div>
 
           <div className="space-y-2.5 max-h-[55vh] overflow-y-auto pr-1">
-            {RULES.map((r, i) => (
-              <div key={i} className="glass rounded-2xl p-3 flex gap-3">
-                <div className="shrink-0 w-7 h-7 rounded-full gradient-cta flex items-center justify-center font-black text-xs">
-                  {i + 1}
+            {RULES.map((r, i) => {
+              const tones = ["cyan","emerald","amber","violet","rose","cyan","emerald"] as const;
+              const t = toneClass[tones[i]];
+              return (
+                <div key={i} className={`rounded-2xl p-3 flex gap-3 bg-linear-to-br ${t.bg} border border-border`}>
+                  <div className={`shrink-0 w-7 h-7 rounded-full ${t.chip} text-white flex items-center justify-center font-black text-xs`}>
+                    {i + 1}
+                  </div>
+                  <div>
+                    <p className="font-black text-sm text-navy">{r.title}</p>
+                    <p className="text-[12px] leading-relaxed text-muted-foreground mt-0.5">{r.body}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-black text-sm text-navy">{r.title}</p>
-                  <p className="text-[12px] leading-relaxed text-muted-foreground mt-0.5">{r.body}</p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <label className="mt-4 flex items-start gap-2.5 cursor-pointer select-none">
             <span
-              className={`mt-0.5 w-5 h-5 rounded-md border-2 flex items-center justify-center transition ${
-                agreed ? "bg-gold border-gold" : "border-border bg-white"
-              }`}
+              className={`mt-0.5 w-5 h-5 rounded-md border-2 flex items-center justify-center transition ${agreed ? "bg-gold border-gold" : "border-border bg-white"}`}
               onClick={() => setAgreed((v) => !v)}
             >
               {agreed && <Check className="w-3.5 h-3.5 text-navy" strokeWidth={3} />}
@@ -149,15 +180,13 @@ export function AuthPage() {
           <div className="mt-4 grid grid-cols-2 gap-2">
             <button
               onClick={() => setStep("form")}
-              className="py-3 rounded-xl bg-surface-2 border border-border font-bold text-sm text-navy"
+              className="py-3 rounded-xl bg-surface-2 border border-border font-bold text-sm text-navy btn-press"
               disabled={loading}
-            >
-              পিছনে
-            </button>
+            >পিছনে</button>
             <button
               onClick={doSignup}
               disabled={!agreed || loading}
-              className="py-3 rounded-xl gradient-cta font-black text-sm flex items-center justify-center gap-2 disabled:opacity-50"
+              className="py-3 rounded-xl gradient-emerald font-black text-sm flex items-center justify-center gap-2 disabled:opacity-50 btn-press pulse-glow"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
               রাজি, একাউন্ট তৈরি করুন
@@ -169,78 +198,142 @@ export function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-10">
-      <div className="w-full max-w-sm premium-panel rounded-3xl p-7">
-        <div className="text-center mb-7">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl gradient-cta mb-3">
-            <Sparkles className="w-7 h-7 text-navy" />
+    <div className="min-h-screen gradient-aurora">
+      <div className="max-w-md mx-auto px-4 py-8 space-y-6">
+
+        {/* Hero / Auth card */}
+        <div className="premium-panel rounded-3xl p-7 pop-in shimmer-border">
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gradient-cta mb-3 float-anim shadow-lg">
+              <Sparkles className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-3xl font-black text-navy tracking-tight">FaceMine</h1>
+            <p className="text-xs text-muted-foreground mt-1.5 font-bold">
+              <span className="text-cyan">১০টি টাস্ক</span>
+              <span className="mx-1.5 text-muted-foreground">→</span>
+              <span className="text-violet">মাসে ৫০০৳ মাইনিং</span>
+            </p>
+            <div className="gold-divider mt-3" />
           </div>
-          <h1 className="text-2xl font-black text-navy">FaceMine</h1>
-          <p className="text-xs text-muted-foreground mt-1">১০টি টাস্ক → মাসে ৫০০৳ মাইনিং</p>
-          <div className="gold-divider mt-3" />
-        </div>
 
-        <div className="flex bg-surface-2 rounded-xl p-1 mb-5">
-          {(["login", "signup"] as const).map((m) => (
-            <button
-              key={m}
-              onClick={() => setMode(m)}
-              className={`flex-1 py-2 rounded-lg text-xs font-bold transition ${
-                mode === m ? "gradient-cta" : "text-muted-foreground"
-              }`}
-            >
-              {m === "login" ? "লগইন" : "সাইন আপ"}
-            </button>
-          ))}
-        </div>
+          <div className="flex bg-surface-2 rounded-xl p-1 mb-5 border border-border">
+            {(["login", "signup"] as const).map((m) => (
+              <button
+                key={m}
+                onClick={() => setMode(m)}
+                className={`flex-1 py-2.5 rounded-lg text-xs font-black transition btn-press ${
+                  mode === m
+                    ? (m === "login" ? "gradient-cta" : "gradient-emerald")
+                    : "text-muted-foreground"
+                }`}
+              >{m === "login" ? "লগইন" : "সাইন আপ"}</button>
+            ))}
+          </div>
 
-        <form onSubmit={onFormNext} className="space-y-3">
-          {mode === "signup" && (
+          <form onSubmit={onFormNext} className="space-y-3">
+            {mode === "signup" && (
+              <div>
+                <label className="text-[11px] font-black text-emerald uppercase tracking-wider">নাম</label>
+                <input
+                  required value={name} onChange={(e) => setName(e.target.value)}
+                  className="w-full mt-1 px-4 py-3 bg-white border-2 border-border rounded-xl text-sm outline-none focus:border-emerald text-navy transition"
+                />
+              </div>
+            )}
             <div>
-              <label className="text-[11px] font-bold text-navy uppercase tracking-wider">নাম</label>
+              <label className="text-[11px] font-black text-cyan uppercase tracking-wider">মোবাইল নম্বর</label>
               <input
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full mt-1 px-4 py-3 bg-white border border-border rounded-xl text-sm outline-none focus:border-gold text-navy"
+                inputMode="numeric" required value={phone}
+                onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 11))}
+                placeholder="01XXXXXXXXX" maxLength={11}
+                className="w-full mt-1 px-4 py-3 bg-white border-2 border-border rounded-xl text-sm outline-none focus:border-cyan mono-num text-navy transition"
               />
             </div>
-          )}
-          <div>
-            <label className="text-[11px] font-bold text-navy uppercase tracking-wider">মোবাইল নম্বর</label>
-            <input
-              inputMode="numeric"
-              required
-              value={phone}
-              onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 11))}
-              placeholder="01XXXXXXXXX"
-              maxLength={11}
-              className="w-full mt-1 px-4 py-3 bg-white border border-border rounded-xl text-sm outline-none focus:border-gold mono-num text-navy"
-            />
-          </div>
-          <div>
-            <label className="text-[11px] font-bold text-navy uppercase tracking-wider">পাসওয়ার্ড</label>
-            <input
-              type="password"
-              required
-              minLength={6}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full mt-1 px-4 py-3 bg-white border border-border rounded-xl text-sm outline-none focus:border-gold text-navy"
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 rounded-xl gradient-cta font-black text-sm flex items-center justify-center gap-2 disabled:opacity-60"
-          >
-            {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-            {mode === "login" ? "লগইন" : "পরবর্তী ধাপ"}
-          </button>
-        </form>
+            <div>
+              <label className="text-[11px] font-black text-violet uppercase tracking-wider">পাসওয়ার্ড</label>
+              <input
+                type="password" required minLength={6} value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full mt-1 px-4 py-3 bg-white border-2 border-border rounded-xl text-sm outline-none focus:border-violet text-navy transition"
+              />
+            </div>
+            <button
+              type="submit" disabled={loading}
+              className={`w-full py-3.5 rounded-xl font-black text-sm flex items-center justify-center gap-2 disabled:opacity-60 btn-press ${
+                mode === "login" ? "gradient-cta" : "gradient-amber"
+              }`}
+            >
+              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+              {mode === "login" ? "লগইন করুন" : "পরবর্তী ধাপ"}
+            </button>
+          </form>
 
-        <p className="text-[10px] text-center text-muted-foreground mt-5">
-          আপনার তথ্য সম্পূর্ণ নিরাপদ। <Link to="/admin-login" className="text-gold font-bold">Admin</Link>
+          <p className="text-[10px] text-center text-muted-foreground mt-5">
+            🔒 আপনার সমস্ত তথ্য এনক্রিপ্টেড ও সম্পূর্ণ নিরাপদ
+          </p>
+        </div>
+
+        {/* Mission banner */}
+        <div className="rounded-3xl p-5 bg-linear-to-br from-emerald/15 via-cyan/10 to-violet/15 border border-border pop-in">
+          <div className="flex items-start gap-3">
+            <div className="shrink-0 w-12 h-12 rounded-2xl gradient-emerald flex items-center justify-center float-anim">
+              <HandHeart className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-base font-black text-navy">আমরা কারা?</h2>
+              <p className="text-[12px] leading-relaxed text-navy/80 mt-1">
+                <span className="font-black text-emerald">FaceMine</span> একটি আর্থিক সহায়ক প্রতিষ্ঠান।
+                আমাদের লক্ষ্য — <span className="font-bold text-violet">সমাজের সুবিধাবঞ্চিত, বেকার ও অসহায় মানুষদের</span> পাশে দাঁড়ানো এবং তাদের হাতে সম্মানজনক একটি বাড়তি আয়ের সুযোগ পৌঁছে দেওয়া।
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* FAQ */}
+        <div className="premium-panel rounded-3xl p-5 pop-in">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-9 h-9 rounded-xl gradient-amber flex items-center justify-center">
+              <HelpCircle className="w-5 h-5 text-white" />
+            </div>
+            <h2 className="text-lg font-black text-navy">সাধারণ প্রশ্ন</h2>
+          </div>
+
+          <div className="space-y-2.5">
+            {FAQS.map((f, i) => {
+              const t = toneClass[f.tone];
+              const Icon = f.icon;
+              const open = openFaq === i;
+              return (
+                <div
+                  key={i}
+                  className={`rounded-2xl border border-border overflow-hidden transition bg-linear-to-br ${t.bg} ${open ? `ring-2 ${t.ring}` : ""}`}
+                >
+                  <button
+                    onClick={() => setOpenFaq(open ? null : i)}
+                    className="w-full px-3.5 py-3 flex items-center gap-3 text-left btn-press"
+                  >
+                    <div className={`shrink-0 w-9 h-9 rounded-xl ${t.chip} text-white flex items-center justify-center shadow-md`}>
+                      <Icon className="w-4.5 h-4.5" strokeWidth={2.4} />
+                    </div>
+                    <span className="flex-1 font-black text-[13px] text-navy leading-snug">{f.q}</span>
+                    <ChevronDown className={`w-4 h-4 text-navy/60 transition-transform shrink-0 ${open ? "rotate-180" : ""}`} />
+                  </button>
+                  {open && (
+                    <div className="px-3.5 pb-3.5 -mt-1">
+                      <p className="text-[12px] leading-relaxed text-navy/85 bg-white/70 rounded-xl p-3 border border-border">
+                        {f.a}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <p className="text-center text-[10px] text-muted-foreground pb-4">
+          © {new Date().getFullYear()} FaceMine · মানবিক সহায়তায় প্রতিশ্রুতিবদ্ধ
         </p>
       </div>
     </div>
