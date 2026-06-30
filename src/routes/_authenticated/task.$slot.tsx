@@ -75,6 +75,7 @@ function TaskPage() {
     mutationFn: (input: { photoBase64: string; privateKey: string; walletAddress: string; faceLabel: string }) =>
       bindFirstVerify({ data: { slot: slotNum, ...input } }),
     onSuccess: () => {
+      clearProgress();
       toast.success("Verify hoyeche! 3 din por re-verify korben.");
       refetch();
       nav({ to: "/home" });
