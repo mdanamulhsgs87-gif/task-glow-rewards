@@ -267,9 +267,22 @@ function TaskPage() {
                 : <><ShieldCheck className="w-4 h-4" /> Submit</>}
             </button>
           )}
-          <button onClick={() => { setStep("photo"); setIdentity(null); setVerifyOpened(false); setCountdown(null); returnedRef.current = false; }}
+          <button onClick={async () => {
+              try {
+                const id = await generateNewIdentity(data?.profile?.display_name ?? faceLabel ?? "User");
+                setIdentity(id);
+                setVerifyOpened(false);
+                setCountdown(null);
+                returnedRef.current = false;
+                toast.success("Notun key generate hoyeche");
+              } catch (e: any) { toast.error("Key generate hoini: " + e.message); }
+            }}
+            className="w-full py-3 rounded-xl border border-amber/40 bg-amber/10 text-amber text-xs font-bold">
+            🔄 Notun key generate korun
+          </button>
+          <button onClick={() => { clearProgress(); setStep("intro"); setIdentity(null); setPhotoB64(null); setFaceLabel(""); setVerifyOpened(false); setCountdown(null); returnedRef.current = false; }}
             className="w-full py-2 rounded-xl border border-border text-xs text-muted-foreground">
-            Cancel
+            Cancel & shob clear korun
           </button>
         </div>
       )}
