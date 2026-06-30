@@ -127,7 +127,7 @@ function HomePage() {
   );
 }
 
-function TaskCell({ task, onClick }: { task: any; onClick: () => void }) {
+function TaskCell({ task, onClick, onOpenPhoto }: { task: any; onClick: () => void; onOpenPhoto: (url: string) => void }) {
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
@@ -150,25 +150,25 @@ function TaskCell({ task, onClick }: { task: any; onClick: () => void }) {
     const m = Math.floor((totalSec % 3600) / 60);
     const s = totalSec % 60;
     return (
-      <button disabled
-        className="relative aspect-square rounded-2xl overflow-hidden border border-amber/50 shadow-[0_8px_24px_-8px_rgba(245,158,11,0.45)] disabled:opacity-100 group">
+      <button onClick={() => faceUrl && onOpenPhoto(faceUrl)}
+        className="relative aspect-square rounded-2xl overflow-hidden border-2 border-violet/60 shadow-[0_10px_30px_-10px_rgba(139,92,246,0.6)] group transition active:scale-95">
         {faceUrl ? (
           <img src={faceUrl} alt={`Slot ${task.slot}`} className="absolute inset-0 h-full w-full object-cover" />
         ) : (
           <div className="absolute inset-0 bg-surface-2" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/40" />
         <div className="absolute top-1.5 left-1.5 right-1.5 flex items-center justify-between">
-          <span className="text-[10px] font-black text-white/90 drop-shadow">#{task.slot}</span>
-          <span className="rounded-full bg-amber/90 p-0.5"><Lock className="w-2.5 h-2.5 text-black" /></span>
+          <span className="text-[10px] font-black text-white drop-shadow">#{task.slot}</span>
+          <span className="rounded-full bg-rose p-0.5 shadow"><Lock className="w-2.5 h-2.5 text-white" /></span>
         </div>
         <div className="absolute bottom-1 left-0 right-0 px-1">
-          <div className="flex items-end justify-center gap-0.5 mono-num text-amber leading-none">
-            <span className="text-sm font-black">{d}</span><span className="text-[8px] mb-0.5 opacity-70">d</span>
-            <span className="text-sm font-black ml-0.5">{String(h).padStart(2,"0")}</span><span className="text-[8px] mb-0.5 opacity-70">h</span>
-            <span className="text-sm font-black ml-0.5">{String(m).padStart(2,"0")}</span><span className="text-[8px] mb-0.5 opacity-70">m</span>
+          <div className="flex items-end justify-center gap-0.5 mono-num leading-none text-white drop-shadow">
+            <span className="text-sm font-black">{d}</span><span className="text-[8px] mb-0.5 opacity-80">d</span>
+            <span className="text-sm font-black ml-0.5">{String(h).padStart(2,"0")}</span><span className="text-[8px] mb-0.5 opacity-80">h</span>
+            <span className="text-sm font-black ml-0.5">{String(m).padStart(2,"0")}</span><span className="text-[8px] mb-0.5 opacity-80">m</span>
           </div>
-          <p className="mono-num text-[9px] text-amber/80 text-center mt-0.5">{String(s).padStart(2,"0")}s</p>
+          <p className="mono-num text-[10px] text-white text-center mt-0.5 drop-shadow font-bold">{String(s).padStart(2,"0")}s</p>
         </div>
       </button>
     );
