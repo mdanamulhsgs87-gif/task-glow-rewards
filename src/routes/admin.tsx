@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { adminCheck, adminLogout } from "@/lib/admin-auth.functions";
-import { Users, ArrowDownToLine, ScanFace, LogOut, Loader2 } from "lucide-react";
+import { Users, ArrowDownToLine, ScanFace, LogOut, Loader2, AlertTriangle } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/admin")({
