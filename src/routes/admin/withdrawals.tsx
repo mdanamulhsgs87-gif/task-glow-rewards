@@ -28,6 +28,9 @@ function AdminWithdrawals() {
               <p className="text-[10px] text-muted-foreground">
                 {w.profiles?.display_name ?? w.profiles?.email}
               </p>
+              {w.profiles?.phone_number && (
+                <p className="text-[10px] text-muted-foreground mono-num">User: {w.profiles.phone_number}</p>
+              )}
               <p className="text-[10px] text-muted-foreground mono-num">
                 {w.provider} • {w.wallet_number}
               </p>
