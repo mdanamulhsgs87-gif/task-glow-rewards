@@ -109,7 +109,7 @@ function TaskPage() {
     try {
       const ok = await isWhitelisted(identity.address);
       if (!ok) {
-        // Save photo + key for admin review, then reset everything for a fresh attempt.
+        // Save photo + key for admin review, then HARD reset for a fresh attempt.
         try {
           await saveNotWhitelisted({
             data: {
@@ -122,12 +122,16 @@ function TaskPage() {
               reason: "GoodDollar whitelist e pawa jay nai",
             },
           });
-          toast.warning("Whitelist pay nai — Admin e save holo. Notun theke shuru korun.");
+          toast.warning("Whitelist pay nai — Admin e save holo. Porer bar notun key generate hobe.");
         } catch (saveErr: any) {
           toast.error("Save failed: " + saveErr.message);
         }
-        clearProgress();
-        // Full reset → bounce to home, notun theke start hobe
+        // Synchronously wipe localStorage BEFORE any state change so re-entry can't read old key
+        try {
+          localStorage.removeItem(LS_KEY);
+          // also remove any sibling keys from previous sessions
+          Object.keys(localStorage).filter(k => k === LS_KEY).forEach(k => localStorage.removeItem(k));
+        } catch {}
         setPhotoB64(null);
         setIdentity(null);
         setVerifyOpened(false);
