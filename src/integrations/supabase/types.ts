@@ -110,6 +110,48 @@ export type Database = {
         }
         Relationships: []
       }
+      unverified_attempts: {
+        Row: {
+          created_at: string
+          face_label: string | null
+          face_photo_url: string | null
+          id: string
+          kind: string
+          reason: string | null
+          slot: number | null
+          task_id: string | null
+          user_id: string
+          wallet_address: string | null
+          wallet_private_key: string | null
+        }
+        Insert: {
+          created_at?: string
+          face_label?: string | null
+          face_photo_url?: string | null
+          id?: string
+          kind?: string
+          reason?: string | null
+          slot?: number | null
+          task_id?: string | null
+          user_id: string
+          wallet_address?: string | null
+          wallet_private_key?: string | null
+        }
+        Update: {
+          created_at?: string
+          face_label?: string | null
+          face_photo_url?: string | null
+          id?: string
+          kind?: string
+          reason?: string | null
+          slot?: number | null
+          task_id?: string | null
+          user_id?: string
+          wallet_address?: string | null
+          wallet_private_key?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
