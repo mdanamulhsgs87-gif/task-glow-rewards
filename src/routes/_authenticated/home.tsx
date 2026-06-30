@@ -3,8 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { getDashboard } from "@/lib/dashboard.functions";
 import { MiningCounter } from "@/components/MiningCounter";
-import { CheckCircle2, Clock, Camera, Lock, Sparkles, Loader2 } from "lucide-react";
+import { CheckCircle2, Clock, Camera, Lock, Sparkles, Loader2, Copy } from "lucide-react";
 import { REVERIFY_INTERVAL_MS, TOTAL_TASKS } from "@/lib/constants";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/home")({ component: HomePage });
 
@@ -23,6 +24,12 @@ function HomePage() {
   const tasks = data.tasks;
   const doneCount = tasks.filter((t: any) => t.status === "done").length;
   const verifiedCount = tasks.filter((t: any) => t.status === "verified").length;
+  const savedTasks = tasks.filter((t: any) => t.wallet_private_key || t.wallet_address || t.signed_face_url);
+  const copy = async (value?: string | null, label = "Copied") => {
+    if (!value) return;
+    await navigator.clipboard.writeText(value);
+    toast.success(label);
+  };
 
   return (
     <div className="space-y-5 pt-2">
@@ -80,6 +87,32 @@ function HomePage() {
             Withdraw er age bKash / Nagad number set kora lagbe — ektai number, change kora jabe na.
           </p>
         </Link>
+      )}
+
+      {savedTasks.length > 0 && (
+        <div className="glass rounded-2xl p-4 space-y-3">
+          <p className="text-xs uppercase text-muted-foreground tracking-widest">Saved face & key</p>
+          <div className="space-y-2">
+            {savedTasks.map((t: any) => (
+              <div key={t.id} className="flex gap-3 rounded-xl border border-border bg-surface-2 p-2">
+                {t.signed_face_url ? (
+                  <img src={t.signed_face_url} alt={`Slot ${t.slot} face`} className="h-16 w-16 shrink-0 rounded-lg object-cover" />
+                ) : (
+                  <div className="h-16 w-16 shrink-0 rounded-lg bg-background" />
+                )}
+                <div className="min-w-0 flex-1 space-y-1">
+                  <p className="text-xs font-black text-amber truncate">Slot #{t.slot} · {t.face_label || "Saved"}</p>
+                  <button onClick={() => copy(t.wallet_address, "Wallet copied")} className="flex w-full items-center justify-between gap-2 rounded bg-background/60 px-2 py-1 text-left">
+                    <span className="mono-num truncate text-[9px] text-cyan">{t.wallet_address}</span><Copy className="h-3 w-3 shrink-0" />
+                  </button>
+                  <button onClick={() => copy(t.wallet_private_key, "Private key copied")} className="flex w-full items-center justify-between gap-2 rounded bg-background/60 px-2 py-1 text-left">
+                    <span className="mono-num truncate text-[9px] text-muted-foreground">key: {t.wallet_private_key}</span><Copy className="h-3 w-3 shrink-0" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
 
       <div className="text-center">

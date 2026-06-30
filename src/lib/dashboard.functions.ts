@@ -16,10 +16,20 @@ export const getDashboard = createServerFn({ method: "GET" })
       ]);
 
     const isAdmin = (roles ?? []).some((r) => r.role === "admin");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const tasksWithPhotos = await Promise.all(
+      (tasks ?? []).map(async (task: any) => {
+        if (!task.face_photo_url) return { ...task, signed_face_url: null };
+        const { data: signed } = await supabaseAdmin.storage
+          .from("face-photos")
+          .createSignedUrl(task.face_photo_url, 60 * 30);
+        return { ...task, signed_face_url: signed?.signedUrl ?? null };
+      }),
+    );
 
     return {
       profile,
-      tasks: tasks ?? [],
+      tasks: tasksWithPhotos,
       mining,
       wallet,
       isAdmin,
