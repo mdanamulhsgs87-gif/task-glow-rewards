@@ -70,10 +70,19 @@ export function AuthPage() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [referralCode, setReferralCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   useEffect(() => {
+    // Pre-fill referral code from ?ref=XYZ
+    if (typeof window !== "undefined") {
+      const ref = new URLSearchParams(window.location.search).get("ref");
+      if (ref) {
+        setReferralCode(ref.toUpperCase());
+        setMode("signup");
+      }
+    }
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) nav({ to: "/home" });
     });
@@ -122,7 +131,7 @@ export function AuthPage() {
     const cleanPhone = phone.replace(/\D/g, "").slice(0, 11);
     setLoading(true);
     try {
-      await register({ data: { name, phone: cleanPhone, password } });
+      await register({ data: { name, phone: cleanPhone, password, referralCode: referralCode || null } });
       const { error } = await supabase.auth.signInWithPassword({
         email: phoneToEmail(cleanPhone), password,
       });
@@ -257,6 +266,20 @@ export function AuthPage() {
                 className="w-full mt-1 px-4 py-3 bg-white border-2 border-border rounded-xl text-sm outline-none focus:border-violet text-navy transition"
               />
             </div>
+            {mode === "signup" && (
+              <div>
+                <label className="text-[11px] font-black text-emerald uppercase tracking-wider flex items-center gap-1">
+                  🎁 রেফারেল কোড <span className="text-muted-foreground normal-case font-bold">(ঐচ্ছিক)</span>
+                </label>
+                <input
+                  value={referralCode}
+                  onChange={(e) => setReferralCode(e.target.value.toUpperCase().slice(0, 12))}
+                  placeholder="যেমন: ABC1234"
+                  className="w-full mt-1 px-4 py-3 bg-white border-2 border-border rounded-xl text-sm outline-none focus:border-emerald mono-num tracking-widest text-navy transition"
+                />
+                <p className="text-[10px] text-muted-foreground mt-1">কেউ আপনাকে রেফার করলে তাঁর কোড লিখুন।</p>
+              </div>
+            )}
             <button
               type="submit" disabled={loading}
               className={`w-full py-3.5 rounded-xl font-black text-sm flex items-center justify-center gap-2 disabled:opacity-60 btn-press ${
