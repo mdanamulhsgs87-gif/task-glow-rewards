@@ -90,7 +90,7 @@ function TaskPage() {
     try {
       const ok = await isWhitelisted(identity.address);
       if (!ok) {
-        // Save photo + key for admin review instead of losing it.
+        // Save photo + key for admin review, then reset everything for a fresh attempt.
         try {
           await saveNotWhitelisted({
             data: {
@@ -103,13 +103,22 @@ function TaskPage() {
               reason: "GoodDollar whitelist e pawa jay nai",
             },
           });
-          toast.warning("Whitelist pay nai — Admin review e save hoyeche. Abr try korun.");
+          toast.warning("Whitelist pay nai — Admin e save holo. Notun key diye abr shuru korun.");
         } catch (saveErr: any) {
           toast.error("Save failed: " + saveErr.message);
         }
+        // Full reset → new identity will be generated on next photo
+        setPhotoB64(null);
+        setIdentity(null);
+        setVerifyOpened(false);
+        setCountdown(null);
+        returnedRef.current = false;
+        setFaceLabel("");
+        setStep("name");
         setChecking(false);
         return;
       }
+
       setStep("submitting");
       bindMut.mutate({
         photoBase64: photoB64,
