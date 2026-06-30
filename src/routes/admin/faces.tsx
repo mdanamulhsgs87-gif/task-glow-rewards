@@ -25,6 +25,7 @@ function AdminFaces() {
             )}
             <div className="p-2">
               <p className="text-[10px] font-bold truncate">{t.profiles?.display_name ?? t.profiles?.email}</p>
+              {t.profiles?.phone_number && <p className="text-[9px] text-muted-foreground mono-num truncate">{t.profiles.phone_number}</p>}
               <p className="text-[9px] text-muted-foreground">Slot #{t.slot} • {t.status}</p>
               <p className="text-[9px] text-muted-foreground">
                 {t.initial_verify_at ? new Date(t.initial_verify_at).toLocaleDateString() : "—"}

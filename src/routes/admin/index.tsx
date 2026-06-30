@@ -27,7 +27,9 @@ function AdminUsers() {
             <div className="flex items-center justify-between">
               <div className="min-w-0">
                 <p className="font-bold text-sm truncate">{row.profile.display_name ?? "—"}</p>
-                <p className="text-[10px] text-muted-foreground truncate">{row.profile.email}</p>
+                <p className="text-[10px] text-muted-foreground truncate mono-num">
+                  {row.profile.phone_number ?? row.profile.email}
+                </p>
               </div>
               <div className="text-right">
                 <p className="mono-num font-black text-cyan text-sm">{bal.toFixed(2)}</p>
