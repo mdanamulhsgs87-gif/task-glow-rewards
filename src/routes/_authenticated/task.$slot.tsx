@@ -203,7 +203,16 @@ function TaskPage() {
             ৩. GoodDollar e face verify koren<br />
             ৪. Fire ashar pore 10s wait → Submit chapun
           </p>
-          <button onClick={() => setStep("name")} className="w-full py-3 rounded-xl gradient-cta font-black flex items-center justify-center gap-2">
+          <button onClick={() => {
+              clearProgress();
+              setIdentity(null);
+              setPhotoB64(null);
+              setFaceLabel("");
+              setVerifyOpened(false);
+              setCountdown(null);
+              returnedRef.current = false;
+              setStep("name");
+            }} className="w-full py-3 rounded-xl gradient-cta font-black flex items-center justify-center gap-2">
             <Sparkles className="w-4 h-4" /> Shuru korun
           </button>
         </div>
