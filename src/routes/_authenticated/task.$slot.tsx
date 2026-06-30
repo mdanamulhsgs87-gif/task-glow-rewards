@@ -92,7 +92,7 @@ function TaskPage() {
           <p className="font-bold">3 din opekkha korun</p>
           <p className="text-[11px] text-muted-foreground mt-2">
             Re-verify ready hobe: <br />
-            <span className="text-amber font-bold">{new Date(task.reverify_due_at).toLocaleString()}</span>
+            <span className="text-amber font-bold">{new Date(task.reverify_due_at!).toLocaleString()}</span>
           </p>
         </div>
       )}
