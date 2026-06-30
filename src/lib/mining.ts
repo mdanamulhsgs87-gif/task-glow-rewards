@@ -1,25 +1,26 @@
 import { MINING_RATE_BDT_PER_SEC, TOTAL_TASKS } from "./constants";
 
 // Live computed mining balance.
-// Effective rate = base_rate * (effective_task_count / TOTAL_TASKS).
-// If a previously-done task fails the daily whitelist re-check, its
-// effective_task_count drops on the server so the live rate slows down.
+// Effective rate = base_rate * (effective_task_count / TOTAL_TASKS)
+//                + base_rate * 0.10 * qualifying_referees
 export function computeLiveBalance(input: {
   accrued: number;
   withdrawn: number;
   isActive: boolean;
   lastCreditedAt: string | null;
   effectiveTaskCount?: number;
+  qualifyingReferees?: number;
   now?: number;
 }): number {
   const now = input.now ?? Date.now();
   let total = input.accrued;
   const eff = Math.max(0, Math.min(TOTAL_TASKS, input.effectiveTaskCount ?? 0));
-  if (input.isActive && input.lastCreditedAt && eff > 0) {
+  const refs = Math.max(0, input.qualifyingReferees ?? 0);
+  const rate = MINING_RATE_BDT_PER_SEC * (eff / TOTAL_TASKS + 0.10 * refs);
+  if (input.isActive && input.lastCreditedAt && rate > 0) {
     const last = new Date(input.lastCreditedAt).getTime();
     const elapsedSec = Math.max(0, (now - last) / 1000);
-    const effectiveRate = MINING_RATE_BDT_PER_SEC * (eff / TOTAL_TASKS);
-    total += elapsedSec * effectiveRate;
+    total += elapsedSec * rate;
   }
   return Math.max(0, total - input.withdrawn);
 }
