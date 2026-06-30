@@ -4,7 +4,7 @@ import { adminListWithdrawals, adminUpdateWithdrawal } from "@/lib/admin.functio
 import { Loader2, Check, X } from "lucide-react";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_authenticated/admin/withdrawals")({ component: AdminWithdrawals });
+export const Route = createFileRoute("/admin/withdrawals")({ component: AdminWithdrawals });
 
 function AdminWithdrawals() {
   const { data, isLoading, refetch } = useQuery({ queryKey: ["admin-withdrawals"], queryFn: () => adminListWithdrawals() });
