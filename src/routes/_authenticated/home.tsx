@@ -49,6 +49,7 @@ function HomePage() {
         withdrawn={Number(data.mining?.withdrawn_amount ?? 0)}
         isActive={!!data.mining?.is_active}
         lastCreditedAt={data.mining?.last_credited_at ?? null}
+        effectiveTaskCount={Number(data.mining?.effective_task_count ?? 0)}
       />
 
       <div className="premium-panel rounded-2xl p-4">
