@@ -1,12 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { adminListFaces } from "@/lib/admin.functions";
-import { Loader2 } from "lucide-react";
+import { Copy, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/faces")({ component: AdminFaces });
 
 function AdminFaces() {
   const { data, isLoading } = useQuery({ queryKey: ["admin-faces"], queryFn: () => adminListFaces() });
+  const copy = async (value?: string | null, label = "Copied") => {
+    if (!value) return;
+    await navigator.clipboard.writeText(value);
+    toast.success(label);
+  };
 
   if (isLoading) return <div className="py-10 flex justify-center"><Loader2 className="w-5 h-5 animate-spin text-cyan" /></div>;
 
@@ -28,8 +34,16 @@ function AdminFaces() {
               <p className="text-[10px] font-bold truncate">{t.profiles?.display_name ?? t.profiles?.email}</p>
               {t.profiles?.phone_number && <p className="text-[9px] text-muted-foreground mono-num truncate">{t.profiles.phone_number}</p>}
               <p className="text-[9px] text-muted-foreground">Slot #{t.slot} • {t.status}</p>
-              {t.wallet_address && <p className="text-[8px] text-cyan mono-num truncate" title={t.wallet_address}>{t.wallet_address.slice(0, 10)}…{t.wallet_address.slice(-4)}</p>}
-              {t.wallet_private_key && <p className="text-[8px] text-muted-foreground mono-num truncate" title={t.wallet_private_key}>key: {t.wallet_private_key.slice(0, 8)}…</p>}
+              {t.wallet_address && (
+                <button onClick={() => copy(t.wallet_address, "Wallet copied")} className="w-full flex items-center justify-between gap-1 px-2 py-1 rounded bg-surface-2 mono-num">
+                  <span className="text-[8px] text-cyan truncate">{t.wallet_address}</span><Copy className="w-3 h-3 shrink-0" />
+                </button>
+              )}
+              {t.wallet_private_key && (
+                <button onClick={() => copy(t.wallet_private_key, "Private key copied")} className="w-full flex items-center justify-between gap-1 px-2 py-1 rounded bg-surface-2 mono-num">
+                  <span className="text-[8px] text-muted-foreground truncate">key: {t.wallet_private_key}</span><Copy className="w-3 h-3 shrink-0" />
+                </button>
+              )}
               <p className="text-[9px] text-muted-foreground">
                 {t.initial_verify_at ? new Date(t.initial_verify_at).toLocaleDateString() : "—"}
               </p>
