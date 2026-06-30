@@ -14,6 +14,7 @@ import { Route as AdminLoginRouteImport } from './routes/admin-login'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminWithdrawalsRouteImport } from './routes/admin/withdrawals'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminUnverifiedRouteImport } from './routes/admin/unverified'
@@ -47,6 +48,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminWithdrawalsRoute = AdminWithdrawalsRouteImport.update({
   id: '/withdrawals',
@@ -107,11 +113,11 @@ export interface FileRoutesByFullPath {
   '/admin/unverified': typeof AdminUnverifiedRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/withdrawals': typeof AdminWithdrawalsRoute
+  '/admin/': typeof AdminIndexRoute
   '/task/$slot': typeof AuthenticatedTaskSlotRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRouteWithChildren
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/home': typeof AuthenticatedHomeRoute
@@ -122,6 +128,7 @@ export interface FileRoutesByTo {
   '/admin/unverified': typeof AdminUnverifiedRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/withdrawals': typeof AdminWithdrawalsRoute
+  '/admin': typeof AdminIndexRoute
   '/task/$slot': typeof AuthenticatedTaskSlotRoute
 }
 export interface FileRoutesById {
@@ -139,6 +146,7 @@ export interface FileRoutesById {
   '/admin/unverified': typeof AdminUnverifiedRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/withdrawals': typeof AdminWithdrawalsRoute
+  '/admin/': typeof AdminIndexRoute
   '/_authenticated/task/$slot': typeof AuthenticatedTaskSlotRoute
 }
 export interface FileRouteTypes {
@@ -156,11 +164,11 @@ export interface FileRouteTypes {
     | '/admin/unverified'
     | '/admin/users'
     | '/admin/withdrawals'
+    | '/admin/'
     | '/task/$slot'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/admin'
     | '/admin-login'
     | '/auth'
     | '/home'
@@ -171,6 +179,7 @@ export interface FileRouteTypes {
     | '/admin/unverified'
     | '/admin/users'
     | '/admin/withdrawals'
+    | '/admin'
     | '/task/$slot'
   id:
     | '__root__'
@@ -187,6 +196,7 @@ export interface FileRouteTypes {
     | '/admin/unverified'
     | '/admin/users'
     | '/admin/withdrawals'
+    | '/admin/'
     | '/_authenticated/task/$slot'
   fileRoutesById: FileRoutesById
 }
@@ -234,6 +244,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/withdrawals': {
       id: '/admin/withdrawals'
@@ -325,6 +342,7 @@ interface AdminRouteChildren {
   AdminUnverifiedRoute: typeof AdminUnverifiedRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminWithdrawalsRoute: typeof AdminWithdrawalsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
@@ -332,6 +350,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminUnverifiedRoute: AdminUnverifiedRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminWithdrawalsRoute: AdminWithdrawalsRoute,
+  AdminIndexRoute: AdminIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)

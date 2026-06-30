@@ -77,14 +77,24 @@ function AdminDashboard() {
   );
 }
 
+function cv(accent: string) {
+  return { color: `var(--color-${accent})` } as React.CSSProperties;
+}
+function bv(accent: string, pct: number) {
+  return { background: `color-mix(in oklch, var(--color-${accent}) ${pct}%, transparent)` } as React.CSSProperties;
+}
+function brv(accent: string, pct: number) {
+  return { borderColor: `color-mix(in oklch, var(--color-${accent}) ${pct}%, transparent)` } as React.CSSProperties;
+}
+
 function BigStat({ label, value, unit, accent, icon }: any) {
   return (
-    <div className={`glass rounded-2xl p-3 border-l-2 border-${accent}`}>
-      <div className={`flex items-center gap-1 text-${accent}`}>
+    <div className="glass rounded-2xl p-3 border-l-2" style={brv(accent, 80)}>
+      <div className="flex items-center gap-1" style={cv(accent)}>
         {icon}
         <p className="text-[9px] uppercase tracking-widest font-bold">{label}</p>
       </div>
-      <p className={`mono-num font-black text-xl text-${accent} mt-1`}>{value}</p>
+      <p className="mono-num font-black text-xl mt-1" style={cv(accent)}>{value}</p>
       <p className="text-[10px] text-muted-foreground">{unit}</p>
     </div>
   );
@@ -92,9 +102,9 @@ function BigStat({ label, value, unit, accent, icon }: any) {
 
 function QuickCard({ to, icon, value, label, accent }: any) {
   return (
-    <Link to={to} className={`glass rounded-2xl p-3 hover:border-${accent} transition group`}>
-      <div className={`text-${accent} mb-1`}>{icon}</div>
-      <p className={`mono-num font-black text-xl text-${accent}`}>{value}</p>
+    <Link to={to} className="glass rounded-2xl p-3 transition hover:scale-[1.02]">
+      <div className="mb-1" style={cv(accent)}>{icon}</div>
+      <p className="mono-num font-black text-xl" style={cv(accent)}>{value}</p>
       <p className="text-[10px] text-muted-foreground">{label}</p>
     </Link>
   );
@@ -102,9 +112,9 @@ function QuickCard({ to, icon, value, label, accent }: any) {
 
 function Slice({ color, label, v }: any) {
   return (
-    <div className={`bg-${color}/10 rounded-xl py-2 border border-${color}/20`}>
-      <p className={`mono-num font-black text-lg text-${color}`}>{v}</p>
-      <p className={`text-[9px] text-${color} font-bold uppercase tracking-wider`}>{label}</p>
+    <div className="rounded-xl py-2 border" style={{ ...bv(color, 10), ...brv(color, 25) }}>
+      <p className="mono-num font-black text-lg" style={cv(color)}>{v}</p>
+      <p className="text-[9px] font-bold uppercase tracking-wider" style={cv(color)}>{label}</p>
     </div>
   );
 }
