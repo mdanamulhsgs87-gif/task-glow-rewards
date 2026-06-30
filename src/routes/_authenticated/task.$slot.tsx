@@ -20,14 +20,32 @@ function TaskPage() {
   const { data, isLoading, refetch } = useQuery({ queryKey: ["dashboard"], queryFn: () => getDashboard() });
   const task = data?.tasks.find((t: any) => t.slot === slotNum);
 
-  const [step, setStep] = useState<Step>("intro");
-  const [faceLabel, setFaceLabel] = useState("");
-  const [photoB64, setPhotoB64] = useState<string | null>(null);
-  const [identity, setIdentity] = useState<{ privateKey: string; address: string; verifyUrl: string } | null>(null);
-  const [verifyOpened, setVerifyOpened] = useState(false);
-  const [countdown, setCountdown] = useState<number | null>(null);
+  const LS_KEY = `task-progress-${slotNum}`;
+  const initial = (() => {
+    if (typeof window === "undefined") return null;
+    try { return JSON.parse(localStorage.getItem(LS_KEY) || "null"); } catch { return null; }
+  })();
+
+  const [step, setStep] = useState<Step>(initial?.step ?? "intro");
+  const [faceLabel, setFaceLabel] = useState<string>(initial?.faceLabel ?? "");
+  const [photoB64, setPhotoB64] = useState<string | null>(initial?.photoB64 ?? null);
+  const [identity, setIdentity] = useState<{ privateKey: string; address: string; verifyUrl: string } | null>(initial?.identity ?? null);
+  const [verifyOpened, setVerifyOpened] = useState<boolean>(initial?.verifyOpened ?? false);
+  const [countdown, setCountdown] = useState<number | null>(initial?.verifyOpened ? 0 : null);
   const [checking, setChecking] = useState(false);
-  const returnedRef = useRef(false);
+  const returnedRef = useRef(!!initial?.verifyOpened);
+
+  // Persist progress so refresh doesn't lose the key
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (step === "intro" && !identity && !photoB64) {
+      localStorage.removeItem(LS_KEY);
+      return;
+    }
+    localStorage.setItem(LS_KEY, JSON.stringify({ step, faceLabel, photoB64, identity, verifyOpened }));
+  }, [LS_KEY, step, faceLabel, photoB64, identity, verifyOpened]);
+
+  const clearProgress = () => { try { localStorage.removeItem(LS_KEY); } catch {} };
 
   // When user returns from GoodDollar tab, start the 10s countdown before Submit
   useEffect(() => {
