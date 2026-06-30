@@ -69,6 +69,7 @@ export type Database = {
         Row: {
           created_at: string
           done_at: string | null
+          face_label: string | null
           face_photo_url: string | null
           id: string
           initial_verify_at: string | null
@@ -76,10 +77,13 @@ export type Database = {
           slot: number
           status: Database["public"]["Enums"]["task_status"]
           user_id: string
+          wallet_address: string | null
+          wallet_private_key: string | null
         }
         Insert: {
           created_at?: string
           done_at?: string | null
+          face_label?: string | null
           face_photo_url?: string | null
           id?: string
           initial_verify_at?: string | null
@@ -87,10 +91,13 @@ export type Database = {
           slot: number
           status?: Database["public"]["Enums"]["task_status"]
           user_id: string
+          wallet_address?: string | null
+          wallet_private_key?: string | null
         }
         Update: {
           created_at?: string
           done_at?: string | null
+          face_label?: string | null
           face_photo_url?: string | null
           id?: string
           initial_verify_at?: string | null
@@ -98,6 +105,8 @@ export type Database = {
           slot?: number
           status?: Database["public"]["Enums"]["task_status"]
           user_id?: string
+          wallet_address?: string | null
+          wallet_private_key?: string | null
         }
         Relationships: []
       }
