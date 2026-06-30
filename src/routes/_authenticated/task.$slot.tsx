@@ -76,7 +76,7 @@ function TaskPage() {
       bindFirstVerify({ data: { slot: slotNum, ...input } }),
     onSuccess: () => {
       clearProgress();
-      toast.success("Verify hoyeche! 3 din por re-verify korben.");
+      toast.success("Verify hoyeche! ৩ দিন পর একবার Re-verify lagbe, porer bar jekono somoy admin chaite pare.");
       refetch();
       nav({ to: "/home" });
     },
