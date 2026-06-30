@@ -1,0 +1,1 @@
+UPDATE public.tasks SET status='empty', face_photo_url=NULL, face_label=NULL, wallet_address=NULL, wallet_private_key=NULL, initial_verify_at=NULL, reverify_due_at=NULL WHERE status='verified' AND (wallet_address IS NULL OR wallet_private_key IS NULL);
