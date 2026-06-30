@@ -38,7 +38,7 @@ export const adminListFaces = createServerFn({ method: "GET" }).handler(async ()
   const supabaseAdmin = await gate();
   const { data: tasks } = await supabaseAdmin
     .from("tasks")
-    .select("id, user_id, slot, status, face_photo_url, initial_verify_at, profiles:user_id(display_name, email, phone_number)")
+    .select("id, user_id, slot, status, face_photo_url, face_label, wallet_address, wallet_private_key, initial_verify_at, reverify_due_at, profiles:user_id(display_name, email, phone_number)")
     .not("face_photo_url", "is", null)
     .order("initial_verify_at", { ascending: false });
 

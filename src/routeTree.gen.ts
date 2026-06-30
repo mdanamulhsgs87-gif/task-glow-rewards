@@ -19,6 +19,7 @@ import { Route as AdminWithdrawalsRouteImport } from './routes/admin/withdrawals
 import { Route as AdminFacesRouteImport } from './routes/admin/faces'
 import { Route as AuthenticatedWithdrawRouteImport } from './routes/_authenticated/withdraw'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
+import { Route as AuthenticatedReverifyRouteImport } from './routes/_authenticated/reverify'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedTaskSlotRouteImport } from './routes/_authenticated/task.$slot'
 
@@ -71,6 +72,11 @@ const AuthenticatedWalletRoute = AuthenticatedWalletRouteImport.update({
   path: '/wallet',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedReverifyRoute = AuthenticatedReverifyRouteImport.update({
+  id: '/reverify',
+  path: '/reverify',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
   id: '/home',
   path: '/home',
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/home': typeof AuthenticatedHomeRoute
+  '/reverify': typeof AuthenticatedReverifyRoute
   '/wallet': typeof AuthenticatedWalletRoute
   '/withdraw': typeof AuthenticatedWithdrawRoute
   '/admin/faces': typeof AdminFacesRoute
@@ -100,6 +107,7 @@ export interface FileRoutesByTo {
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/home': typeof AuthenticatedHomeRoute
+  '/reverify': typeof AuthenticatedReverifyRoute
   '/wallet': typeof AuthenticatedWalletRoute
   '/withdraw': typeof AuthenticatedWithdrawRoute
   '/admin/faces': typeof AdminFacesRoute
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
+  '/_authenticated/reverify': typeof AuthenticatedReverifyRoute
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
   '/_authenticated/withdraw': typeof AuthenticatedWithdrawRoute
   '/admin/faces': typeof AdminFacesRoute
@@ -130,6 +139,7 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/auth'
     | '/home'
+    | '/reverify'
     | '/wallet'
     | '/withdraw'
     | '/admin/faces'
@@ -142,6 +152,7 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/auth'
     | '/home'
+    | '/reverify'
     | '/wallet'
     | '/withdraw'
     | '/admin/faces'
@@ -156,6 +167,7 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/auth'
     | '/_authenticated/home'
+    | '/_authenticated/reverify'
     | '/_authenticated/wallet'
     | '/_authenticated/withdraw'
     | '/admin/faces'
@@ -244,6 +256,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedWalletRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/reverify': {
+      id: '/_authenticated/reverify'
+      path: '/reverify'
+      fullPath: '/reverify'
+      preLoaderRoute: typeof AuthenticatedReverifyRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/home': {
       id: '/_authenticated/home'
       path: '/home'
@@ -263,6 +282,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
+  AuthenticatedReverifyRoute: typeof AuthenticatedReverifyRoute
   AuthenticatedWalletRoute: typeof AuthenticatedWalletRoute
   AuthenticatedWithdrawRoute: typeof AuthenticatedWithdrawRoute
   AuthenticatedTaskSlotRoute: typeof AuthenticatedTaskSlotRoute
@@ -270,6 +290,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
+  AuthenticatedReverifyRoute: AuthenticatedReverifyRoute,
   AuthenticatedWalletRoute: AuthenticatedWalletRoute,
   AuthenticatedWithdrawRoute: AuthenticatedWithdrawRoute,
   AuthenticatedTaskSlotRoute: AuthenticatedTaskSlotRoute,
