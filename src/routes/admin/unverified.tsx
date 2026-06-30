@@ -1,15 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { adminListUnverified } from "@/lib/admin.functions";
-import { Loader2, AlertTriangle, Copy } from "lucide-react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { adminListUnverified, adminDeleteUnverified } from "@/lib/admin.functions";
+import { Loader2, AlertTriangle, Copy, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/unverified")({ component: UnverifiedPage });
 
 function UnverifiedPage() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ["admin-unverified"],
     queryFn: () => adminListUnverified(),
+  });
+
+  const del = useMutation({
+    mutationFn: (id: string) => adminDeleteUnverified({ data: { id } }),
+    onSuccess: () => { toast.success("Deleted"); refetch(); },
+    onError: (e: any) => toast.error(e.message),
   });
 
   if (isLoading) {
