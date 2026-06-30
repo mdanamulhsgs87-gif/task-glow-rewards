@@ -103,19 +103,21 @@ function TaskPage() {
               reason: "GoodDollar whitelist e pawa jay nai",
             },
           });
-          toast.warning("Whitelist pay nai — Admin e save holo. Notun key diye abr shuru korun.");
+          toast.warning("Whitelist pay nai — Admin e save holo. Notun theke shuru korun.");
         } catch (saveErr: any) {
           toast.error("Save failed: " + saveErr.message);
         }
-        // Full reset → new identity will be generated on next photo
+        // Full reset → bounce to home, notun theke start hobe
         setPhotoB64(null);
         setIdentity(null);
         setVerifyOpened(false);
         setCountdown(null);
         returnedRef.current = false;
         setFaceLabel("");
-        setStep("name");
+        setStep("intro");
         setChecking(false);
+        refetch();
+        nav({ to: "/home" });
         return;
       }
 
