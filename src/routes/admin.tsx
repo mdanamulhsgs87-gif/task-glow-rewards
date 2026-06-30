@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet, Link, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Outlet, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { adminCheck, adminLogout } from "@/lib/admin-auth.functions";
 import { Users, ArrowDownToLine, ScanFace, LogOut, Loader2 } from "lucide-react";
@@ -10,7 +10,6 @@ export const Route = createFileRoute("/admin")({
 });
 
 function AdminLayout() {
-  const router = useRouter();
   const check = useServerFn(adminCheck);
   const logout = useServerFn(adminLogout);
   const [status, setStatus] = useState<"checking" | "unlocked" | "locked">("checking");
@@ -28,7 +27,7 @@ function AdminLayout() {
       if (active) setStatus("locked");
     });
     return () => { active = false; };
-  }, [check, router]);
+  }, [check]);
 
   async function onLogout() {
     await logout();
