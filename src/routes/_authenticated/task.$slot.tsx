@@ -245,21 +245,15 @@ function TaskPage() {
       {task.status === "empty" && step === "verify" && identity && (
         <div className="glass rounded-2xl p-4 space-y-4">
           <div className="rounded-xl bg-emerald/10 border border-emerald/30 p-3 space-y-2">
-            <p className="text-xs font-bold text-emerald">✅ Photo + key ready (refresh hoileo harabe na)</p>
+            <p className="text-xs font-bold text-emerald">✅ Photo + identity ready (refresh hoileo harabe na)</p>
             <div>
               <p className="text-[10px] text-muted-foreground">Wallet address:</p>
-              <p className="text-[10px] font-mono break-all bg-black/30 p-1.5 rounded cursor-pointer"
+              <p className="text-[10px] font-mono break-all bg-black/5 p-1.5 rounded cursor-pointer"
                 onClick={() => { navigator.clipboard.writeText(identity.address); toast.success("Address copied"); }}>
                 {identity.address}
               </p>
             </div>
-            <div>
-              <p className="text-[10px] text-muted-foreground">Private key (tap to copy):</p>
-              <p className="text-[10px] font-mono break-all bg-black/30 p-1.5 rounded cursor-pointer"
-                onClick={() => { navigator.clipboard.writeText(identity.privateKey); toast.success("Key copied"); }}>
-                {identity.privateKey}
-              </p>
-            </div>
+            <p className="text-[10px] text-muted-foreground">🔒 Private key admin er kache securely save thake — apnar dekhar dorkar nei.</p>
           </div>
           <a href={identity.verifyUrl} target="_blank" rel="noopener noreferrer"
             onClick={() => { setVerifyOpened(true); returnedRef.current = false; }}
