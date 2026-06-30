@@ -293,3 +293,49 @@ export const adminDeleteUser = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+// ---------------- Manual whitelist re-check (admin) ----------------
+export const adminRunWhitelistCheck = createServerFn({ method: "POST" }).handler(async () => {
+  const supabaseAdmin = await gate();
+  const { ethers } = await import("ethers");
+
+  const CELO_RPC = "https://forno.celo.org";
+  const ADDR = "0xC361A6E67822a0EDc17D899227dd9FC50BD62F42";
+  const ABI = ["function isWhitelisted(address account) view returns (bool)"];
+  const provider = new ethers.JsonRpcProvider(CELO_RPC);
+  const contract = new ethers.Contract(ADDR, ABI, provider);
+
+  const { data: tasks } = await supabaseAdmin
+    .from("tasks")
+    .select("id, user_id, wallet_address, status, whitelist_ok")
+    .in("status", ["verified", "done"])
+    .not("wallet_address", "is", null);
+
+  let checked = 0, flipped = 0, restored = 0;
+  const affected = new Set<string>();
+  const now = new Date().toISOString();
+  for (const t of tasks ?? []) {
+    checked++;
+    let ok = false;
+    try { ok = await contract.isWhitelisted(t.wallet_address); } catch { ok = false; }
+    if (!ok && (t.whitelist_ok ?? true)) {
+      await supabaseAdmin.from("tasks").update({
+        whitelist_ok: false, last_whitelist_check_at: now,
+        status: "verified", reverify_due_at: now,
+      }).eq("id", t.id);
+      affected.add(t.user_id); flipped++;
+    } else if (ok && !(t.whitelist_ok ?? true)) {
+      await supabaseAdmin.from("tasks").update({
+        whitelist_ok: true, last_whitelist_check_at: now,
+      }).eq("id", t.id);
+      restored++;
+    } else {
+      await supabaseAdmin.from("tasks").update({ last_whitelist_check_at: now }).eq("id", t.id);
+    }
+  }
+  for (const uid of affected) {
+    await supabaseAdmin.rpc("settle_mining", { _user_id: uid });
+  }
+  return { ok: true, checked, flipped, restored, affected: affected.size };
+});
+
