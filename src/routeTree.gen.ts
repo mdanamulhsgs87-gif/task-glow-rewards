@@ -16,6 +16,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminWithdrawalsRouteImport } from './routes/admin/withdrawals'
+import { Route as AdminWalletsRouteImport } from './routes/admin/wallets'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminUnverifiedRouteImport } from './routes/admin/unverified'
 import { Route as AdminReverifyRouteImport } from './routes/admin/reverify'
@@ -59,6 +60,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
 const AdminWithdrawalsRoute = AdminWithdrawalsRouteImport.update({
   id: '/withdrawals',
   path: '/withdrawals',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminWalletsRoute = AdminWalletsRouteImport.update({
+  id: '/wallets',
+  path: '/wallets',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
@@ -125,6 +131,7 @@ export interface FileRoutesByFullPath {
   '/admin/reverify': typeof AdminReverifyRoute
   '/admin/unverified': typeof AdminUnverifiedRoute
   '/admin/users': typeof AdminUsersRoute
+  '/admin/wallets': typeof AdminWalletsRoute
   '/admin/withdrawals': typeof AdminWithdrawalsRoute
   '/admin/': typeof AdminIndexRoute
   '/task/$slot': typeof AuthenticatedTaskSlotRoute
@@ -142,6 +149,7 @@ export interface FileRoutesByTo {
   '/admin/reverify': typeof AdminReverifyRoute
   '/admin/unverified': typeof AdminUnverifiedRoute
   '/admin/users': typeof AdminUsersRoute
+  '/admin/wallets': typeof AdminWalletsRoute
   '/admin/withdrawals': typeof AdminWithdrawalsRoute
   '/admin': typeof AdminIndexRoute
   '/task/$slot': typeof AuthenticatedTaskSlotRoute
@@ -162,6 +170,7 @@ export interface FileRoutesById {
   '/admin/reverify': typeof AdminReverifyRoute
   '/admin/unverified': typeof AdminUnverifiedRoute
   '/admin/users': typeof AdminUsersRoute
+  '/admin/wallets': typeof AdminWalletsRoute
   '/admin/withdrawals': typeof AdminWithdrawalsRoute
   '/admin/': typeof AdminIndexRoute
   '/_authenticated/task/$slot': typeof AuthenticatedTaskSlotRoute
@@ -182,6 +191,7 @@ export interface FileRouteTypes {
     | '/admin/reverify'
     | '/admin/unverified'
     | '/admin/users'
+    | '/admin/wallets'
     | '/admin/withdrawals'
     | '/admin/'
     | '/task/$slot'
@@ -199,6 +209,7 @@ export interface FileRouteTypes {
     | '/admin/reverify'
     | '/admin/unverified'
     | '/admin/users'
+    | '/admin/wallets'
     | '/admin/withdrawals'
     | '/admin'
     | '/task/$slot'
@@ -218,6 +229,7 @@ export interface FileRouteTypes {
     | '/admin/reverify'
     | '/admin/unverified'
     | '/admin/users'
+    | '/admin/wallets'
     | '/admin/withdrawals'
     | '/admin/'
     | '/_authenticated/task/$slot'
@@ -281,6 +293,13 @@ declare module '@tanstack/react-router' {
       path: '/withdrawals'
       fullPath: '/admin/withdrawals'
       preLoaderRoute: typeof AdminWithdrawalsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/wallets': {
+      id: '/admin/wallets'
+      path: '/wallets'
+      fullPath: '/admin/wallets'
+      preLoaderRoute: typeof AdminWalletsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/users': {
@@ -380,6 +399,7 @@ interface AdminRouteChildren {
   AdminReverifyRoute: typeof AdminReverifyRoute
   AdminUnverifiedRoute: typeof AdminUnverifiedRoute
   AdminUsersRoute: typeof AdminUsersRoute
+  AdminWalletsRoute: typeof AdminWalletsRoute
   AdminWithdrawalsRoute: typeof AdminWithdrawalsRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminUserUserIdRoute: typeof AdminUserUserIdRoute
@@ -390,6 +410,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminReverifyRoute: AdminReverifyRoute,
   AdminUnverifiedRoute: AdminUnverifiedRoute,
   AdminUsersRoute: AdminUsersRoute,
+  AdminWalletsRoute: AdminWalletsRoute,
   AdminWithdrawalsRoute: AdminWithdrawalsRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminUserUserIdRoute: AdminUserUserIdRoute,
