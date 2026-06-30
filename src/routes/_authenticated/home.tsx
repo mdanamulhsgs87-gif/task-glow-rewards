@@ -99,7 +99,10 @@ function HomePage() {
             {savedTasks.map((t: any) => (
               <div key={t.id} className="flex gap-3 rounded-xl border border-border bg-surface-2 p-2">
                 {t.signed_face_url ? (
-                  <img src={t.signed_face_url} alt={`Slot ${t.slot} face`} className="h-16 w-16 shrink-0 rounded-lg object-cover" />
+                  <button onClick={() => setLightbox({ url: t.signed_face_url, label: `Slot #${t.slot} · ${t.face_label || "Face"}` })}
+                    className="h-16 w-16 shrink-0 rounded-lg overflow-hidden active:scale-95 transition">
+                    <img src={t.signed_face_url} alt={`Slot ${t.slot} face`} className="h-full w-full object-cover" />
+                  </button>
                 ) : (
                   <div className="h-16 w-16 shrink-0 rounded-lg bg-background" />
                 )}
