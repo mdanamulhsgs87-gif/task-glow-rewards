@@ -13,19 +13,19 @@ function AdminLayout() {
   const router = useRouter();
   const check = useServerFn(adminCheck);
   const logout = useServerFn(adminLogout);
-  const [ready, setReady] = useState(false);
+  const [status, setStatus] = useState<"checking" | "unlocked" | "locked">("checking");
 
   useEffect(() => {
     let active = true;
     check().then((res) => {
       if (!active) return;
       if (!res.unlocked) {
-        router.navigate({ to: "/admin-login", replace: true });
+        setStatus("locked");
         return;
       }
-      setReady(true);
+      setStatus("unlocked");
     }).catch(() => {
-      if (active) router.navigate({ to: "/admin-login", replace: true });
+      if (active) setStatus("locked");
     });
     return () => { active = false; };
   }, [check, router]);
@@ -35,12 +35,26 @@ function AdminLayout() {
     window.location.href = "/admin-login";
   }
 
-  if (!ready) {
+  if (status === "checking") {
     return (
       <div className="min-h-screen flex items-center justify-center px-4 py-10">
         <div className="glass w-full max-w-sm rounded-2xl p-6 text-center">
           <Loader2 className="mx-auto mb-3 h-6 w-6 animate-spin text-amber" />
           <p className="text-sm font-bold">Admin panel check hocche...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (status === "locked") {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4 py-10">
+        <div className="glass w-full max-w-sm rounded-2xl p-6 text-center">
+          <h1 className="text-lg font-black text-amber">Admin locked</h1>
+          <p className="mt-2 text-xs text-muted-foreground">Admin password diye unlock korte hobe.</p>
+          <Link to="/admin-login" className="gradient-cta mt-4 inline-flex rounded-xl px-4 py-2 text-xs font-black">
+            Admin login
+          </Link>
         </div>
       </div>
     );

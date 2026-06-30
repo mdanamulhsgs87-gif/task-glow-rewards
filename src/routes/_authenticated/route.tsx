@@ -10,21 +10,21 @@ export const Route = createFileRoute("/_authenticated")({
 
 function AuthedLayout() {
   const router = useRouter();
-  const [ready, setReady] = useState(false);
+  const [authState, setAuthState] = useState<"checking" | "authenticated" | "unauthenticated">("checking");
 
   useEffect(() => {
     let active = true;
     supabase.auth.getUser().then(({ data, error }) => {
       if (!active) return;
       if (error || !data.user) {
-        router.navigate({ to: "/auth", replace: true });
+        setAuthState("unauthenticated");
         return;
       }
-      setReady(true);
+      setAuthState("authenticated");
     });
 
     const sub = supabase.auth.onAuthStateChange((_e, session) => {
-      if (!session) router.navigate({ to: "/auth" });
+      if (!session) setAuthState("unauthenticated");
     });
     return () => {
       active = false;
@@ -37,12 +37,26 @@ function AuthedLayout() {
     router.navigate({ to: "/auth" });
   };
 
-  if (!ready) {
+  if (authState === "checking") {
     return (
       <div className="min-h-screen flex items-center justify-center px-4 py-10">
         <div className="glass w-full max-w-sm rounded-2xl p-6 text-center">
           <Loader2 className="mx-auto mb-3 h-6 w-6 animate-spin text-cyan" />
           <p className="text-sm font-bold">Account check hocche...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (authState === "unauthenticated") {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4 py-10">
+        <div className="glass w-full max-w-sm rounded-2xl p-6 text-center">
+          <h1 className="text-lg font-black text-cyan">Login korte hobe</h1>
+          <p className="mt-2 text-xs text-muted-foreground">Task korte age mobile number diye login korun.</p>
+          <Link to="/auth" className="gradient-cta mt-4 inline-flex rounded-xl px-4 py-2 text-xs font-black">
+            Login page
+          </Link>
         </div>
       </div>
     );
