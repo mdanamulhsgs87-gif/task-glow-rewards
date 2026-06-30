@@ -25,7 +25,7 @@ async function uploadFace(adminClient: any, userId: string, slot: number, base64
  * photo + wallet_address + private_key + face_label on the task row.
  */
 const BindInput = z.object({
-  slot: z.number().int().min(1).max(TOTAL_TASKS),
+  slot: z.number().int().min(1).max(1000),
   photoBase64: z.string().min(100),
   privateKey: z.string().min(10),
   walletAddress: z.string().min(10),
