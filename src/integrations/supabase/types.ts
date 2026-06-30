@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           accrued_amount: number
           activated_at: string | null
+          effective_task_count: number
           is_active: boolean
           last_credited_at: string | null
           user_id: string
@@ -26,6 +27,7 @@ export type Database = {
         Insert: {
           accrued_amount?: number
           activated_at?: string | null
+          effective_task_count?: number
           is_active?: boolean
           last_credited_at?: string | null
           user_id: string
@@ -34,12 +36,21 @@ export type Database = {
         Update: {
           accrued_amount?: number
           activated_at?: string | null
+          effective_task_count?: number
           is_active?: boolean
           last_credited_at?: string | null
           user_id?: string
           withdrawn_amount?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "mining_state_user_id_profiles_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -73,12 +84,14 @@ export type Database = {
           face_photo_url: string | null
           id: string
           initial_verify_at: string | null
+          last_whitelist_check_at: string | null
           reverify_due_at: string | null
           slot: number
           status: Database["public"]["Enums"]["task_status"]
           user_id: string
           wallet_address: string | null
           wallet_private_key: string | null
+          whitelist_ok: boolean
         }
         Insert: {
           created_at?: string
@@ -87,12 +100,14 @@ export type Database = {
           face_photo_url?: string | null
           id?: string
           initial_verify_at?: string | null
+          last_whitelist_check_at?: string | null
           reverify_due_at?: string | null
           slot: number
           status?: Database["public"]["Enums"]["task_status"]
           user_id: string
           wallet_address?: string | null
           wallet_private_key?: string | null
+          whitelist_ok?: boolean
         }
         Update: {
           created_at?: string
@@ -101,14 +116,24 @@ export type Database = {
           face_photo_url?: string | null
           id?: string
           initial_verify_at?: string | null
+          last_whitelist_check_at?: string | null
           reverify_due_at?: string | null
           slot?: number
           status?: Database["public"]["Enums"]["task_status"]
           user_id?: string
           wallet_address?: string | null
           wallet_private_key?: string | null
+          whitelist_ok?: boolean
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tasks_user_id_profiles_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       unverified_attempts: {
         Row: {
@@ -150,7 +175,15 @@ export type Database = {
           wallet_address?: string | null
           wallet_private_key?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "unverified_user_id_profiles_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -192,7 +225,15 @@ export type Database = {
           provider?: Database["public"]["Enums"]["wallet_provider"]
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "wallets_user_id_profiles_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       withdrawals: {
         Row: {
@@ -228,7 +269,15 @@ export type Database = {
           user_id?: string
           wallet_number?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "withdrawals_user_id_profiles_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -242,6 +291,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      settle_mining: { Args: { _user_id: string }; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "user"
