@@ -1,15 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { adminReverifyQueue } from "@/lib/admin.functions";
-import { Loader2, Clock, CheckCircle2 } from "lucide-react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { adminReverifyQueue, adminRunWhitelistCheck } from "@/lib/admin.functions";
+import { Loader2, Clock, CheckCircle2, RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/reverify")({ component: ReverifyQueue });
 
 function ReverifyQueue() {
-  const { data, isLoading } = useQuery({ queryKey: ["admin-reverify-queue"], queryFn: () => adminReverifyQueue(), refetchInterval: 30_000 });
+  const { data, isLoading, refetch } = useQuery({ queryKey: ["admin-reverify-queue"], queryFn: () => adminReverifyQueue(), refetchInterval: 30_000 });
   const [now, setNow] = useState(Date.now());
   useEffect(() => { const id = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(id); }, []);
+
+  const run = useMutation({
+    mutationFn: () => adminRunWhitelistCheck(),
+    onSuccess: (r: any) => { toast.success(`Checked ${r.checked} · ${r.flipped} dropped · ${r.restored} restored`); refetch(); },
+    onError: (e: any) => toast.error(e.message),
+  });
 
   if (isLoading) return <div className="py-10 flex justify-center"><Loader2 className="w-5 h-5 animate-spin text-amber" /></div>;
 
@@ -19,8 +26,14 @@ function ReverifyQueue() {
 
   return (
     <div className="space-y-3">
+      <button onClick={() => run.mutate()} disabled={run.isPending}
+        className="w-full gradient-cta rounded-xl py-2.5 text-xs font-black flex items-center justify-center gap-2 disabled:opacity-60">
+        {run.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+        Whitelist auto-check chalu
+      </button>
+
       <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold px-1">
-        Total in queue: {rows.length} · Ready now: {ready.length}
+        Total in queue: {rows.length} · Ready now: {ready.length} · Auto runs daily 6 PM
       </p>
 
       {ready.length > 0 && (
