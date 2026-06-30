@@ -5,7 +5,7 @@ export async function sendTelegram(message: string): Promise<void> {
   const chatId = process.env.TELEGRAM_CHAT_ID;
   if (!token || !chatId) {
     console.warn("Telegram not configured");
-    return;
+    throw new Error("Telegram not configured");
   }
   try {
     const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
@@ -16,8 +16,10 @@ export async function sendTelegram(message: string): Promise<void> {
     if (!res.ok) {
       const body = await res.text();
       console.error("Telegram send failed", res.status, body);
+      throw new Error(`Telegram send failed: ${res.status}`);
     }
   } catch (e) {
     console.error("Telegram send error:", e);
+    throw e;
   }
 }
