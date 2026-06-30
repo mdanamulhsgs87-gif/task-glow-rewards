@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, Link, useRouter } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { Home, Wallet, ArrowDownToLine, LogOut, Loader2, RefreshCcw } from "lucide-react";
+import { Home, Wallet, ArrowDownToLine, LogOut, Loader2, RefreshCcw, Gift } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -81,9 +81,10 @@ function AuthedLayout() {
       </main>
 
       <nav className="fixed bottom-0 inset-x-0 z-30 glass border-t border-cyan/15">
-        <div className="max-w-md mx-auto px-4 py-2 grid grid-cols-4 gap-1">
+        <div className="max-w-md mx-auto px-2 py-2 grid grid-cols-5 gap-1">
           <NavItem to="/home" icon={<Home className="w-5 h-5" />} label="হোম" />
           <NavItem to="/reverify" icon={<RefreshCcw className="w-5 h-5" />} label="রি-ভেরিফাই" />
+          <NavItem to="/referral" icon={<Gift className="w-5 h-5" />} label="রেফার" />
           <NavItem to="/wallet" icon={<Wallet className="w-5 h-5" />} label="ওয়ালেট" />
           <NavItem to="/withdraw" icon={<ArrowDownToLine className="w-5 h-5" />} label="উইথড্র" />
         </div>

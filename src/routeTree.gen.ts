@@ -24,6 +24,7 @@ import { Route as AdminFacesRouteImport } from './routes/admin/faces'
 import { Route as AuthenticatedWithdrawRouteImport } from './routes/_authenticated/withdraw'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
 import { Route as AuthenticatedReverifyRouteImport } from './routes/_authenticated/reverify'
+import { Route as AuthenticatedReferralRouteImport } from './routes/_authenticated/referral'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as ApiPublicWhitelistRecheckRouteImport } from './routes/api/public/whitelist-recheck'
 import { Route as AdminUserUserIdRouteImport } from './routes/admin/user.$userId'
@@ -103,6 +104,11 @@ const AuthenticatedReverifyRoute = AuthenticatedReverifyRouteImport.update({
   path: '/reverify',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedReferralRoute = AuthenticatedReferralRouteImport.update({
+  id: '/referral',
+  path: '/referral',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
   id: '/home',
   path: '/home',
@@ -131,6 +137,7 @@ export interface FileRoutesByFullPath {
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/home': typeof AuthenticatedHomeRoute
+  '/referral': typeof AuthenticatedReferralRoute
   '/reverify': typeof AuthenticatedReverifyRoute
   '/wallet': typeof AuthenticatedWalletRoute
   '/withdraw': typeof AuthenticatedWithdrawRoute
@@ -150,6 +157,7 @@ export interface FileRoutesByTo {
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/home': typeof AuthenticatedHomeRoute
+  '/referral': typeof AuthenticatedReferralRoute
   '/reverify': typeof AuthenticatedReverifyRoute
   '/wallet': typeof AuthenticatedWalletRoute
   '/withdraw': typeof AuthenticatedWithdrawRoute
@@ -172,6 +180,7 @@ export interface FileRoutesById {
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
+  '/_authenticated/referral': typeof AuthenticatedReferralRoute
   '/_authenticated/reverify': typeof AuthenticatedReverifyRoute
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
   '/_authenticated/withdraw': typeof AuthenticatedWithdrawRoute
@@ -194,6 +203,7 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/auth'
     | '/home'
+    | '/referral'
     | '/reverify'
     | '/wallet'
     | '/withdraw'
@@ -213,6 +223,7 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/auth'
     | '/home'
+    | '/referral'
     | '/reverify'
     | '/wallet'
     | '/withdraw'
@@ -234,6 +245,7 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/auth'
     | '/_authenticated/home'
+    | '/_authenticated/referral'
     | '/_authenticated/reverify'
     | '/_authenticated/wallet'
     | '/_authenticated/withdraw'
@@ -365,6 +377,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReverifyRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/referral': {
+      id: '/_authenticated/referral'
+      path: '/referral'
+      fullPath: '/referral'
+      preLoaderRoute: typeof AuthenticatedReferralRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/home': {
       id: '/_authenticated/home'
       path: '/home'
@@ -398,6 +417,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
+  AuthenticatedReferralRoute: typeof AuthenticatedReferralRoute
   AuthenticatedReverifyRoute: typeof AuthenticatedReverifyRoute
   AuthenticatedWalletRoute: typeof AuthenticatedWalletRoute
   AuthenticatedWithdrawRoute: typeof AuthenticatedWithdrawRoute
@@ -406,6 +426,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
+  AuthenticatedReferralRoute: AuthenticatedReferralRoute,
   AuthenticatedReverifyRoute: AuthenticatedReverifyRoute,
   AuthenticatedWalletRoute: AuthenticatedWalletRoute,
   AuthenticatedWithdrawRoute: AuthenticatedWithdrawRoute,
