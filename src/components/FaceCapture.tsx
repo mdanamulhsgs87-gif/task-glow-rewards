@@ -8,6 +8,7 @@ type FaceCaptureProps = {
   onCancel: () => void;
   isUploading?: boolean;
   title?: string;
+  submitLabel?: string;
   readyVoice?: NarrationKey;
   retryVoice?: NarrationKey;
   cancelVoice?: NarrationKey;
@@ -18,6 +19,7 @@ export function FaceCapture({
   onCancel,
   isUploading,
   title,
+  submitLabel = "জমা দিন",
   readyVoice = "task.photo.submit",
   retryVoice = "task.photo.retry",
   cancelVoice = "common.cancel",
@@ -155,7 +157,7 @@ export function FaceCapture({
               data-voice={readyVoice}
               className="flex-1 py-2 rounded-xl gradient-cta text-xs font-black flex items-center justify-center gap-1">
               {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Scan className="w-4 h-4" />}
-              জমা দিন
+              {submitLabel}
             </button>
           </div>
         </div>
