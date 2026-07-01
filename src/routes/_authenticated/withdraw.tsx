@@ -47,7 +47,9 @@ function WithdrawPage() {
 
   return (
     <div className="space-y-4 pt-2">
+      <PageVoice pageId="withdraw" steps={["withdraw.intro","withdraw.amount","withdraw.submit"]} />
       <div className="text-center">
+
         <ArrowDownToLine className="w-8 h-8 text-rose mx-auto" />
         <h1 className="text-2xl font-black mt-1">উইথড্র</h1>
       </div>
