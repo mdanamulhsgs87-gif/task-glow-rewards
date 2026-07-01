@@ -45,7 +45,9 @@ function HomePage() {
 
   return (
     <div className="space-y-3 pt-2 pb-6">
+      <PageVoice pageId="home" steps={["home.welcome","home.mining","home.claim","home.main","home.witness","home.tap.slot"]} />
       <AnnouncementTicker />
+
 
       <div className="text-center">
         <p className="text-[11px] text-muted-foreground">স্বাগতম,</p>
