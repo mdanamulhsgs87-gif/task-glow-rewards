@@ -167,10 +167,9 @@
     -webkit-mask-composite: xor; mask-composite: exclude;
     padding: 1px;
     pointer-events: none;
-    opacity: 0.55;
-    background-size: 200% 200%;
-    animation: aurora-shift 6s ease-in-out infinite;
+    opacity: 0.45;
   }
+
 
 
   .gradient-mining {
