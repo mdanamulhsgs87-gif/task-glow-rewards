@@ -77,29 +77,30 @@ export function MiningCounter({
       )}
 
       <div className="relative">
-        <p className="text-[11px] font-black mb-2"
+        <p className="text-sm font-black mb-3"
            style={{ color: "color-mix(in oklch, white 90%, transparent)" }}>
           {live ? (
             <span className="inline-flex items-center gap-2">
-              <span className="relative flex h-2 w-2">
+              <span className="relative flex h-2.5 w-2.5">
                 <span className="absolute inline-flex h-full w-full rounded-full bg-emerald animate-ping opacity-80" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald" />
               </span>
               লাইভ মাইনিং ব্যালেন্স
             </span>
           ) : "🔒 মাইনিং লক"}
         </p>
 
-        <p className={`mining-number mono-num text-[2.4rem] leading-none font-black bg-gradient-to-r from-amber-200 via-white to-rose-200 bg-clip-text text-transparent ${live ? "shine" : ""}`}>
+        <p className={`mining-number mono-num text-[3.4rem] leading-none font-black bg-gradient-to-r from-amber-200 via-white to-rose-200 bg-clip-text text-transparent ${live ? "shine" : ""}`}>
           {balance.toFixed(6)}
         </p>
-        <p className="text-xs font-black text-white mt-1 drop-shadow">৳ টাকা</p>
+        <p className="text-sm font-black text-white mt-2 drop-shadow">৳ টাকা</p>
 
-        <p className="text-[11px] mt-2 font-bold" style={{ color: "color-mix(in oklch, white 88%, transparent)" }}>
+        <p className="text-xs mt-3 font-bold" style={{ color: "color-mix(in oklch, white 88%, transparent)" }}>
           {live
             ? `${effectiveTaskCount}/১০ ঘর সক্রিয় · ${ratePerMonth.toFixed(0)}৳ / মাস`
             : "১০টি ঘর সম্পন্ন করলে মাইনিং শুরু হবে"}
         </p>
+
 
         {qualifyingReferees > 0 && (
           <p className="mt-2 inline-block rounded-full px-3 py-1 text-[11px] font-black bounce-soft"
