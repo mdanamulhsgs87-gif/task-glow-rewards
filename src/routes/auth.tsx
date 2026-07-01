@@ -239,6 +239,7 @@ export function AuthPage() {
               <button
                 key={m}
                 onClick={() => setMode(m)}
+                data-voice={m === "login" ? "auth.mode.login" : "auth.mode.signup"}
                 className={`flex-1 py-2.5 rounded-lg text-xs font-black transition btn-press ${
                   mode === m
                     ? (m === "login" ? "gradient-cta" : "gradient-emerald")
@@ -250,7 +251,7 @@ export function AuthPage() {
 
           <form onSubmit={onFormNext} className="space-y-3">
             {mode === "signup" && (
-              <div>
+              <div data-voice="auth.name">
                 <label className="text-[11px] font-black text-emerald uppercase tracking-wider">নাম</label>
                 <input
                   required value={name} onChange={(e) => setName(e.target.value)}
@@ -258,7 +259,7 @@ export function AuthPage() {
                 />
               </div>
             )}
-            <div>
+            <div data-voice="auth.phone">
               <label className="text-[11px] font-black text-cyan uppercase tracking-wider">মোবাইল নম্বর</label>
               <input
                 inputMode="numeric" required value={phone}
@@ -267,7 +268,7 @@ export function AuthPage() {
                 className="w-full mt-1 px-4 py-3 bg-white border-2 border-border rounded-xl text-sm outline-none focus:border-cyan mono-num text-navy transition"
               />
             </div>
-            <div>
+            <div data-voice="auth.password">
               <label className="text-[11px] font-black text-violet uppercase tracking-wider">পাসওয়ার্ড</label>
               <input
                 type="password" required minLength={6} value={password}
@@ -276,7 +277,7 @@ export function AuthPage() {
               />
             </div>
             {mode === "signup" && (
-              <div>
+              <div data-voice="auth.referral">
                 <label className="text-[11px] font-black text-emerald uppercase tracking-wider flex items-center gap-1">
                   🎁 রেফারেল কোড <span className="text-muted-foreground normal-case font-bold">(ঐচ্ছিক)</span>
                 </label>
@@ -291,6 +292,7 @@ export function AuthPage() {
             )}
             <button
               type="submit" disabled={loading}
+              data-voice={mode === "login" ? "auth.login.submit" : "auth.agreement"}
               className={`w-full py-3.5 rounded-xl font-black text-sm flex items-center justify-center gap-2 disabled:opacity-60 btn-press ${
                 mode === "login" ? "gradient-cta" : "gradient-amber"
               }`}

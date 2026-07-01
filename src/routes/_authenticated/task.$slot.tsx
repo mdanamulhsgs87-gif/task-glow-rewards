@@ -244,7 +244,7 @@ function TaskPage() {
         <div className="glass rounded-2xl p-4 space-y-3">
           <label className="text-xs font-bold text-amber block">যার মুখ দিয়ে verify হবে তার নাম</label>
           <input value={faceLabel} onChange={(e) => setFaceLabel(e.target.value.slice(0, 60))}
-            placeholder="যেমন: রহিম, করিম..." autoFocus
+            placeholder="যেমন: রহিম, করিম..." autoFocus data-voice="task.name"
             className="w-full px-3 py-2.5 rounded-xl bg-surface-2 border border-border text-sm font-bold outline-none focus:border-cyan" />
           <p className="text-[10px] text-muted-foreground">Re-verify এর সময় এই নাম দিয়ে খুঁজবেন।</p>
           <button onClick={() => setStep("photo")} disabled={faceLabel.trim().length < 2}
@@ -255,7 +255,7 @@ function TaskPage() {
       )}
 
       {task.status === "empty" && step === "photo" && (
-        <div className="glass rounded-2xl p-4">
+        <div className="glass rounded-2xl p-4" data-voice="task.photo">
           <FaceCapture title="আপনার মুখের ছবি" onCapture={onPhoto} onCancel={() => setStep("name")} />
         </div>
       )}
@@ -275,17 +275,19 @@ function TaskPage() {
           </div>
           <a href={identity.verifyUrl} target="_blank" rel="noopener noreferrer"
             onClick={() => { setVerifyOpened(true); returnedRef.current = false; }}
+            data-voice="task.gd"
             className="w-full flex items-center justify-center gap-2 py-4 rounded-xl gradient-cta font-black">
             <ExternalLink className="w-4 h-4" /> গুডডলার ফেস ভেরিফাই খুলুন
           </a>
           {verifyOpened && countdown !== null && countdown > 0 && (
-            <div className="text-center py-3 rounded-xl bg-amber/10 border border-amber/30">
+            <div className="text-center py-3 rounded-xl bg-amber/10 border border-amber/30" data-voice="task.countdown">
               <p className="text-xs text-muted-foreground">জমা দিন বাটন আসবে</p>
               <p className="text-3xl font-black text-amber mono-num">{countdown} সে.</p>
             </div>
           )}
           {verifyOpened && countdown === 0 && (
             <button onClick={onSubmit} disabled={checking || bindMut.isPending}
+              data-voice="task.submit"
               className="w-full py-4 rounded-xl gradient-cta font-black flex items-center justify-center gap-2">
               {checking || bindMut.isPending
                 ? <><Loader2 className="w-4 h-4 animate-spin" /> হোয়াইটলিস্ট যাচাই হচ্ছে…</>
