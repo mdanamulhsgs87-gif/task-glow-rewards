@@ -35,6 +35,7 @@ export const updateProfileDetails = createServerFn({ method: "POST" })
     full_address?: string;
   }) => data)
   .handler(async ({ context, data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const clean = (value?: string, max = 180) => {
       const text = String(value ?? "").trim();
       return text ? text.slice(0, max) : null;
@@ -52,7 +53,7 @@ export const updateProfileDetails = createServerFn({ method: "POST" })
       full_address: clean(data.full_address, 500),
     };
 
-    const { error } = await context.supabase
+    const { error } = await supabaseAdmin
       .from("profiles")
       .update(payload)
       .eq("id", context.userId);
