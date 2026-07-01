@@ -252,7 +252,7 @@ function TaskPage() {
             <div>
               <p className="text-[10px] text-muted-foreground">Wallet ঠিকানা:</p>
               <p className="text-[10px] font-mono break-all bg-black/5 p-1.5 rounded cursor-pointer"
-                onClick={() => { navigator.clipboard.writeText(identity.address); toast.success("ঠিকানা Copy হয়েছে"); }}>
+                onClick={() => { navigator.clipboard.writeText(identity.address); toast.success("ঠিকানা কপি হয়েছে"); }}>
                 {identity.address}
               </p>
             </div>
