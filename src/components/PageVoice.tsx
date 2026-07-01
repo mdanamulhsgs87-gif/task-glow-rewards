@@ -78,7 +78,7 @@ export function PageVoice({ pageId, steps, autoStart = true, compact = false }: 
     setIdx(at);
     setPlaying(true);
     const url = await fetchAudioUrl(key);
-    if (!url) { fallbackSpeak(NARRATIONS[key]); setPlaying(false); return; }
+    if (!url) { setPlaying(false); return; }
     const a = new Audio(url);
     audioRef.current = a;
     a.onended = () => {
@@ -87,8 +87,8 @@ export function PageVoice({ pageId, steps, autoStart = true, compact = false }: 
       if (at + 1 < steps.length) { void play(at + 1); }
       else { try { localStorage.setItem(storageKey, "1"); } catch {} }
     };
-    a.onerror = () => { fallbackSpeak(NARRATIONS[key]); setPlaying(false); };
-    a.play().catch(() => { fallbackSpeak(NARRATIONS[key]); setPlaying(false); });
+    a.onerror = () => { setPlaying(false); };
+    a.play().catch(() => { setPlaying(false); });
   };
 
   const replay = () => { setVisible(true); void play(0); };
