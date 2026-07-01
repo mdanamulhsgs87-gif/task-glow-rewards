@@ -1,11 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getProfileHistory, uploadAvatar } from "@/lib/profile.functions";
 import { computeLiveBalance } from "@/lib/mining";
-import { Camera, Printer, Loader2, User, IdCard, History, Sparkles, CheckCircle2, XCircle, Clock } from "lucide-react";
+import { Camera, Download, Loader2, User, IdCard, History, Sparkles, CheckCircle2, XCircle, Clock, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { PageVoice } from "@/components/PageVoice";
+import { QrCode } from "@/components/QrCode";
+import html2canvas from "html2canvas";
 
 
 export const Route = createFileRoute("/_authenticated/profile")({ component: ProfilePage });
@@ -55,19 +57,37 @@ function ProfilePage() {
   }
 
   const p = data.profile!;
-  const uid = String(p.id).replace(/-/g, "").slice(0, 12).toUpperCase();
+  const uidFull = String(p.id);
+  const uid = uidFull.replace(/-/g, "").slice(0, 12).toUpperCase();
+  const cardUrl = typeof window !== "undefined" ? `${window.location.origin}/card/${uidFull}` : `/card/${uidFull}`;
   const mining = data.mining;
   const balance = mining ? computeLiveBalance({
     accrued: Number(mining.accrued_amount), withdrawn: Number(mining.withdrawn_amount),
     isActive: !!mining.is_active, lastCreditedAt: mining.last_credited_at, now,
   }) : 0;
   const doneCount = (data.tasks ?? []).filter((t: any) => t.status === "done" && (t.whitelist_ok ?? true)).length;
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [downloading, setDownloading] = useState(false);
+
+  const downloadCard = async () => {
+    if (!cardRef.current) return;
+    setDownloading(true);
+    try {
+      const canvas = await html2canvas(cardRef.current, { backgroundColor: null, scale: 2, useCORS: true });
+      const link = document.createElement("a");
+      link.download = `good-app-card-${uid}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+      toast.success("কার্ড ডাউনলোড হয়েছে ✨");
+    } catch (e: any) {
+      toast.error(e?.message ?? "ডাউনলোড ব্যর্থ");
+    } finally { setDownloading(false); }
+  };
 
   return (
     <div className="space-y-5 pt-2 pop-in">
-      <PageVoice pageId="profile" steps={["profile.intro","profile.avatar","profile.card","profile.history"]} />
+      <PageVoice pageId="profile" steps={["profile.intro","profile.avatar","profile.uid","profile.card","profile.qr","profile.download"]} />
       <div className="text-center">
-
         <h1 className="text-2xl font-black flex items-center justify-center gap-2">
           <Sparkles className="w-5 h-5 text-gold bounce-soft" /> আমার প্রোফাইল
         </h1>
@@ -116,56 +136,67 @@ function ProfilePage() {
 
       {tab === "card" && (
         <div className="space-y-3" data-voice="profile.card">
-          <div id="print-card" className="id-card p-5 pop-in">
-            <div className="id-watermark">GOOD</div>
+          <div ref={cardRef} id="print-card" className="relative rounded-3xl p-5 pop-in text-white overflow-hidden shadow-2xl"
+            style={{
+              background:
+                "linear-gradient(135deg, #ff6b6b 0%, #f59e0b 25%, #10b981 55%, #06b6d4 78%, #8b5cf6 100%)",
+              boxShadow: "0 25px 60px -20px rgba(139,92,246,0.55)",
+            }}>
+            <div className="absolute inset-0 opacity-25 pointer-events-none"
+              style={{ background: "repeating-linear-gradient(45deg, rgba(255,255,255,0.18) 0 2px, transparent 2px 14px)" }} />
+            <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
+            <div className="absolute -bottom-10 -left-10 w-40 h-40 rounded-full bg-black/20 blur-2xl" />
+
             <div className="relative flex items-start justify-between">
               <div>
-                <p className="text-[9px] uppercase tracking-[0.3em] text-gold font-bold">good-app · Official</p>
-                <p className="text-[10px] text-white/60 mt-0.5">সদস্য পরিচয়পত্র</p>
+                <p className="text-[10px] uppercase tracking-[0.3em] font-black text-white/95 drop-shadow">good-app · Official</p>
+                <p className="text-[11px] text-white/85 mt-0.5 font-bold">সদস্য পরিচয়পত্র</p>
               </div>
-              <div className="w-10 h-10 rounded-lg gradient-gold flex items-center justify-center shine">
-                <span className="text-[10px] font-black">GA</span>
+              <div className="rounded-xl bg-white p-1.5 shadow-lg" data-voice="profile.qr">
+                <QrCode value={cardUrl} size={64} />
               </div>
             </div>
 
-            <div className="relative mt-5 flex gap-4">
-              <div className="w-24 h-28 rounded-lg overflow-hidden border-2 border-gold/60 bg-surface-2 flex items-center justify-center shrink-0">
+            <div className="relative mt-4 flex gap-3">
+              <div className="w-24 h-28 rounded-xl overflow-hidden border-2 border-white/80 bg-white/20 flex items-center justify-center shrink-0 shadow-lg">
                 {data.avatar_signed
-                  ? <img src={data.avatar_signed} className="w-full h-full object-cover" alt="" />
-                  : <User className="w-10 h-10 text-white/40" />}
+                  ? <img src={data.avatar_signed} className="w-full h-full object-cover" alt="" crossOrigin="anonymous" />
+                  : <User className="w-10 h-10 text-white/80" />}
               </div>
-              <div className="flex-1 min-w-0 text-white space-y-1.5">
+              <div className="flex-1 min-w-0 space-y-1.5">
                 <Row k="নাম" v={p.display_name ?? "-"} />
                 <Row k="মোবাইল" v={p.phone_number ?? "-"} mono />
-                <Row k="রেফার কোড" v={p.referral_code} mono />
+                <Row k="রেফার" v={p.referral_code} mono />
                 <Row k="যোগদান" v={new Date(p.created_at).toLocaleDateString("bn-BD")} />
               </div>
             </div>
 
-            <div className="relative mt-4 pt-4 border-t border-gold/25 grid grid-cols-3 gap-2 text-white">
+            <div className="relative mt-4 pt-3 border-t-2 border-white/30 grid grid-cols-3 gap-2">
               <Stat label="টাস্ক" value={`${doneCount}/${(data.tasks ?? []).length}`} />
               <Stat label="ব্যালান্স" value={`${balance.toFixed(2)}৳`} />
               <Stat label="উইথড্র" value={`${(data.withdrawals ?? []).length}x`} />
             </div>
 
-            <div className="relative mt-4 flex items-end justify-between">
-              <div>
-                <p className="text-[9px] uppercase tracking-[0.25em] text-white/50">Card No.</p>
-                <p className="mono-num text-lg font-black text-gold tracking-widest">
+            <div className="relative mt-3 flex items-end justify-between">
+              <div className="min-w-0">
+                <p className="text-[9px] uppercase tracking-[0.25em] text-white/80 font-bold">Card No.</p>
+                <p className="mono-num text-base font-black tracking-widest drop-shadow">
                   {uid.match(/.{1,4}/g)?.join(" ")}
                 </p>
               </div>
-              <div className="text-right">
-                <p className="text-[9px] uppercase tracking-[0.25em] text-white/50">Signature</p>
-                <p className="font-black text-cyan italic">~ {p.display_name?.split(" ")[0] ?? "user"}</p>
-              </div>
+              <p className="text-[9px] text-white/85 font-bold text-right">
+                সত্যায়িত সদস্য<br />good-app foundation
+              </p>
             </div>
           </div>
 
-          <button onClick={() => window.print()}
-            className="no-print w-full gradient-gold rounded-2xl py-3.5 font-black text-sm flex items-center justify-center gap-2 btn-press glow-gold">
-            <Printer className="w-4 h-4" /> কার্ড প্রিন্ট / ডাউনলোড
+          <button onClick={downloadCard} disabled={downloading} data-voice="profile.download"
+            className="no-print w-full rounded-2xl py-3.5 font-black text-sm flex items-center justify-center gap-2 btn-press text-white shadow-lg disabled:opacity-60"
+            style={{ background: "linear-gradient(120deg,#8b5cf6,#ef476f 55%,#f59e0b)" }}>
+            {downloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+            কার্ড ডাউনলোড করুন (গ্যালারিতে সেভ)
           </button>
+          <p className="text-center text-[10px] text-muted-foreground">QR স্ক্যান করলে যে কেউ আপনার পাবলিক কার্ড দেখতে পারবে</p>
         </div>
       )}
 

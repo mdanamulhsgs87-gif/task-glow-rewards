@@ -54,6 +54,21 @@ function HomePage() {
         <h1 className="text-xl font-black mt-0.5">
           {data.profile?.display_name ?? "ইউজার"} 👋
         </h1>
+        {data.profile?.id && (
+          <button
+            data-voice="home.uid"
+            onClick={() => {
+              navigator.clipboard.writeText(String(data.profile!.id));
+              toast.success("UID কপি হয়েছে");
+            }}
+            className="mt-1.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black tracking-widest text-white shadow-md btn-press"
+            style={{ background: "linear-gradient(120deg,#8b5cf6,#06b6d4,#10b981)" }}
+          >
+            <span className="opacity-80">UID</span>
+            <span className="mono-num">{String(data.profile.id).replace(/-/g,"").slice(0,12).toUpperCase().match(/.{1,4}/g)?.join(" ")}</span>
+            <span>📋</span>
+          </button>
+        )}
       </div>
 
       <div data-tour="mining" data-voice="home.mining">

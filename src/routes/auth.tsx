@@ -7,9 +7,11 @@ import {
   Sparkles, Loader2, ShieldCheck, Check, ArrowRight,
   HandHeart, HelpCircle, ChevronDown, Heart, Users, Gift, Coins,
 } from "lucide-react";
-import { registerWithPhone } from "@/lib/auth.functions";
+import { registerWithPhone, resolveCardUidForLogin } from "@/lib/auth.functions";
 import logo from "@/assets/logo.png";
 import { PageVoice } from "@/components/PageVoice";
+import { QrScanner } from "@/components/QrScanner";
+import { QrCode as QrCodeIcon } from "lucide-react";
 
 
 export const Route = createFileRoute("/auth")({ ssr: false, component: AuthPage });
@@ -76,6 +78,23 @@ export function AuthPage() {
   const [referralCode, setReferralCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [scanOpen, setScanOpen] = useState(false);
+  const resolveUid = useServerFn(resolveCardUidForLogin);
+
+  const handleScan = async (raw: string) => {
+    setScanOpen(false);
+    try {
+      // Extract UID from QR — could be full URL or plain uid
+      const m = raw.match(/card\/([0-9a-f-]{8,})/i);
+      const candidate = m?.[1] ?? raw.trim();
+      const res = await resolveUid({ data: { uid: candidate } });
+      setPhone(res.phone);
+      setMode("login");
+      toast.success("UID পাওয়া গেছে — এবার পাসওয়ার্ড দিন");
+    } catch (e: any) {
+      toast.error(e?.message ?? "QR পড়া যায়নি");
+    }
+  };
 
   useEffect(() => {
     // Pre-fill referral code from ?ref=XYZ
@@ -304,12 +323,26 @@ export function AuthPage() {
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
               {mode === "login" ? "লগইন করুন" : "পরবর্তী ধাপ"}
             </button>
+
+            {mode === "login" && (
+              <button
+                type="button" onClick={() => setScanOpen(true)}
+                data-voice="auth.qr.scan"
+                className="w-full py-3 rounded-xl font-black text-sm flex items-center justify-center gap-2 text-white btn-press shadow-lg"
+                style={{ background: "linear-gradient(120deg,#06b6d4,#8b5cf6,#ef476f)" }}
+              >
+                <QrCodeIcon className="w-4 h-4" /> QR কার্ড স্ক্যান করে লগইন
+              </button>
+            )}
           </form>
 
           <p className="text-[10px] text-center text-muted-foreground mt-5">
             🔒 আপনার সমস্ত তথ্য এনক্রিপ্টেড ও সম্পূর্ণ নিরাপদ
           </p>
         </div>
+
+        {scanOpen && <QrScanner onResult={handleScan} onClose={() => setScanOpen(false)} />}
+
 
         {/* Mission banner */}
         <div className="rounded-3xl p-5 bg-linear-to-br from-emerald/15 via-cyan/10 to-violet/15 border border-border pop-in">

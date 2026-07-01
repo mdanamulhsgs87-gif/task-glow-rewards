@@ -9,14 +9,14 @@ import { createHash } from "crypto";
 import { NARRATIONS, isNarrationKey } from "@/lib/narrations";
 
 const BUCKET = "tour-audio";
-const VOICE = "ash"; // brighter, more expressive male voice
+const VOICE = "ash";
 const FALLBACK_VOICE = "onyx";
 const MODEL = "openai/gpt-4o-mini-tts";
-const SPEED = 1.08;
-const CACHE_VERSION = "v10-laughing-button-name-bhaiya";
-const SIGN_TTL = 60 * 60 * 24 * 365; // 1 year
+const SPEED = 1.15;
+const CACHE_VERSION = "v11-context-aware-smiling-bhaiya";
+const SIGN_TTL = 60 * 60 * 24 * 365;
 const TTS_INSTRUCTIONS =
-  "Speak ONLY in natural Dhakai/Bangladeshi Bangla (bn-BD). Persona: a real, VERY cheerful, smiling, excited young Bangladeshi bhaiya talking loudly and joyfully to a close friend. Start many lines with a tiny friendly smile-laugh when the text says 'হা হা'; make the laugh sound natural, short, human, and happy. Smile audibly through every sentence, use playful enthusiasm, warm excitement, lively ups-and-downs in pitch, and a louder confident voice. NEVER sound ghostly, soft, sleepy, flat, robotic, formal, news-reader, or announcement-style. When a control has a name, say that exact name, not generic phrases like 'এই বাটন' or 'ওই বাটন'. Keep lines short and conversational. Pronounce naturally: সাগতম = sa-go-tom, টাকা = taka, গুডডলার = good-dollar, ভেরিফাই = verify, জমা দিন = joma din, শাকখি = shakkhi.";
+  "Speak ONLY in natural Dhakai/Bangladeshi Bangla (bn-BD). Persona: a real, warm, smiling, joyful young Bangladeshi bhaiya guiding a close friend — like a helpful older brother, not a news anchor, not a robot. Always smile audibly, keep pitch lively with natural rise-and-fall, sound excited and encouraging. Voice must be clearly loud and confident, never soft, ghostly, sleepy, flat, or monotone. When the text names a specific button/label, say that exact wording — never replace with generic 'এই বাটন' / 'ওই বাটন'. Keep it short, conversational, human. Pronounce: স্বাগতম = shago-tom, সাক্ষী = shakkhi, গুডডলার = good-dollar, ভেরিফাই = ve-ri-fai, জমা দিন = joma din, UID = ইউ-আই-ডি.";
 
 export const Route = createFileRoute("/api/public/tour-audio")({
   server: {

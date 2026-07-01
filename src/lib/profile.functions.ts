@@ -61,3 +61,69 @@ export const claimMining = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true, balance };
   });
+
+// Public card viewer (no auth) — safe non-sensitive info only
+export const getPublicCardDetails = createServerFn({ method: "GET" })
+  .inputValidator((data: { uid: string }) => data)
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const raw = String(data.uid ?? "").trim();
+    if (!raw) throw new Error("UID লাগবে");
+
+    let profileRow: any = null;
+    if (/^[0-9a-f-]{32,}$/i.test(raw)) {
+      const { data: p } = await supabaseAdmin
+        .from("profiles")
+        .select("id,display_name,referral_code,avatar_url,created_at")
+        .eq("id", raw)
+        .maybeSingle();
+      profileRow = p;
+    } else {
+      const compact = raw.replace(/[^0-9a-f]/gi, "").toLowerCase();
+      const { data: rows } = await supabaseAdmin
+        .from("profiles")
+        .select("id,display_name,referral_code,avatar_url,created_at")
+        .limit(500);
+      profileRow = (rows ?? []).find((r: any) =>
+        String(r.id).replace(/-/g, "").toLowerCase().startsWith(compact),
+      );
+    }
+    if (!profileRow) throw new Error("কার্ড খুঁজে পাওয়া যায়নি");
+
+    const [{ data: mining }, { data: tasks }, { data: withdrawals }, { count: refCount }] =
+      await Promise.all([
+        supabaseAdmin.from("mining_state").select("accrued_amount,withdrawn_amount,is_active").eq("user_id", profileRow.id).maybeSingle(),
+        supabaseAdmin.from("tasks").select("status,whitelist_ok").eq("user_id", profileRow.id),
+        supabaseAdmin.from("withdrawals").select("amount,status").eq("user_id", profileRow.id).eq("status", "paid"),
+        supabaseAdmin.from("profiles").select("id", { count: "exact", head: true }).eq("referred_by", profileRow.referral_code),
+      ]);
+
+    let avatar_signed: string | null = null;
+    if (profileRow.avatar_url) {
+      const { data: signed } = await supabaseAdmin.storage.from("avatars").createSignedUrl(profileRow.avatar_url, 60 * 60);
+      avatar_signed = signed?.signedUrl ?? null;
+    }
+
+    const done = (tasks ?? []).filter((t: any) => t.status === "done" && (t.whitelist_ok ?? true)).length;
+    const totalWithdrawn = (withdrawals ?? []).reduce((s: number, w: any) => s + Number(w.amount ?? 0), 0);
+    const balance = Number(mining?.accrued_amount ?? 0) - Number(mining?.withdrawn_amount ?? 0);
+
+    return {
+      profile: {
+        id: profileRow.id,
+        display_name: profileRow.display_name,
+        referral_code: profileRow.referral_code,
+        created_at: profileRow.created_at,
+      },
+      avatar_signed,
+      stats: {
+        verified: done,
+        totalTasks: (tasks ?? []).length,
+        withdrawCount: (withdrawals ?? []).length,
+        totalWithdrawn,
+        referrals: refCount ?? 0,
+        balance,
+        mining_active: !!mining?.is_active,
+      },
+    };
+  });
