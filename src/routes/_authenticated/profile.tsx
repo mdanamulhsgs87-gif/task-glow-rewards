@@ -385,8 +385,21 @@ function drawRows(ctx: CanvasRenderingContext2D, x: number, y: number, rows: str
 }
 function drawStats(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, stats: string[][]) { const sw = (w - 24) / 3; stats.forEach(([k, v], i) => { roundRect(ctx, x + i * (sw + 12), y, sw, 86, 24, "rgba(255,255,255,0.72)"); ctx.fillStyle = "#64748b"; ctx.font = "800 21px sans-serif"; ctx.textAlign = "center"; ctx.fillText(k, x + i * (sw + 12) + sw / 2, y + 30); ctx.fillStyle = "#f59e0b"; ctx.font = "900 32px monospace"; ctx.fillText(v, x + i * (sw + 12) + sw / 2, y + 66); ctx.textAlign = "start"; }); }
 function wrapText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number) { const words = text.split(" "); let line = ""; for (const word of words) { const test = line + word + " "; if (ctx.measureText(test).width > maxWidth && line) { ctx.fillText(line, x, y); line = word + " "; y += lineHeight; } else line = test; } ctx.fillText(line, x, y); }
-function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number, fill: string | CanvasGradient) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.fillStyle = fill; ctx.fill(); }
-function roundStroke(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.stroke(); }
-function drawImageRounded(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, w: number, h: number, r: number) { ctx.save(); ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.clip(); ctx.drawImage(img, x, y, w, h); ctx.restore(); }
+function addRoundPath(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+  const rr = Math.min(r, w / 2, h / 2);
+  ctx.moveTo(x + rr, y);
+  ctx.lineTo(x + w - rr, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + rr);
+  ctx.lineTo(x + w, y + h - rr);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - rr, y + h);
+  ctx.lineTo(x + rr, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - rr);
+  ctx.lineTo(x, y + rr);
+  ctx.quadraticCurveTo(x, y, x + rr, y);
+  ctx.closePath();
+}
+function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number, fill: string | CanvasGradient) { ctx.beginPath(); addRoundPath(ctx, x, y, w, h, r); ctx.fillStyle = fill; ctx.fill(); }
+function roundStroke(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) { ctx.beginPath(); addRoundPath(ctx, x, y, w, h, r); ctx.stroke(); }
+function drawImageRounded(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, w: number, h: number, r: number) { ctx.save(); ctx.beginPath(); addRoundPath(ctx, x, y, w, h, r); ctx.clip(); ctx.drawImage(img, x, y, w, h); ctx.restore(); }
 function loadImage(src: string) { return new Promise<HTMLImageElement>((resolve, reject) => { const img = new Image(); img.onload = () => resolve(img); img.onerror = reject; img.src = src; }); }
 async function loadImageFromUrl(src: string) { const res = await fetch(src); const blob = await res.blob(); const url = URL.createObjectURL(blob); try { return await loadImage(url); } finally { setTimeout(() => URL.revokeObjectURL(url), 1000); } }
