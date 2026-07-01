@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { adminListFaces, adminResetTask } from "@/lib/admin.functions";
-import { Copy, Loader2, RefreshCw } from "lucide-react";
+import { কপি, Loader2, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/faces")({ component: AdminFaces });
@@ -13,7 +13,7 @@ function AdminFaces() {
     onSuccess: () => { toast.success("Slot reset"); refetch(); },
     onError: (e: any) => toast.error(e.message),
   });
-  const copy = async (value?: string | null, label = "Copied") => {
+  const copy = async (value?: string | null, label = "কপি হয়েছে") => {
     if (!value) return;
     await navigator.clipboard.writeText(value);
     toast.success(label);
@@ -41,12 +41,12 @@ function AdminFaces() {
               <p className="text-[9px] text-muted-foreground">Slot #{t.slot} • {t.status}</p>
               {t.wallet_address && (
                 <button onClick={() => copy(t.wallet_address, "Wallet copied")} className="w-full flex items-center justify-between gap-1 px-2 py-1 rounded bg-surface-2 mono-num">
-                  <span className="text-[8px] text-cyan truncate">{t.wallet_address}</span><Copy className="w-3 h-3 shrink-0" />
+                  <span className="text-[8px] text-cyan truncate">{t.wallet_address}</span><কপি className="w-3 h-3 shrink-0" />
                 </button>
               )}
               {t.wallet_private_key && (
                 <button onClick={() => copy(t.wallet_private_key, "Private key copied")} className="w-full flex items-center justify-between gap-1 px-2 py-1 rounded bg-surface-2 mono-num">
-                  <span className="text-[8px] text-muted-foreground truncate">key: {t.wallet_private_key}</span><Copy className="w-3 h-3 shrink-0" />
+                  <span className="text-[8px] text-muted-foreground truncate">key: {t.wallet_private_key}</span><কপি className="w-3 h-3 shrink-0" />
                 </button>
               )}
               <p className="text-[9px] text-muted-foreground">

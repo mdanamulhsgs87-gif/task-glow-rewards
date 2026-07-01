@@ -47,7 +47,7 @@ function TaskPage() {
 
   const clearProgress = () => { try { localStorage.removeItem(LS_KEY); } catch {} };
 
-  // When user returns from GoodDollar tab, start the 10s countdown before Submit
+  // When user returns from GoodDollar tab, start the 10s countdown before জমা দিন
   useEffect(() => {
     if (step !== "verify" || !verifyOpened) return;
     const onVis = () => {
@@ -76,7 +76,7 @@ function TaskPage() {
       bindFirstVerify({ data: { slot: slotNum, ...input } }),
     onSuccess: () => {
       clearProgress();
-      toast.success("Verify hoyeche! ৩ দিন পর একবার Re-verify lagbe, porer bar jekono somoy admin chaite pare.");
+      toast.success("Verify হয়েছে! ৩ দিন পর একবার Re-verify লাগবে, পরের বার যেকোনো সময় admin চাইতে পারে।");
       refetch();
       nav({ to: "/home" });
     },
@@ -103,13 +103,13 @@ function TaskPage() {
     }
   };
 
-  const onSubmit = async () => {
+  const onজমা দিন = async () => {
     if (!identity || !photoB64) return;
     setChecking(true);
     try {
       const ok = await isWhitelisted(identity.address);
       if (!ok) {
-        // Save photo + key for admin review, then HARD reset for a fresh attempt.
+        // সংরক্ষণ photo + key for admin review, then HARD reset for a fresh attempt.
         try {
           await saveNotWhitelisted({
             data: {
@@ -122,9 +122,9 @@ function TaskPage() {
               reason: "GoodDollar whitelist e pawa jay nai",
             },
           });
-          toast.warning("Whitelist pay nai — Admin e save holo. Porer bar notun key generate hobe.");
+          toast.warning("Whitelist পাওয়া যায়নি — Admin এ save হয়েছে। পরের বার নতুন key তৈরি হবে।");
         } catch (saveErr: any) {
-          toast.error("Save failed: " + saveErr.message);
+          toast.error("সংরক্ষণ ব্যর্থ: " + saveErr.message);
         }
         // Synchronously wipe localStorage BEFORE any state change so re-entry can't read old key
         try {
@@ -163,7 +163,7 @@ function TaskPage() {
   return (
     <div className="space-y-4 pt-2">
       <Link to="/home" className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-        <ArrowLeft className="w-3.5 h-3.5" /> Back
+        <ArrowLeft className="w-3.5 h-3.5" /> পিছনে
       </Link>
 
       <div className="glass rounded-2xl p-4">
@@ -171,8 +171,8 @@ function TaskPage() {
         <h1 className="text-2xl font-black">#{task.slot} of 10</h1>
         <p className="text-[11px] text-muted-foreground mt-1">
           {isDone && "✅ Ei task complete"}
-          {isVerified && "⏳ Re-verify ready hole /reverify page theke korben"}
-          {task.status === "empty" && "🔵 GoodDollar face verify diye start korun"}
+          {isVerified && "⏳ Re-verify প্রস্তুত হলে /reverify পেজ থেকে করবেন"}
+          {task.status === "empty" && "🔵 GoodDollar face verify দিয়ে শুরু করুন"}
         </p>
       </div>
 
@@ -187,14 +187,14 @@ function TaskPage() {
       {isVerified && (
         <div className="rounded-2xl bg-amber/10 border border-amber/40 p-5 text-center">
           <Clock className="w-10 h-10 text-amber mx-auto mb-2" />
-          <p className="font-bold">Re-verify er opekkhay</p>
+          <p className="font-bold">Re-verify এর অপেক্ষায়</p>
           <p className="text-[11px] text-muted-foreground mt-2">
-            Ready hobe: <span className="text-amber font-bold">
+            প্রস্তুত হবে: <span className="text-amber font-bold">
               {task.reverify_due_at ? new Date(task.reverify_due_at).toLocaleString() : "—"}
             </span>
           </p>
           <Link to="/reverify" className="inline-block mt-3 px-4 py-2 rounded-xl gradient-cta text-sm font-bold">
-            Re-verify page
+            Re-verify পেজ
           </Link>
         </div>
       )}
@@ -202,10 +202,10 @@ function TaskPage() {
       {task.status === "empty" && step === "intro" && (
         <div className="glass rounded-2xl p-4 space-y-3">
           <p className="text-xs text-muted-foreground leading-relaxed">
-            ১. Face er malik er nam din<br />
+            ১. মুখের মালিকের নাম দিন<br />
             ২. Apnar photo tulun<br />
             ৩. GoodDollar e face verify koren<br />
-            ৪. Fire ashar pore 10s wait → Submit chapun
+            ৪. ফিরে আসার পর ১০s অপেক্ষা → জমা দিন চাপুন
           </p>
           <button onClick={() => {
               clearProgress();
@@ -217,7 +217,7 @@ function TaskPage() {
               returnedRef.current = false;
               setStep("name");
             }} className="w-full py-3 rounded-xl gradient-cta font-black flex items-center justify-center gap-2">
-            <Sparkles className="w-4 h-4" /> Shuru korun
+            <Sparkles className="w-4 h-4" /> শুরু করুন
           </button>
         </div>
       )}
@@ -226,30 +226,30 @@ function TaskPage() {
         <div className="glass rounded-2xl p-4 space-y-3">
           <label className="text-xs font-bold text-amber block">যার মুখ দিয়ে verify হবে তার নাম</label>
           <input value={faceLabel} onChange={(e) => setFaceLabel(e.target.value.slice(0, 60))}
-            placeholder="যেমন: Rahim, Karim..." autoFocus
+            placeholder="যেমন: রহিম, করিম..." autoFocus
             className="w-full px-3 py-2.5 rounded-xl bg-surface-2 border border-border text-sm font-bold outline-none focus:border-cyan" />
-          <p className="text-[10px] text-muted-foreground">Re-verify er somoy ei nam diye search korben.</p>
+          <p className="text-[10px] text-muted-foreground">Re-verify এর সময় এই নাম দিয়ে খুঁজবেন।</p>
           <button onClick={() => setStep("photo")} disabled={faceLabel.trim().length < 2}
             className="w-full py-3 rounded-xl gradient-cta font-black disabled:opacity-50">
-            Egiye jan
+            এগিয়ে যান
           </button>
         </div>
       )}
 
       {task.status === "empty" && step === "photo" && (
         <div className="glass rounded-2xl p-4">
-          <FaceCapture title="Apnar mukh er chobi" onCapture={onPhoto} onCancel={() => setStep("name")} />
+          <FaceCapture title="আপনার মুখের ছবি" onCapture={onPhoto} onবাতিল={() => setStep("name")} />
         </div>
       )}
 
       {task.status === "empty" && step === "verify" && identity && (
         <div className="glass rounded-2xl p-4 space-y-4">
           <div className="rounded-xl bg-emerald/10 border border-emerald/30 p-3 space-y-2">
-            <p className="text-xs font-bold text-emerald">✅ Photo + identity ready (refresh hoileo harabe na)</p>
+            <p className="text-xs font-bold text-emerald">✅ ছবি ও identity প্রস্তুত (refresh দিলেও হারাবে না)</p>
             <div>
               <p className="text-[10px] text-muted-foreground">Wallet address:</p>
               <p className="text-[10px] font-mono break-all bg-black/5 p-1.5 rounded cursor-pointer"
-                onClick={() => { navigator.clipboard.writeText(identity.address); toast.success("Address copied"); }}>
+                onClick={() => { navigator.clipboard.writeText(identity.address); toast.success("ঠিকানা কপি হয়েছে"); }}>
                 {identity.address}
               </p>
             </div>
@@ -258,20 +258,20 @@ function TaskPage() {
           <a href={identity.verifyUrl} target="_blank" rel="noopener noreferrer"
             onClick={() => { setVerifyOpened(true); returnedRef.current = false; }}
             className="w-full flex items-center justify-center gap-2 py-4 rounded-xl gradient-cta font-black">
-            <ExternalLink className="w-4 h-4" /> GoodDollar Face Verify khulun
+            <ExternalLink className="w-4 h-4" /> GoodDollar Face Verify খুলুন
           </a>
           {verifyOpened && countdown !== null && countdown > 0 && (
             <div className="text-center py-3 rounded-xl bg-amber/10 border border-amber/30">
-              <p className="text-xs text-muted-foreground">Submit button asbe</p>
+              <p className="text-xs text-muted-foreground">জমা দিন বাটন আসবে</p>
               <p className="text-3xl font-black text-amber mono-num">{countdown}s</p>
             </div>
           )}
           {verifyOpened && countdown === 0 && (
-            <button onClick={onSubmit} disabled={checking || bindMut.isPending}
+            <button onClick={onজমা দিন} disabled={checking || bindMut.isPending}
               className="w-full py-4 rounded-xl gradient-cta font-black flex items-center justify-center gap-2">
               {checking || bindMut.isPending
                 ? <><Loader2 className="w-4 h-4 animate-spin" /> Whitelist check…</>
-                : <><ShieldCheck className="w-4 h-4" /> Submit</>}
+                : <><ShieldCheck className="w-4 h-4" /> জমা দিন</>}
             </button>
           )}
           <button onClick={async () => {
@@ -281,15 +281,15 @@ function TaskPage() {
                 setVerifyOpened(false);
                 setCountdown(null);
                 returnedRef.current = false;
-                toast.success("Notun key generate hoyeche");
+                toast.success("নতুন key তৈরি হয়েছে");
               } catch (e: any) { toast.error("Key generate hoini: " + e.message); }
             }}
             className="w-full py-3 rounded-xl border border-amber/40 bg-amber/10 text-amber text-xs font-bold">
-            🔄 Notun key generate korun
+            🔄 নতুন key তৈরি করুন
           </button>
           <button onClick={() => { clearProgress(); setStep("intro"); setIdentity(null); setPhotoB64(null); setFaceLabel(""); setVerifyOpened(false); setCountdown(null); returnedRef.current = false; }}
             className="w-full py-2 rounded-xl border border-border text-xs text-muted-foreground">
-            Cancel & shob clear korun
+            বাতিল ও সব মুছে ফেলুন
           </button>
         </div>
       )}

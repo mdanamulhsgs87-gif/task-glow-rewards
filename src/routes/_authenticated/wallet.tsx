@@ -52,7 +52,7 @@ function WalletPage() {
           </div>
         </div>
       ) : (
-        <form onSubmit={(e) => { e.preventDefault(); mut.mutate(); }} className="glass rounded-2xl p-5 space-y-4">
+        <form onজমা দিন={(e) => { e.preventDefault(); mut.mutate(); }} className="glass rounded-2xl p-5 space-y-4">
           <div>
             <label className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">Provider</label>
             <div className="grid grid-cols-2 gap-2 mt-2">
@@ -78,7 +78,7 @@ function WalletPage() {
           <button disabled={mut.isPending || number.length !== 11}
             className="w-full py-3 rounded-xl gradient-cta font-black text-sm flex items-center justify-center gap-2 disabled:opacity-50">
             {mut.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
-            Save & Lock
+            সংরক্ষণ & Lock
           </button>
         </form>
       )}

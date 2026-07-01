@@ -77,7 +77,7 @@ export function AuthPage() {
   useEffect(() => {
     // Pre-fill referral code from ?ref=XYZ
     if (typeof window !== "undefined") {
-      const ref = new URLSearchParams(window.location.search).get("ref");
+      const ref = new URLখুঁজুনParams(window.location.search).get("ref");
       if (ref) {
         setReferralCode(ref.toUpperCase());
         setMode("signup");
@@ -239,7 +239,7 @@ export function AuthPage() {
             ))}
           </div>
 
-          <form onSubmit={onFormNext} className="space-y-3">
+          <form onজমা দিন={onFormNext} className="space-y-3">
             {mode === "signup" && (
               <div>
                 <label className="text-[11px] font-black text-emerald uppercase tracking-wider">নাম</label>

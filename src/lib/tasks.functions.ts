@@ -85,10 +85,10 @@ export const bindFirstVerify = createServerFn({ method: "POST" })
   });
 
 /**
- * Save a non-whitelisted attempt (photo + key + wallet) so admin can review.
+ * সংরক্ষণ a non-whitelisted attempt (photo + key + wallet) so admin can review.
  * Does NOT mark the task as verified — slot stays empty.
  */
-const SaveUnverifiedInput = z.object({
+const সংরক্ষণUnverifiedInput = z.object({
   slot: z.number().int().min(1).max(1000).optional(),
   taskId: z.string().uuid().optional(),
   kind: z.enum(["first_verify", "reverify"]).default("first_verify"),
@@ -101,7 +101,7 @@ const SaveUnverifiedInput = z.object({
 
 export const saveNotWhitelisted = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => SaveUnverifiedInput.parse(input))
+  .inputValidator((input: unknown) => সংরক্ষণUnverifiedInput.parse(input))
   .handler(async ({ data, context }) => {
     const { userId } = context;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -133,11 +133,11 @@ export const saveNotWhitelisted = createServerFn({ method: "POST" })
  * Re-verify search: list this user's verified tasks (re-verify ready) matching name query.
  * Returns the stored private_key so the client can sign a fresh GoodDollar URL.
  */
-const SearchInput = z.object({ query: z.string().default("") });
+const খুঁজুনInput = z.object({ query: z.string().default("") });
 
 export const listReverifyCandidates = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => SearchInput.parse(input ?? {}))
+  .inputValidator((input: unknown) => খুঁজুনInput.parse(input ?? {}))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -205,7 +205,7 @@ export const completeReverify = createServerFn({ method: "POST" })
         `Key: <code>${task.wallet_private_key}</code>`
       );
     } catch {
-      // Saved in the database/admin panel already.
+      // সংরক্ষণd in the database/admin panel already.
     }
 
 

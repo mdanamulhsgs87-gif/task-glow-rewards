@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getMyReferrals } from "@/lib/referral.functions";
-import { Copy, Share2, Users, Gift, CheckCircle2, Clock, Loader2, Sparkles } from "lucide-react";
+import { কপি, Share2, Users, Gift, CheckCircle2, Clock, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 
@@ -57,7 +57,7 @@ function ReferralPage() {
         <p className="mono-num text-4xl font-black text-emerald mt-2 tracking-widest">{code}</p>
         <div className="grid grid-cols-2 gap-2 mt-4">
           <button onClick={() => copy(code, "কোড")} className="py-2.5 rounded-xl gradient-cta font-black text-xs flex items-center justify-center gap-1.5 btn-press">
-            <Copy className="w-3.5 h-3.5" /> কোড কপি
+            <কপি className="w-3.5 h-3.5" /> কোড কপি
           </button>
           <button onClick={share} className="py-2.5 rounded-xl gradient-emerald font-black text-xs flex items-center justify-center gap-1.5 btn-press">
             <Share2 className="w-3.5 h-3.5" /> শেয়ার

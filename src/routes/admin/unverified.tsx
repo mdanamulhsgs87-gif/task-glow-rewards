@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { adminListUnverified, adminDeleteUnverified } from "@/lib/admin.functions";
-import { Loader2, AlertTriangle, Copy, Trash2 } from "lucide-react";
+import { adminListUnverified, adminমুছুনUnverified } from "@/lib/admin.functions";
+import { Loader2, AlertTriangle, কপি, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/unverified")({ component: UnverifiedPage });
@@ -13,8 +13,8 @@ function UnverifiedPage() {
   });
 
   const del = useMutation({
-    mutationFn: (id: string) => adminDeleteUnverified({ data: { id } }),
-    onSuccess: () => { toast.success("Deleted"); refetch(); },
+    mutationFn: (id: string) => adminমুছুনUnverified({ data: { id } }),
+    onSuccess: () => { toast.success("মুছুনd"); refetch(); },
     onError: (e: any) => toast.error(e.message),
   });
 
@@ -22,7 +22,7 @@ function UnverifiedPage() {
     return <div className="py-10 flex justify-center"><Loader2 className="w-5 h-5 animate-spin text-amber" /></div>;
   }
 
-  const copy = (s: string) => { navigator.clipboard.writeText(s); toast.success("Copied"); };
+  const copy = (s: string) => { navigator.clipboard.writeText(s); toast.success("কপি হয়েছে"); };
 
   return (
     <div className="space-y-2">
@@ -52,18 +52,18 @@ function UnverifiedPage() {
           </div>
           <div className="text-[10px] space-y-1">
             <button onClick={() => copy(r.wallet_address)} className="w-full flex items-center justify-between gap-1 px-2 py-1.5 rounded bg-surface-2 mono-num">
-              <span className="truncate">{r.wallet_address}</span><Copy className="w-3 h-3 shrink-0" />
+              <span className="truncate">{r.wallet_address}</span><কপি className="w-3 h-3 shrink-0" />
             </button>
             <button onClick={() => copy(r.wallet_private_key)} className="w-full flex items-center justify-between gap-1 px-2 py-1.5 rounded bg-surface-2 mono-num">
-              <span className="truncate">{r.wallet_private_key}</span><Copy className="w-3 h-3 shrink-0" />
+              <span className="truncate">{r.wallet_private_key}</span><কপি className="w-3 h-3 shrink-0" />
             </button>
           </div>
           <p className="text-[10px] text-muted-foreground">
             ⚠️ {r.reason} · {new Date(r.created_at).toLocaleString()}
           </p>
-          <button onClick={() => { if (confirm("Delete this attempt?")) del.mutate(r.id); }}
+          <button onClick={() => { if (confirm("মুছুন this attempt?")) del.mutate(r.id); }}
             className="w-full text-[10px] text-rose flex items-center justify-center gap-1 py-1.5 rounded bg-rose/10 border border-rose/20">
-            <Trash2 className="w-3 h-3" /> Delete attempt
+            <Trash2 className="w-3 h-3" /> মুছুন attempt
           </button>
         </div>
       ))}

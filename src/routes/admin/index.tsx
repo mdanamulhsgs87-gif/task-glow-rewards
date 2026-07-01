@@ -53,7 +53,7 @@ function AdminDashboard() {
       {/* Mini quick links grid */}
       <div className="grid grid-cols-2 gap-3">
         <QuickCard to="/admin/users" icon={<Users className="w-5 h-5" />} value={stats.users} label="Users" accent="cyan" />
-        <QuickCard to="/admin/faces" icon={<ScanFace className="w-5 h-5" />} value={stats.tasks.done + stats.tasks.verified} label="Saved Faces" accent="violet" />
+        <QuickCard to="/admin/faces" icon={<ScanFace className="w-5 h-5" />} value={stats.tasks.done + stats.tasks.verified} label="সংরক্ষণd Faces" accent="violet" />
         <QuickCard to="/admin/reverify" icon={<Clock className="w-5 h-5" />} value={stats.tasks.verified} label="Re-verify queue" accent="amber" />
         <QuickCard to="/admin/unverified" icon={<AlertTriangle className="w-5 h-5" />} value={stats.unverifiedCount} label="Not whitelisted" accent="rose" />
         <QuickCard to="/admin/wallets" icon={<Wallet className="w-5 h-5" />} value={stats.wallets} label="Wallets bound" accent="emerald" />

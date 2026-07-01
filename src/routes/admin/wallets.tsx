@@ -1,14 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { adminListWallets } from "@/lib/admin.functions";
-import { Loader2, Copy, Wallet } from "lucide-react";
+import { Loader2, কপি, Wallet } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/wallets")({ component: AdminWallets });
 
 function AdminWallets() {
   const { data, isLoading } = useQuery({ queryKey: ["admin-wallets"], queryFn: () => adminListWallets() });
-  const copy = (s: string) => { navigator.clipboard.writeText(s); toast.success("Copied"); };
+  const copy = (s: string) => { navigator.clipboard.writeText(s); toast.success("কপি হয়েছে"); };
   if (isLoading) return <div className="py-10 flex justify-center"><Loader2 className="w-5 h-5 animate-spin text-cyan" /></div>;
 
   return (
@@ -32,7 +32,7 @@ function AdminWallets() {
             <p className="mono-num font-black text-sm">{w.number}</p>
             <p className="text-[9px] uppercase font-bold text-amber">{w.provider}</p>
           </div>
-          <Copy className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+          <কপি className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
         </button>
       ))}
       {(data ?? []).length === 0 && <p className="text-center text-xs text-muted-foreground py-10">No wallets set yet</p>}
