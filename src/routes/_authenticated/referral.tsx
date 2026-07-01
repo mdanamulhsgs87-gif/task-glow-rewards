@@ -4,6 +4,8 @@ import { getMyReferrals } from "@/lib/referral.functions";
 import { Copy, Share2, Users, Gift, CheckCircle2, Clock, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
+import { PageVoice } from "@/components/PageVoice";
+
 
 export const Route = createFileRoute("/_authenticated/referral")({
   ssr: false,
@@ -65,7 +67,9 @@ function ReferralPage() {
 
   return (
     <div className="space-y-5 pt-2 pb-6">
+      <PageVoice pageId="referral" steps={["referral.intro","referral.bonus"]} />
       <div className="text-center">
+
         <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl gradient-emerald mb-2 float-anim">
           <Gift className="w-7 h-7 text-white" />
         </div>

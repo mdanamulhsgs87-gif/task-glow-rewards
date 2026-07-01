@@ -5,6 +5,8 @@ import { setWallet } from "@/lib/wallet.functions";
 import { useState } from "react";
 import { Wallet, ShieldCheck, Loader2, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
+import { PageVoice } from "@/components/PageVoice";
+
 
 export const Route = createFileRoute("/_authenticated/wallet")({ component: WalletPage });
 
@@ -24,6 +26,8 @@ function WalletPage() {
 
   return (
     <div className="space-y-4 pt-2">
+      <PageVoice pageId="wallet" steps={["wallet.intro","wallet.provider","wallet.number","wallet.save"]} />
+
       <div className="text-center">
         <Wallet className="w-8 h-8 text-cyan mx-auto" />
         <h1 className="text-xl font-black mt-1">ওয়ালেট</h1>

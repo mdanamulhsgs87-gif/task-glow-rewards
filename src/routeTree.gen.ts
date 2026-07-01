@@ -29,6 +29,7 @@ import { Route as AuthenticatedReferralRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as ApiPublicWhitelistRecheckRouteImport } from './routes/api/public/whitelist-recheck'
+import { Route as ApiPublicTourAudioRouteImport } from './routes/api/public/tour-audio'
 import { Route as AdminUserUserIdRouteImport } from './routes/admin/user.$userId'
 import { Route as AuthenticatedTaskSlotRouteImport } from './routes/_authenticated/task.$slot'
 
@@ -132,6 +133,11 @@ const ApiPublicWhitelistRecheckRoute =
     path: '/api/public/whitelist-recheck',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicTourAudioRoute = ApiPublicTourAudioRouteImport.update({
+  id: '/api/public/tour-audio',
+  path: '/api/public/tour-audio',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminUserUserIdRoute = AdminUserUserIdRouteImport.update({
   id: '/user/$userId',
   path: '/user/$userId',
@@ -164,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/task/$slot': typeof AuthenticatedTaskSlotRoute
   '/admin/user/$userId': typeof AdminUserUserIdRoute
+  '/api/public/tour-audio': typeof ApiPublicTourAudioRoute
   '/api/public/whitelist-recheck': typeof ApiPublicWhitelistRecheckRoute
 }
 export interface FileRoutesByTo {
@@ -186,6 +193,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/task/$slot': typeof AuthenticatedTaskSlotRoute
   '/admin/user/$userId': typeof AdminUserUserIdRoute
+  '/api/public/tour-audio': typeof ApiPublicTourAudioRoute
   '/api/public/whitelist-recheck': typeof ApiPublicWhitelistRecheckRoute
 }
 export interface FileRoutesById {
@@ -211,6 +219,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/_authenticated/task/$slot': typeof AuthenticatedTaskSlotRoute
   '/admin/user/$userId': typeof AdminUserUserIdRoute
+  '/api/public/tour-audio': typeof ApiPublicTourAudioRoute
   '/api/public/whitelist-recheck': typeof ApiPublicWhitelistRecheckRoute
 }
 export interface FileRouteTypes {
@@ -236,6 +245,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/task/$slot'
     | '/admin/user/$userId'
+    | '/api/public/tour-audio'
     | '/api/public/whitelist-recheck'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -258,6 +268,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/task/$slot'
     | '/admin/user/$userId'
+    | '/api/public/tour-audio'
     | '/api/public/whitelist-recheck'
   id:
     | '__root__'
@@ -282,6 +293,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/_authenticated/task/$slot'
     | '/admin/user/$userId'
+    | '/api/public/tour-audio'
     | '/api/public/whitelist-recheck'
   fileRoutesById: FileRoutesById
 }
@@ -291,6 +303,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   AdminLoginRoute: typeof AdminLoginRoute
   AuthRoute: typeof AuthRoute
+  ApiPublicTourAudioRoute: typeof ApiPublicTourAudioRoute
   ApiPublicWhitelistRecheckRoute: typeof ApiPublicWhitelistRecheckRoute
 }
 
@@ -436,6 +449,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWhitelistRecheckRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/tour-audio': {
+      id: '/api/public/tour-audio'
+      path: '/api/public/tour-audio'
+      fullPath: '/api/public/tour-audio'
+      preLoaderRoute: typeof ApiPublicTourAudioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/user/$userId': {
       id: '/admin/user/$userId'
       path: '/user/$userId'
@@ -508,6 +528,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   AdminLoginRoute: AdminLoginRoute,
   AuthRoute: AuthRoute,
+  ApiPublicTourAudioRoute: ApiPublicTourAudioRoute,
   ApiPublicWhitelistRecheckRoute: ApiPublicWhitelistRecheckRoute,
 }
 export const routeTree = rootRouteImport

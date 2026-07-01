@@ -7,6 +7,8 @@ import { MiningCounter } from "@/components/MiningCounter";
 import { CheckCircle2, Camera, Lock, Sparkles, Loader2, X, Plus, Crown, Users, Heart, ShieldCheck } from "lucide-react";
 import { AnnouncementTicker } from "@/components/AnnouncementTicker";
 import { TourReplayButton } from "@/components/GuidedTour";
+import { PageVoice } from "@/components/PageVoice";
+
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/home")({ component: HomePage });
@@ -43,7 +45,9 @@ function HomePage() {
 
   return (
     <div className="space-y-3 pt-2 pb-6">
+      <PageVoice pageId="home" steps={["home.welcome","home.mining","home.claim","home.main","home.witness","home.tap.slot"]} />
       <AnnouncementTicker />
+
 
       <div className="text-center">
         <p className="text-[11px] text-muted-foreground">স্বাগতম,</p>
