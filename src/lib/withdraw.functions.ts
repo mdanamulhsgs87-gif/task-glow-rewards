@@ -25,7 +25,7 @@ export const requestWithdraw = createServerFn({ method: "POST" })
     if (!wallet) throw new Error("আগে ওয়ালেট নম্বর সেট করুন");
 
     const { data: mining } = await supabase.from("mining_state").select("*").eq("user_id", userId).maybeSingle();
-    if (!mining || !mining.is_active) throw new Error("মাইনিং সক্রিয় নয় — ১০টি টাস্ক সম্পূর্ণ করুন");
+    if (!mining) throw new Error("ব্যালেন্স পাওয়া যায়নি");
 
     const balance = computeLiveBalance({
       accrued: Number(mining.accrued_amount),

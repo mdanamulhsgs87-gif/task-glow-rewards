@@ -67,11 +67,11 @@ function WithdrawPage() {
         <Link to="/wallet" className="block rounded-2xl border border-amber/40 bg-amber/10 p-4 text-center">
           <p className="text-sm font-bold text-amber">প্রথমে ওয়ালেট সেট করুন</p>
         </Link>
-      ) : !mining?.is_active ? (
+      ) : claimable < MIN_WITHDRAW_BDT ? (
         <div className="rounded-2xl border border-rose/30 bg-rose/10 p-4 text-center">
           <Lock className="w-6 h-6 text-rose mx-auto mb-1" />
-          <p className="text-sm font-bold text-rose">মাইনিং এখনও চালু হয়নি</p>
-          <p className="text-[11px] text-muted-foreground mt-1">১০/১০ টাস্ক সম্পূর্ণ করলে উইথড্র করা যাবে</p>
+          <p className="text-sm font-bold text-rose">পর্যাপ্ত ব্যালেন্স নেই</p>
+          <p className="text-[11px] text-muted-foreground mt-1">সর্বনিম্ন {MIN_WITHDRAW_BDT}৳ ক্লেইমযোগ্য হলে উইথড্র করা যাবে</p>
         </div>
       ) : (
         <form onSubmit={(e) => { e.preventDefault(); mut.mutate(); }} className="glass rounded-2xl p-5 space-y-4">
