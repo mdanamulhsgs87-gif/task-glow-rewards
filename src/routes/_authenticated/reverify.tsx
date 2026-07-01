@@ -71,6 +71,10 @@ function ReverifyPage() {
     }
   }, [step, opened, countdown]);
 
+  useEffect(() => {
+    if (step === "photo") playVoiceAuto("reverify.photo");
+  }, [step]);
+
   const onSelect = async (cand: any) => {
     setSelected(cand);
     try {
@@ -198,7 +202,7 @@ function ReverifyPage() {
       {step === "photo" && selected && (
         <div className="glass rounded-2xl p-4 space-y-2">
           <p className="text-xs text-emerald font-bold text-center">✅ Whitelist নিশ্চিত হয়েছে — নতুন ছবি তুলুন</p>
-          <FaceCapture title="নতুন ছবি" onCapture={onNewPhoto} readyVoice="reverify.photo"
+          <FaceCapture title="নতুন ছবি" onCapture={onNewPhoto}
             onCancel={() => setStep("verify")} isUploading={completeMut.isPending} />
         </div>
       )}
