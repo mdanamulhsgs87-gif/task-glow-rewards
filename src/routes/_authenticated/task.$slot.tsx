@@ -273,7 +273,7 @@ function TaskPage() {
             <button onClick={onSubmit} disabled={checking || bindMut.isPending}
               className="w-full py-4 rounded-xl gradient-cta font-black flex items-center justify-center gap-2">
               {checking || bindMut.isPending
-                ? <><Loader2 className="w-4 h-4 animate-spin" /> Whitelist যাচাই হচ্ছে…</>
+                ? <><Loader2 className="w-4 h-4 animate-spin" /> হোয়াইটলিস্ট যাচাই হচ্ছে…</>
                 : <><ShieldCheck className="w-4 h-4" /> জমা দিন</>}
             </button>
           )}
