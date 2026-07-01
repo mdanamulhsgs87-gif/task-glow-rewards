@@ -1,14 +1,27 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { Camera, X, Loader2, Scan, AlertTriangle } from "lucide-react";
+import type { NarrationKey } from "@/lib/narrations";
+import { playVoiceAuto } from "@/lib/voice-guide";
 
 type FaceCaptureProps = {
   onCapture: (photoBase64: string) => void;
   onCancel: () => void;
   isUploading?: boolean;
   title?: string;
+  readyVoice?: NarrationKey;
+  retryVoice?: NarrationKey;
+  cancelVoice?: NarrationKey;
 };
 
-export function FaceCapture({ onCapture, onCancel, isUploading, title }: FaceCaptureProps) {
+export function FaceCapture({
+  onCapture,
+  onCancel,
+  isUploading,
+  title,
+  readyVoice = "task.photo.submit",
+  retryVoice = "task.photo.retry",
+  cancelVoice = "common.cancel",
+}: FaceCaptureProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -112,6 +125,10 @@ export function FaceCapture({ onCapture, onCancel, isUploading, title }: FaceCap
     return () => stopCamera();
   }, [startCamera, stopCamera]);
 
+  useEffect(() => {
+    if (capturedImage) playVoiceAuto(readyVoice);
+  }, [capturedImage, readyVoice]);
+
   const submit = () => {
     if (!capturedImage) return;
     const base64 = capturedImage.split(",")[1];
@@ -132,8 +149,10 @@ export function FaceCapture({ onCapture, onCancel, isUploading, title }: FaceCap
           <div className="flex gap-2">
             <button onClick={() => { setCapturedImage(null); startCamera(); }}
               disabled={isUploading}
+              data-voice={retryVoice}
               className="flex-1 py-2 rounded-xl bg-surface-2 text-xs font-bold">Retry</button>
             <button onClick={submit} disabled={isUploading}
+              data-voice={readyVoice}
               className="flex-1 py-2 rounded-xl gradient-cta text-xs font-black flex items-center justify-center gap-1">
               {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Scan className="w-4 h-4" />}
               জমা দিন
@@ -157,7 +176,7 @@ export function FaceCapture({ onCapture, onCancel, isUploading, title }: FaceCap
         </div>
       )}
       <canvas ref={canvasRef} className="hidden" />
-      <button onClick={onCancel}
+      <button onClick={onCancel} data-voice={cancelVoice}
         className="w-full py-2 rounded-xl border border-border text-xs text-muted-foreground flex items-center justify-center gap-1">
         <X className="w-3 h-3" /> বাতিল
       </button>
