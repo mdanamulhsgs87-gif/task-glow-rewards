@@ -98,7 +98,9 @@ function ReverifyPage() {
 
   return (
     <div className="space-y-4 pt-2">
+      <PageVoice pageId="reverify" steps={["reverify.intro","reverify.search","reverify.button"]} />
       <Link to="/home"
+
         className="inline-flex items-center gap-2 px-4 py-2 rounded-full gradient-cta text-white text-sm font-black shadow-lg btn-press">
         <ArrowLeft className="w-4 h-4" /> পিছনে যান
       </Link>
