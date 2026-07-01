@@ -5,20 +5,8 @@
 // rate drops to the new effective_task_count.
 import { createFileRoute } from "@tanstack/react-router";
 
-const CELO_RPC = "https://forno.celo.org";
-const GD_IDENTITY_ADDRESS = "0xC361A6E67822a0EDc17D899227dd9FC50BD62F42";
-const GD_IDENTITY_ABI = ["function isWhitelisted(address account) view returns (bool)"];
+import { isWhitelistedRPC } from "@/lib/celo-whitelist";
 
-async function isWhitelistedServer(addr: string): Promise<boolean> {
-  try {
-    const { ethers } = await import("ethers");
-    const provider = new ethers.JsonRpcProvider(CELO_RPC);
-    const c = new ethers.Contract(GD_IDENTITY_ADDRESS, GD_IDENTITY_ABI, provider);
-    return await c.isWhitelisted(addr);
-  } catch {
-    return false;
-  }
-}
 
 export const Route = createFileRoute("/api/public/whitelist-recheck")({
   server: {
