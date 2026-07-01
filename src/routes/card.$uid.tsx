@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getPublicCardDetails } from "@/lib/profile.functions";
 import { QrCode } from "@/components/QrCode";
-import { User, Sparkles, ShieldCheck, Wallet, Users, TrendingUp } from "lucide-react";
+import { User, Sparkles, ShieldCheck, Wallet, Users, TrendingUp, MapPin, IdCard } from "lucide-react";
 
 export const Route = createFileRoute("/card/$uid")({ component: PublicCardPage });
 
@@ -28,36 +28,58 @@ function PublicCardPage() {
 
   return (
     <div className="min-h-screen p-4 flex items-center justify-center"
-         style={{ background: "linear-gradient(135deg,#0f0c29,#302b63,#24243e)" }}>
+         style={{ background: "radial-gradient(circle at top left,#ffe4f0,transparent 36%), radial-gradient(circle at top right,#dff9ff,transparent 34%), linear-gradient(135deg,#fff7ed,#f8fafc,#f0fdf4)" }}>
       <div className="w-full max-w-md space-y-4">
-        <div className="relative rounded-3xl p-5 text-white overflow-hidden shadow-2xl"
-          style={{ background: "linear-gradient(135deg,#ff6b6b 0%,#f59e0b 25%,#10b981 55%,#06b6d4 78%,#8b5cf6 100%)" }}>
-          <div className="absolute inset-0 opacity-25 pointer-events-none"
-            style={{ background: "repeating-linear-gradient(45deg, rgba(255,255,255,0.18) 0 2px, transparent 2px 14px)" }} />
+        <div className="relative rounded-3xl p-5 text-slate-950 overflow-hidden shadow-2xl border-4 border-rose-300"
+          style={{ background: "radial-gradient(circle at 10% 0%,rgba(255,209,102,.75),transparent 30%),radial-gradient(circle at 100% 0%,rgba(6,182,212,.38),transparent 34%),linear-gradient(135deg,#fff7ed 0%,#ffe4f0 35%,#e0f7ff 72%,#eafff4 100%)" }}>
+          <div className="absolute inset-0 opacity-30 pointer-events-none"
+            style={{ background: "repeating-linear-gradient(45deg, rgba(255,255,255,0.55) 0 2px, transparent 2px 14px)" }} />
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none" style={{ transform: "rotate(-18deg)", color: "rgba(15,23,42,.055)", fontSize: 58, fontWeight: 1000, letterSpacing: ".08em", whiteSpace: "nowrap" }}>GOOD-APP OFFICIAL</div>
           <div className="relative flex items-start justify-between">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.3em] font-black">good-app · Official</p>
-              <p className="text-[11px] mt-0.5 font-bold">সদস্য পরিচয়পত্র (পাবলিক)</p>
+              <p className="text-[10px] uppercase tracking-[0.3em] font-black text-slate-950">good-app · Official</p>
+              <p className="text-[11px] mt-0.5 font-black text-rose-600">সদস্য পরিচয়পত্র (পাবলিক)</p>
             </div>
-            <div className="rounded-xl bg-white p-1.5 shadow-lg">
+            <div className="rounded-xl bg-white p-1.5 shadow-lg border border-white">
               <QrCode value={cardUrl} size={64} />
             </div>
           </div>
 
           <div className="relative mt-4 flex gap-3">
-            <div className="w-24 h-28 rounded-xl overflow-hidden border-2 border-white/80 bg-white/20 flex items-center justify-center shrink-0 shadow-lg">
+            <div className="w-24 h-28 rounded-xl overflow-hidden border-4 border-white bg-white/70 flex items-center justify-center shrink-0 shadow-lg text-slate-500">
               {data.avatar_signed
                 ? <img src={data.avatar_signed} className="w-full h-full object-cover" alt="" />
-                : <User className="w-10 h-10 text-white/80" />}
+                : <User className="w-10 h-10" />}
             </div>
-            <div className="flex-1 min-w-0 space-y-1.5 text-[12px] font-bold">
-              <p><span className="opacity-75">নাম:</span> {p.display_name ?? "-"}</p>
-              <p><span className="opacity-75">রেফার:</span> {p.referral_code}</p>
-              <p><span className="opacity-75">যোগদান:</span> {new Date(p.created_at).toLocaleDateString("bn-BD")}</p>
-              <p className="mono-num tracking-widest text-[11px] pt-1">
+            <div className="flex-1 min-w-0 space-y-1.5 text-[12px] font-black text-slate-950">
+              <p><span className="text-slate-500">নাম:</span> {p.display_name ?? "-"}</p>
+              <p><span className="text-slate-500">রেফার:</span> {p.referral_code}</p>
+              <p><span className="text-slate-500">জেলা:</span> {p.district ?? "-"}</p>
+              <p><span className="text-slate-500">যোগদান:</span> {new Date(p.created_at).toLocaleDateString("bn-BD")}</p>
+              <p className="mono-num tracking-widest text-[11px] pt-1 text-rose-700">
                 UID {uidCompact.match(/.{1,4}/g)?.join(" ")}
               </p>
             </div>
+          </div>
+        </div>
+
+        <div className="rounded-3xl p-4 bg-white/80 border border-white shadow-xl space-y-3">
+          <div className="flex items-center gap-2 text-slate-950 font-black">
+            <IdCard className="w-4 h-4 text-rose-600" /> পরিচয় ও ঠিকানা
+          </div>
+          <div className="grid gap-2 text-[12px] font-bold text-slate-800">
+            <Info label="NID" value={p.nid_number ?? "-"} />
+            <Info label="পিতার নাম" value={p.father_name ?? "-"} />
+            <Info label="মাতার নাম" value={p.mother_name ?? "-"} />
+            <Info label="জন্মতারিখ" value={p.date_of_birth ? new Date(p.date_of_birth).toLocaleDateString("bn-BD") : "-"} />
+            <Info label="গ্রাম/এলাকা" value={p.village_area ?? "-"} />
+            <Info label="ডাকঘর" value={p.post_office ?? "-"} />
+            <Info label="থানা/উপজেলা" value={p.thana_upazila ?? "-"} />
+            <Info label="জেলা" value={p.district ?? "-"} />
+          </div>
+          <div className="rounded-2xl p-3 bg-rose-50 border border-rose-100">
+            <p className="text-[11px] font-black text-rose-600 flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> সম্পূর্ণ ঠিকানা</p>
+            <p className="text-[12px] font-bold text-slate-900 mt-1 leading-relaxed">{p.full_address ?? "ঠিকানা দেওয়া হয়নি"}</p>
           </div>
         </div>
 
@@ -68,7 +90,7 @@ function PublicCardPage() {
           <PublicStat icon={<Users className="w-4 h-4" />} label="রেফার" value={`${data.stats.referrals} জন`} c="#8b5cf6" />
         </div>
 
-        <div className="text-center text-white/70 text-[11px] flex items-center justify-center gap-1">
+        <div className="text-center text-slate-600 text-[11px] font-bold flex items-center justify-center gap-1">
           <Sparkles className="w-3 h-3" /> good-app · সমাজের সুবিধাবঞ্চিতদের পাশে
         </div>
       </div>
@@ -83,4 +105,8 @@ function PublicStat({ icon, label, value, c }: { icon: React.ReactNode; label: s
       <p className="text-lg font-black mt-1 mono-num">{value}</p>
     </div>
   );
+}
+
+function Info({ label, value }: { label: string; value: string }) {
+  return <p className="grid grid-cols-[92px_1fr] gap-2"><span className="text-slate-500">{label}</span><b className="text-slate-950 break-words">{value}</b></p>;
 }
