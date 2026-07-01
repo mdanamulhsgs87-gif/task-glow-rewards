@@ -106,19 +106,13 @@ export function GuidedTour({ steps = DEFAULT_STEPS, autoStart = true }: { steps?
 
       let url = urlCache.get(text);
       if (!url) {
-        const ls = readLsUrlCache();
-        if (ls[text]) { url = ls[text]; urlCache.set(text, url); }
-      }
-      if (!url) {
         setLoading(true);
         const res = await fetchAudio({ data: { text } });
         url = res.url;
         urlCache.set(text, url);
-        const ls = readLsUrlCache();
-        ls[text] = url;
-        writeLsUrlCache(ls);
         setLoading(false);
       }
+
       const audio = new Audio(url);
       audioRef.current = audio;
       audio.play().catch(() => speakFallback(text));
