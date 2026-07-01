@@ -7,6 +7,8 @@ import { FaceCapture } from "@/components/FaceCapture";
 import { ArrowLeft, CheckCircle2, Loader2, Sparkles, Clock, ExternalLink, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { useEffect, useRef, useState } from "react";
+import { PageVoice } from "@/components/PageVoice";
+
 
 export const Route = createFileRoute("/_authenticated/task/$slot")({ component: TaskPage });
 
