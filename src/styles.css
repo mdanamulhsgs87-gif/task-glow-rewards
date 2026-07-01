@@ -109,21 +109,21 @@
 
 @layer utilities {
   .glass {
-    background: color-mix(in oklch, var(--color-surface) 78%, transparent);
+    background: color-mix(in oklch, white 82%, transparent);
     backdrop-filter: blur(18px) saturate(140%);
     -webkit-backdrop-filter: blur(18px) saturate(140%);
     border: 1px solid color-mix(in oklch, var(--color-violet) 22%, transparent);
     box-shadow:
-      0 20px 60px -25px oklch(0 0 0 / 0.7),
-      inset 0 1px 0 0 color-mix(in oklch, white 8%, transparent);
+      0 20px 60px -25px color-mix(in oklch, var(--color-navy) 25%, transparent),
+      inset 0 1px 0 0 white;
   }
   .glass-strong {
     background: linear-gradient(160deg,
-      color-mix(in oklch, var(--color-surface) 92%, transparent),
-      color-mix(in oklch, var(--color-surface-2) 82%, transparent));
+      color-mix(in oklch, white 94%, transparent),
+      color-mix(in oklch, var(--color-violet) 8%, white));
     backdrop-filter: blur(24px) saturate(160%);
-    border: 1px solid color-mix(in oklch, var(--color-violet) 28%, transparent);
-    box-shadow: 0 30px 80px -30px oklch(0 0 0 / 0.8);
+    border: 1px solid color-mix(in oklch, var(--color-violet) 25%, transparent);
+    box-shadow: 0 30px 80px -30px color-mix(in oklch, var(--color-violet) 30%, transparent);
   }
   .text-cyan    { color: var(--color-cyan); }
   .text-gold    { color: var(--color-gold); }
@@ -146,13 +146,13 @@
 
   .premium-panel {
     position: relative;
-    background: linear-gradient(160deg,
-      color-mix(in oklch, var(--color-surface) 92%, transparent),
-      color-mix(in oklch, var(--color-surface-2) 78%, transparent));
-    border: 1px solid color-mix(in oklch, var(--color-violet) 25%, transparent);
+    background: linear-gradient(160deg, #ffffff, color-mix(in oklch, var(--color-violet) 6%, white));
+    border: 1px solid color-mix(in oklch, var(--color-violet) 18%, transparent);
+    border-radius: inherit;
     box-shadow:
-      0 22px 60px -28px oklch(0 0 0 / 0.75),
-      inset 0 1px 0 0 color-mix(in oklch, white 8%, transparent);
+      0 22px 60px -28px color-mix(in oklch, var(--color-violet) 30%, transparent),
+      0 4px 14px -6px color-mix(in oklch, var(--color-cyan) 18%, transparent),
+      inset 0 1px 0 0 white;
     overflow: hidden;
   }
   .premium-panel::before {
@@ -161,14 +161,17 @@
     border-radius: inherit;
     background: linear-gradient(120deg,
       transparent 30%,
-      color-mix(in oklch, var(--color-gold) 45%, transparent) 50%,
+      color-mix(in oklch, var(--color-gold) 55%, transparent) 50%,
       transparent 70%);
     -webkit-mask: linear-gradient(#000,#000) content-box, linear-gradient(#000,#000);
     -webkit-mask-composite: xor; mask-composite: exclude;
     padding: 1px;
     pointer-events: none;
-    opacity: 0.7;
+    opacity: 0.55;
+    background-size: 200% 200%;
+    animation: aurora-shift 6s ease-in-out infinite;
   }
+
 
   .gradient-mining {
     background: linear-gradient(135deg,
