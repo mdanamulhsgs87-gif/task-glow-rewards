@@ -350,11 +350,11 @@
 }
 
 .mining-card {
-  background: linear-gradient(140deg, oklch(0.18 0.06 265), oklch(0.28 0.10 285) 55%, oklch(0.22 0.08 210));
+  background: linear-gradient(140deg, #ef476f 0%, #ff8c42 45%, #c9184a 100%);
   box-shadow:
-    0 24px 60px -20px color-mix(in oklch, var(--color-violet) 60%, transparent),
-    0 8px 24px -8px color-mix(in oklch, var(--color-cyan) 35%, transparent),
-    inset 0 1px 0 0 color-mix(in oklch, white 15%, transparent);
+    0 30px 70px -20px color-mix(in oklch, var(--color-rose) 70%, transparent),
+    0 10px 28px -8px color-mix(in oklch, var(--color-amber) 40%, transparent),
+    inset 0 1px 0 0 color-mix(in oklch, white 22%, transparent);
 }
 .mining-ring {
   border-radius: 26px;
