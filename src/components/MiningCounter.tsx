@@ -35,7 +35,7 @@ export function MiningCounter({
   const claimable = Math.floor(balance);
 
   return (
-    <div className="mining-card mining-card-morph relative rounded-3xl p-5 text-center overflow-hidden">
+    <div className="mining-card mining-card-morph relative rounded-3xl p-7 text-center overflow-hidden">
       {live && (
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
           {[
