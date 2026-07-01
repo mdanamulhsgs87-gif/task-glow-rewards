@@ -284,11 +284,11 @@ function TaskPage() {
                 setVerifyOpened(false);
                 setCountdown(null);
                 returnedRef.current = false;
-                toast.success("নতুন key তৈরি হয়েছে");
-              } catch (e: any) { toast.error("Key তৈরি হয়নি: " + e.message); }
+                toast.success("নতুন কী তৈরি হয়েছে");
+              } catch (e: any) { toast.error("কী তৈরি হয়নি: " + e.message); }
             }}
             className="w-full py-3 rounded-xl border border-amber/40 bg-amber/10 text-amber text-xs font-bold">
-            🔄 নতুন key তৈরি করুন
+            🔄 নতুন কী তৈরি করুন
           </button>
           <button onClick={() => { clearProgress(); setStep("intro"); setIdentity(null); setPhotoB64(null); setFaceLabel(""); setVerifyOpened(false); setCountdown(null); returnedRef.current = false; }}
             className="w-full py-2 rounded-xl border border-border text-xs text-muted-foreground">
