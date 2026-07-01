@@ -64,8 +64,6 @@ function HomePage() {
       </div>
 
       {/* Main identity card */}
-
-      {/* Main identity card */}
       {mainTask && (
         <div className="premium-panel rounded-2xl p-3 relative overflow-hidden"
              style={{ background: "linear-gradient(135deg, rgba(255,209,102,0.15), rgba(239,71,111,0.12))" }}>
