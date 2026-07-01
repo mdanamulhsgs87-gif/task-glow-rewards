@@ -25,6 +25,7 @@ import { Route as AuthenticatedWithdrawRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
 import { Route as AuthenticatedReverifyRouteImport } from './routes/_authenticated/reverify'
 import { Route as AuthenticatedReferralRouteImport } from './routes/_authenticated/referral'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as ApiPublicWhitelistRecheckRouteImport } from './routes/api/public/whitelist-recheck'
 import { Route as AdminUserUserIdRouteImport } from './routes/admin/user.$userId'
@@ -109,6 +110,11 @@ const AuthenticatedReferralRoute = AuthenticatedReferralRouteImport.update({
   path: '/referral',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
   id: '/home',
   path: '/home',
@@ -137,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/home': typeof AuthenticatedHomeRoute
+  '/profile': typeof AuthenticatedProfileRoute
   '/referral': typeof AuthenticatedReferralRoute
   '/reverify': typeof AuthenticatedReverifyRoute
   '/wallet': typeof AuthenticatedWalletRoute
@@ -157,6 +164,7 @@ export interface FileRoutesByTo {
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/home': typeof AuthenticatedHomeRoute
+  '/profile': typeof AuthenticatedProfileRoute
   '/referral': typeof AuthenticatedReferralRoute
   '/reverify': typeof AuthenticatedReverifyRoute
   '/wallet': typeof AuthenticatedWalletRoute
@@ -180,6 +188,7 @@ export interface FileRoutesById {
   '/admin-login': typeof AdminLoginRoute
   '/auth': typeof AuthRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/referral': typeof AuthenticatedReferralRoute
   '/_authenticated/reverify': typeof AuthenticatedReverifyRoute
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
@@ -203,6 +212,7 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/auth'
     | '/home'
+    | '/profile'
     | '/referral'
     | '/reverify'
     | '/wallet'
@@ -223,6 +233,7 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/auth'
     | '/home'
+    | '/profile'
     | '/referral'
     | '/reverify'
     | '/wallet'
@@ -245,6 +256,7 @@ export interface FileRouteTypes {
     | '/admin-login'
     | '/auth'
     | '/_authenticated/home'
+    | '/_authenticated/profile'
     | '/_authenticated/referral'
     | '/_authenticated/reverify'
     | '/_authenticated/wallet'
@@ -384,6 +396,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReferralRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/home': {
       id: '/_authenticated/home'
       path: '/home'
@@ -417,6 +436,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedReferralRoute: typeof AuthenticatedReferralRoute
   AuthenticatedReverifyRoute: typeof AuthenticatedReverifyRoute
   AuthenticatedWalletRoute: typeof AuthenticatedWalletRoute
@@ -426,6 +446,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedReferralRoute: AuthenticatedReferralRoute,
   AuthenticatedReverifyRoute: AuthenticatedReverifyRoute,
   AuthenticatedWalletRoute: AuthenticatedWalletRoute,
