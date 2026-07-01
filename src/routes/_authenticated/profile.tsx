@@ -65,7 +65,9 @@ function ProfilePage() {
 
   return (
     <div className="space-y-5 pt-2 pop-in">
+      <PageVoice pageId="profile" steps={["profile.intro","profile.avatar","profile.card","profile.history"]} />
       <div className="text-center">
+
         <h1 className="text-2xl font-black flex items-center justify-center gap-2">
           <Sparkles className="w-5 h-5 text-gold bounce-soft" /> আমার প্রোফাইল
         </h1>
