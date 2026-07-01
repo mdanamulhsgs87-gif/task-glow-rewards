@@ -5,6 +5,7 @@ import { getDashboard } from "@/lib/dashboard.functions";
 import { addMoreSlots } from "@/lib/tasks.functions";
 import { MiningCounter } from "@/components/MiningCounter";
 import { CheckCircle2, Camera, Lock, Sparkles, Loader2, X, Plus } from "lucide-react";
+import { AnnouncementTicker } from "@/components/AnnouncementTicker";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/home")({ component: HomePage });
@@ -37,6 +38,8 @@ function HomePage() {
 
   return (
     <div className="space-y-5 pt-2">
+      <AnnouncementTicker />
+
       <div className="text-center">
         <p className="text-xs text-muted-foreground">স্বাগতম,</p>
         <h1 className="text-xl font-black mt-0.5">
