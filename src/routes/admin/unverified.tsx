@@ -15,7 +15,13 @@ function UnverifiedPage() {
 
   const del = useMutation({
     mutationFn: (id: string) => adminমুছুনUnverified({ data: { id } }),
-    onSuccess: () => { toast.success("মুছুনd"); refetch(); },
+    onSuccess: () => { toast.success("মুছে ফেলা হয়েছে"); refetch(); },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  const promote = useMutation({
+    mutationFn: (input: { id: string; slot?: number }) => adminPromoteUnverified({ data: input }),
+    onSuccess: (r: any) => { toast.success(`Slot #${r.slot}-এ যোগ হয়েছে — user এখন রি-ভেরিফাই করতে পারবে`); refetch(); },
     onError: (e: any) => toast.error(e.message),
   });
 
