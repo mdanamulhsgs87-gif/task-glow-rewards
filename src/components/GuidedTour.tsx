@@ -88,7 +88,7 @@ export function GuidedTour({ steps = DEFAULT_STEPS, autoStart = true }: { steps?
   };
   const next = () => {
     if (!gestureStartedRef.current) { startCurrent(); return; }
-    if (idx >= steps.length - 1) { playFromGesture(steps[idx].voice); setTimeout(finish, 200); return; }
+    if (idx >= steps.length - 1) { playVoiceFromGesture(steps[idx].voice); setTimeout(finish, 200); return; }
     setIdx(idx + 1);
     // Play next step's audio inside this same gesture.
     const nextStep = steps[idx + 1];
