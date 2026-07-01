@@ -347,7 +347,8 @@ async function renderCardCanvas({ p, uid, cardUrl, avatarUrl, details, stats }: 
   ctx.fillStyle = "#f8fbff";
   ctx.fillRect(0, 0, width, height);
   const qr = await import("qrcode");
-  const qrUrl = await qr.default.toDataURL(cardUrl, { width: 220, margin: 1, color: { dark: "#111827", light: "#ffffff" } });
+  const QRCode = (qr as any).default ?? qr;
+  const qrUrl = await QRCode.toDataURL(cardUrl, { width: 220, margin: 1, color: { dark: "#111827", light: "#ffffff" } });
   const qrImg = await loadImage(qrUrl);
   const avatarImg = avatarUrl ? await loadImageFromUrl(avatarUrl).catch(() => null) : null;
   drawCanvasFace(ctx, 40, 20, width - 80, faceH, "front", { p, uid, details, stats, qrImg, avatarImg });
