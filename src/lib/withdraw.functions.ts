@@ -14,15 +14,18 @@ export const requestWithdraw = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
-    if (data.amount < MIN_WITHDRAW_BDT) {
-      throw new Error(`Minimum withdraw ${MIN_WITHDRAW_BDT} TK`);
+    // Whole-taka only — no poisha.
+    const amount = Math.floor(data.amount);
+
+    if (amount < MIN_WITHDRAW_BDT) {
+      throw new Error(`সর্বনিম্ন উইথড্র ${MIN_WITHDRAW_BDT}৳`);
     }
 
     const { data: wallet } = await supabase.from("wallets").select("*").eq("user_id", userId).maybeSingle();
-    if (!wallet) throw new Error("Age wallet number set korun");
+    if (!wallet) throw new Error("আগে ওয়ালেট নম্বর সেট করুন");
 
     const { data: mining } = await supabase.from("mining_state").select("*").eq("user_id", userId).maybeSingle();
-    if (!mining || !mining.is_active) throw new Error("Mining active na — 10 ta task complete korun");
+    if (!mining || !mining.is_active) throw new Error("মাইনিং সক্রিয় নয় — ১০টি টাস্ক সম্পূর্ণ করুন");
 
     const balance = computeLiveBalance({
       accrued: Number(mining.accrued_amount),
@@ -31,8 +34,8 @@ export const requestWithdraw = createServerFn({ method: "POST" })
       lastCreditedAt: mining.last_credited_at,
     });
 
-    if (data.amount > balance) {
-      throw new Error(`Balance kom: ${balance.toFixed(2)} TK`);
+    if (amount > balance) {
+      throw new Error(`ব্যালেন্স কম: ${Math.floor(balance)}৳`);
     }
 
     // Settle current mining: bump accrued to "now" so withdrawn_amount is consistent.
@@ -43,7 +46,7 @@ export const requestWithdraw = createServerFn({ method: "POST" })
     const elapsedSec = Math.max(0, (nowMs - lastMs) / 1000);
     const { MINING_RATE_BDT_PER_SEC } = await import("./constants");
     const newAccrued = Number(mining.accrued_amount) + elapsedSec * MINING_RATE_BDT_PER_SEC;
-    const newWithdrawn = Number(mining.withdrawn_amount) + data.amount;
+    const newWithdrawn = Number(mining.withdrawn_amount) + amount;
 
     const { error: mErr } = await supabaseAdmin
       .from("mining_state")
@@ -57,7 +60,7 @@ export const requestWithdraw = createServerFn({ method: "POST" })
 
     const { error: wErr } = await supabaseAdmin.from("withdrawals").insert({
       user_id: userId,
-      amount: data.amount,
+      amount: amount,
       provider: wallet.provider,
       wallet_number: wallet.number,
     });

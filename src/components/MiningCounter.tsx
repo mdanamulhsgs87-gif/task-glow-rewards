@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { computeLiveBalance } from "@/lib/mining";
+import { Wallet } from "lucide-react";
 
 type Props = {
   accrued: number;
@@ -15,6 +17,7 @@ export function MiningCounter({
   effectiveTaskCount = 0, qualifyingReferees = 0,
 }: Props) {
   const [now, setNow] = useState(Date.now());
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!isActive) return;
@@ -29,18 +32,19 @@ export function MiningCounter({
   const live = isActive && (effectiveTaskCount > 0 || qualifyingReferees > 0);
   const ratePerMonth = 500 * (effectiveTaskCount / 10 + 0.10 * qualifyingReferees);
   const bonusMonth = 500 * 0.10 * qualifyingReferees;
+  const claimable = Math.floor(balance);
 
   return (
-    <div className="mining-card mining-card-morph relative rounded-3xl p-6 text-center overflow-hidden">
-      {/* sparkles */}
+    <div className="mining-card mining-card-morph relative rounded-3xl p-8 text-center overflow-hidden">
       {live && (
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
           {[
-            { l: "12%", t: "70%", sx: "18px", sy: "-60px", d: "0s",  e: "✨" },
-            { l: "82%", t: "60%", sx: "-24px", sy: "-70px", d: "0.7s", e: "⭐" },
-            { l: "48%", t: "80%", sx: "0px", sy: "-80px", d: "1.4s", e: "💎" },
-            { l: "30%", t: "20%", sx: "18px", sy: "40px",  d: "2.1s", e: "✦" },
-            { l: "68%", t: "18%", sx: "-16px", sy: "50px", d: "2.8s", e: "✧" },
+            { l: "10%", t: "70%", sx: "22px", sy: "-70px", d: "0s",  e: "✨" },
+            { l: "84%", t: "60%", sx: "-28px", sy: "-80px", d: "0.6s", e: "⭐" },
+            { l: "48%", t: "82%", sx: "0px", sy: "-90px", d: "1.2s", e: "💎" },
+            { l: "28%", t: "18%", sx: "22px", sy: "45px",  d: "1.8s", e: "✦" },
+            { l: "70%", t: "16%", sx: "-18px", sy: "55px", d: "2.4s", e: "✧" },
+            { l: "55%", t: "45%", sx: "10px", sy: "-30px", d: "3.0s", e: "🌟" },
           ].map((s, i) => (
             <span key={i} className="mining-sparkle"
               style={{ left: s.l, top: s.t, ["--sx" as any]: s.sx, ["--sy" as any]: s.sy, animationDelay: s.d }}>
@@ -49,26 +53,22 @@ export function MiningCounter({
           ))}
         </div>
       )}
-      {/* rotating conic ring */}
       <div className="mining-ring absolute -inset-1 pointer-events-none" aria-hidden />
-      {/* aurora wash */}
       <div className="absolute inset-0 gradient-aurora opacity-30 pointer-events-none" />
-      {/* corner glow */}
-      <div className="absolute -top-16 -right-16 w-52 h-52 rounded-full blur-3xl opacity-50 pointer-events-none animate-pulse"
-           style={{ background: "var(--color-gold)" }} />
-      <div className="absolute -bottom-20 -left-16 w-56 h-56 rounded-full blur-3xl opacity-40 pointer-events-none animate-pulse"
-           style={{ background: "var(--color-violet)", animationDuration: "3.5s" }} />
+      <div className="absolute -top-20 -right-16 w-64 h-64 rounded-full blur-3xl opacity-60 pointer-events-none animate-pulse"
+           style={{ background: "var(--color-rose)" }} />
+      <div className="absolute -bottom-24 -left-20 w-72 h-72 rounded-full blur-3xl opacity-50 pointer-events-none animate-pulse"
+           style={{ background: "var(--color-amber)", animationDuration: "3.5s" }} />
 
-      {/* floating coin particles */}
       {live && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
-          {[0, 1, 2, 3, 4].map((i) => (
+          {[0, 1, 2, 3, 4, 5].map((i) => (
             <span
               key={i}
               className="mining-coin"
               style={{
-                left: `${10 + i * 18}%`,
-                animationDelay: `${i * 0.6}s`,
+                left: `${8 + i * 16}%`,
+                animationDelay: `${i * 0.55}s`,
                 animationDuration: `${4 + (i % 3)}s`,
               }}
             >⛏</span>
@@ -77,39 +77,54 @@ export function MiningCounter({
       )}
 
       <div className="relative">
-        <p className="text-[10px] uppercase tracking-[0.35em] font-black mb-2"
-           style={{ color: "color-mix(in oklch, white 82%, transparent)" }}>
+        <p className="text-xs uppercase tracking-[0.35em] font-black mb-3"
+           style={{ color: "color-mix(in oklch, white 85%, transparent)" }}>
           {live ? (
-            <span className="inline-flex items-center gap-1.5">
-              <span className="relative flex h-2 w-2">
+            <span className="inline-flex items-center gap-2">
+              <span className="relative flex h-2.5 w-2.5">
                 <span className="absolute inline-flex h-full w-full rounded-full bg-emerald animate-ping opacity-80" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald" />
               </span>
               লাইভ মাইনিং ব্যালেন্স
             </span>
           ) : "🔒 মাইনিং লক"}
         </p>
 
-        <p className={`mining-number mono-num text-[2.6rem] leading-none font-black bg-gradient-to-r from-amber-200 via-white to-cyan-200 bg-clip-text text-transparent ${live ? "shine" : ""}`}>
+        <p className={`mining-number mono-num text-[3.6rem] leading-none font-black bg-gradient-to-r from-amber-200 via-white to-rose-200 bg-clip-text text-transparent ${live ? "shine" : ""}`}>
           {balance.toFixed(6)}
         </p>
-        <p className="text-xs font-black text-gold mt-1.5 tracking-widest">৳ টাকা</p>
+        <p className="text-base font-black text-white mt-2 tracking-widest drop-shadow">৳ টাকা</p>
 
-        <p className="text-[11px] mt-3 font-bold" style={{ color: "color-mix(in oklch, white 85%, transparent)" }}>
+        <p className="text-sm mt-4 font-bold" style={{ color: "color-mix(in oklch, white 88%, transparent)" }}>
           {live
             ? `${effectiveTaskCount}/১০ ঘর সক্রিয় · ${ratePerMonth.toFixed(0)}৳ / মাস`
             : "১০টি ঘর সম্পন্ন করলে মাইনিং শুরু হবে"}
         </p>
 
         {qualifyingReferees > 0 && (
-          <p className="mt-3 inline-block rounded-full px-3 py-1 text-[10px] font-black bounce-soft"
+          <p className="mt-3 inline-block rounded-full px-4 py-1.5 text-xs font-black bounce-soft"
              style={{
-               background: "color-mix(in oklch, var(--color-emerald) 28%, transparent)",
+               background: "color-mix(in oklch, var(--color-emerald) 32%, transparent)",
                border: "1px solid color-mix(in oklch, var(--color-emerald) 55%, transparent)",
                color: "white",
              }}>
             🎁 {qualifyingReferees} জন রেফার · +{bonusMonth.toFixed(0)}৳ বোনাস/মাস
           </p>
+        )}
+
+        {live && claimable > 0 && (
+          <button
+            onClick={() => navigate({ to: "/withdraw" })}
+            className="mt-5 w-full rounded-2xl py-4 font-black text-base flex items-center justify-center gap-2 btn-press shine"
+            style={{
+              background: "linear-gradient(120deg, #ffd166, #ef476f 50%, #ffb86b)",
+              color: "#3a0a1a",
+              boxShadow: "0 18px 40px -12px rgba(239,71,111,0.6)",
+            }}
+          >
+            <Wallet className="w-5 h-5" />
+            💰 {claimable}৳ ক্লেইম ও উইথড্র
+          </button>
         )}
       </div>
     </div>
