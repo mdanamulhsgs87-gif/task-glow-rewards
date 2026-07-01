@@ -150,22 +150,22 @@ function TaskCell({ task, onClick, onOpenPhoto }: { task: any; onClick: () => vo
     const s = totalSec % 60;
     return (
       <button onClick={() => faceUrl && onOpenPhoto(faceUrl)}
-        className="relative aspect-square rounded-xl overflow-hidden border-2 border-rose/70 shadow-[0_8px_18px_-6px_rgba(239,71,111,0.7)] active:scale-95 transition">
+        className="relative aspect-square rounded-2xl overflow-hidden border-2 border-rose/70 shadow-[0_14px_28px_-8px_rgba(239,71,111,0.7)] active:scale-95 transition">
         {faceUrl ? (
           <img src={faceUrl} alt={`Slot ${task.slot}`} className="absolute inset-0 h-full w-full object-cover" />
         ) : (
           <div className="absolute inset-0 bg-surface-2" />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/45" />
-        <div className="absolute top-0.5 left-1 right-1 flex items-center justify-between">
-          <span className="text-[9px] font-black text-white drop-shadow">#{task.slot}</span>
-          <span className="rounded-full bg-rose p-0.5 shadow"><Lock className="w-2 h-2 text-white" /></span>
+        <div className="absolute top-2 left-2 right-2 flex items-center justify-between">
+          <span className="text-sm font-black text-white drop-shadow">#{task.slot}</span>
+          <span className="rounded-full bg-rose p-1.5 shadow"><Lock className="w-4 h-4 text-white" /></span>
         </div>
-        <div className="absolute bottom-0.5 left-0 right-0 px-0.5">
-          <p className="mono-num text-[10px] font-black text-white text-center drop-shadow leading-tight">
+        <div className="absolute bottom-2 left-0 right-0 px-2">
+          <p className="mono-num text-xl font-black text-white text-center drop-shadow leading-tight">
             {d}d {String(h).padStart(2,"0")}h
           </p>
-          <p className="mono-num text-[9px] text-white/90 text-center drop-shadow font-bold leading-tight">
+          <p className="mono-num text-sm text-white/90 text-center drop-shadow font-bold leading-tight">
             {String(m).padStart(2,"0")}m {String(s).padStart(2,"0")}s
           </p>
         </div>
@@ -174,25 +174,26 @@ function TaskCell({ task, onClick, onOpenPhoto }: { task: any; onClick: () => vo
   }
 
   let cellClass = "task-cell-empty";
-  let icon = <Camera className="w-5 h-5 text-white drop-shadow-lg" />;
+  let icon = <Camera className="w-10 h-10 text-white drop-shadow-lg" />;
   let label = "শুরু";
 
   if (isDone) {
     cellClass = "task-cell-done";
-    icon = <CheckCircle2 className="w-5 h-5 text-white drop-shadow-lg bounce-soft" />;
+    icon = <CheckCircle2 className="w-10 h-10 text-white drop-shadow-lg bounce-soft" />;
     label = "সম্পন্ন";
   } else if (readyToReverify) {
     cellClass = "task-cell-reverify pulse-glow";
-    icon = <Sparkles className="w-5 h-5 text-white drop-shadow-lg spin-slow" />;
+    icon = <Sparkles className="w-10 h-10 text-white drop-shadow-lg spin-slow" />;
     label = "রি-ভেরিফাই";
   }
 
   return (
     <button onClick={onClick}
-      className={`relative aspect-square rounded-xl ${cellClass} flex flex-col items-center justify-center gap-0.5 btn-press overflow-hidden`}>
-      <span className="absolute top-0.5 left-1 text-[9px] font-black text-white/90 mono-num drop-shadow">#{task.slot}</span>
+      className={`relative aspect-square rounded-2xl ${cellClass} flex flex-col items-center justify-center gap-2 btn-press overflow-hidden`}>
+      <span className="absolute top-2 left-2 text-sm font-black text-white/90 mono-num drop-shadow">#{task.slot}</span>
       <span className="relative">{icon}</span>
-      <span className="text-[9px] font-black text-white drop-shadow leading-none">{label}</span>
+      <span className="text-sm font-black text-white drop-shadow leading-none">{label}</span>
     </button>
   );
 }
+
