@@ -172,6 +172,7 @@ export function GuidedTour({ steps = DEFAULT_STEPS, autoStart = true }: { steps?
   const finish = () => {
     setActive(false);
     try { window.speechSynthesis?.cancel(); } catch {}
+    try { audioRef.current?.pause(); audioRef.current = null; } catch {}
     try { localStorage.setItem(STORAGE_KEY, "done"); } catch {}
   };
 
