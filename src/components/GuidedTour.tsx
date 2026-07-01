@@ -269,8 +269,12 @@ export function GuidedTour({ steps = DEFAULT_STEPS, autoStart = true }: { steps?
               onClick={() => {
                 const m = !muted;
                 setMuted(m);
-                if (m) { try { window.speechSynthesis?.cancel(); } catch {} }
-                else speak(step.text, false);
+                if (m) {
+                  try { window.speechSynthesis?.cancel(); } catch {}
+                  try { audioRef.current?.pause(); } catch {}
+                } else {
+                  void play(step.text);
+                }
               }}
               className="p-2 rounded-lg bg-violet-100 hover:bg-violet-200 text-violet-600"
               title={muted ? "ভয়েস চালু" : "ভয়েস বন্ধ"}
