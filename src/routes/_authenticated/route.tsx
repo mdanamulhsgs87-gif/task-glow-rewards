@@ -1,6 +1,8 @@
 import { createFileRoute, Outlet, Link, useRouter } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { Home, Wallet, ArrowDownToLine, LogOut, Loader2, RefreshCcw, Gift } from "lucide-react";
+import { Home, Wallet, ArrowDownToLine, LogOut, Loader2, RefreshCcw, Gift, User } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getProfileHistory } from "@/lib/profile.functions";
 import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/_authenticated")({
