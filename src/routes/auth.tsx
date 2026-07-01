@@ -8,6 +8,7 @@ import {
   HandHeart, HelpCircle, ChevronDown, Heart, Users, Gift, Coins,
 } from "lucide-react";
 import { registerWithPhone } from "@/lib/auth.functions";
+import logo from "@/assets/logo.png";
 
 export const Route = createFileRoute("/auth")({ ssr: false, component: AuthPage });
 
