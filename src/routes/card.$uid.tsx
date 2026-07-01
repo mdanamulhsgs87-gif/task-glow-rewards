@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import type { ReactNode } from "react";
 import { getPublicCardDetails } from "@/lib/profile.functions";
 import { QrCode } from "@/components/QrCode";
 import { User, Sparkles, ShieldCheck, Wallet, Users, TrendingUp, MapPin, IdCard } from "lucide-react";
@@ -98,7 +99,7 @@ function PublicCardPage() {
   );
 }
 
-function PublicStat({ icon, label, value, c }: { icon: React.ReactNode; label: string; value: string; c: string }) {
+function PublicStat({ icon, label, value, c }: { icon: ReactNode; label: string; value: string; c: string }) {
   return (
     <div className="rounded-2xl p-3 text-white shadow-lg" style={{ background: `linear-gradient(135deg, ${c}CC, ${c}77)` }}>
       <div className="flex items-center gap-1.5 text-[10px] font-bold opacity-95">{icon}{label}</div>
