@@ -170,7 +170,7 @@ function HomePage() {
 
       <div className="text-center py-2">
         <p className="text-[11px] text-muted-foreground italic">
-          🌸 "একজনের সাহায্য, হাজারের হাসি" 🌸
+          🌸 "হাজার জনের সহযোগিতা, একজনের হাসি" 🌸
         </p>
       </div>
 
