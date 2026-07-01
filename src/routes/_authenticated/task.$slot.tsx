@@ -119,10 +119,10 @@ function TaskPage() {
               privateKey: identity.privateKey,
               walletAddress: identity.address,
               faceLabel: faceLabel.trim(),
-              reason: "GoodDollar whitelist এ পাওয়া যায়নি",
+              reason: "গুডডলার হোয়াইটলিস্টে পাওয়া যায়নি",
             },
           });
-          toast.warning("Whitelist পাওয়া যায়নি — Admin এ save হয়েছে। পরের বার নতুন key তৈরি হবে।");
+          toast.warning("হোয়াইটলিস্টে পাওয়া যায়নি — অ্যাডমিন প্যানেলে সংরক্ষিত হয়েছে। পরের বার নতুন কী তৈরি হবে।");
         } catch (saveErr: any) {
           toast.error("সংরক্ষণ ব্যর্থ: " + saveErr.message);
         }
