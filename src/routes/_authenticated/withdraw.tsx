@@ -76,21 +76,23 @@ function WithdrawPage() {
       ) : (
         <form onSubmit={(e) => { e.preventDefault(); mut.mutate(); }} className="glass rounded-2xl p-5 space-y-4">
           <div>
-            <label className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">পরিমাণ (৳)</label>
+            <label className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">পরিমাণ (৳ পূর্ণ টাকা)</label>
             <input type="number" min={MIN_WITHDRAW_BDT} step="1" value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="w-full mt-2 px-4 py-3 mono-num bg-surface-2 border border-border rounded-xl text-base outline-none focus:border-cyan" />
-            <p className="text-[10px] text-muted-foreground mt-1">সর্বনিম্ন: {MIN_WITHDRAW_BDT} ৳</p>
+              onChange={(e) => setAmount(e.target.value.replace(/[^\d]/g, ""))}
+              placeholder={`সর্বনিম্ন ${MIN_WITHDRAW_BDT}`}
+              className="w-full mt-2 px-4 py-3 mono-num bg-surface-2 border border-border rounded-xl text-lg font-black outline-none focus:border-rose" />
+            <p className="text-[10px] text-muted-foreground mt-1">সর্বনিম্ন: {MIN_WITHDRAW_BDT}৳ · সর্বোচ্চ: {claimable}৳ (শুধু পূর্ণ টাকা)</p>
           </div>
           <div className="bg-surface-2 rounded-xl p-3 text-[11px] space-y-1">
             <p><span className="text-muted-foreground">পাঠানো হবে:</span> <span className="font-bold">{wallet.provider === "bkash" ? "বিকাশ" : "নগদ"}</span></p>
             <p className="mono-num"><span className="text-muted-foreground">নম্বর:</span> <span className="font-bold">{wallet.number}</span></p>
           </div>
-          <button disabled={mut.isPending || Number(amount) < MIN_WITHDRAW_BDT || Number(amount) > balance}
-            className="w-full py-3 rounded-xl gradient-cta font-black text-sm flex items-center justify-center gap-2 disabled:opacity-50">
+          <button disabled={mut.isPending || Math.floor(Number(amount) || 0) < MIN_WITHDRAW_BDT || Math.floor(Number(amount) || 0) > claimable}
+            className="w-full py-4 rounded-xl gradient-cta font-black text-base flex items-center justify-center gap-2 disabled:opacity-50">
             {mut.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
             উইথড্র রিকোয়েস্ট করুন
           </button>
+
         </form>
       )}
 
