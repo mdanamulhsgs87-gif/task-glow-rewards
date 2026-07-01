@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { adminUserDetail, adminAdjustBalance, adminToggleMining, adminResetTask, adminমুছুনUser } from "@/lib/admin.functions";
-import { ArrowLeft, Loader2, Power, Plus, Minus, RefreshCw, Trash2, কপি } from "lucide-react";
+import { ArrowLeft, Loader2, Power, Plus, Minus, RefreshCw, Trash2, Copy } from "lucide-react";
 import { computeLiveBalance } from "@/lib/mining";
 import { toast } from "sonner";
 import { useState } from "react";

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getMyReferrals } from "@/lib/referral.functions";
-import { কপি, Share2, Users, Gift, CheckCircle2, Clock, Loader2, Sparkles } from "lucide-react";
+import { Copy, Share2, Users, Gift, CheckCircle2, Clock, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 

@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { adminListWallets } from "@/lib/admin.functions";
-import { Loader2, কপি, Wallet } from "lucide-react";
+import { Loader2, Copy, Wallet } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/wallets")({ component: AdminWallets });

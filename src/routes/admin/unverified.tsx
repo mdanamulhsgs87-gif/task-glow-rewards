@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { adminListUnverified, adminমুছুনUnverified } from "@/lib/admin.functions";
-import { Loader2, AlertTriangle, কপি, Trash2 } from "lucide-react";
+import { Loader2, AlertTriangle, Copy, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/unverified")({ component: UnverifiedPage });

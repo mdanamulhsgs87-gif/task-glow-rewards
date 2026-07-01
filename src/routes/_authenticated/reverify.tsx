@@ -3,7 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { listReverifyCandidates, completeReverify } from "@/lib/tasks.functions";
 import { buildVerifyUrl, isWhitelisted } from "@/lib/gooddollar";
 import { FaceCapture } from "@/components/FaceCapture";
-import { ArrowLeft, ExternalLink, Loader2, RefreshCcw, খুঁজুন, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ExternalLink, Loader2, RefreshCcw, Search, ShieldCheck } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 

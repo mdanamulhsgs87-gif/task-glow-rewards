@@ -77,7 +77,7 @@ export function AuthPage() {
   useEffect(() => {
     // Pre-fill referral code from ?ref=XYZ
     if (typeof window !== "undefined") {
-      const ref = new URLখুঁজুনParams(window.location.search).get("ref");
+      const ref = new URLSearchParams(window.location.search).get("ref");
       if (ref) {
         setReferralCode(ref.toUpperCase());
         setMode("signup");
