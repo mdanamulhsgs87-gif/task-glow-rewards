@@ -267,7 +267,7 @@ function TaskCell({ task, onClick, onOpenPhoto }: { task: any; onClick: () => vo
         {faceUrl ? <img src={faceUrl} className="absolute inset-0 h-full w-full object-cover" alt="" />
                  : <div className="absolute inset-0 bg-surface-2" />}
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/30" />
-        <span className="absolute top-1 left-1 text-[9px] font-black text-white drop-shadow">#{task.slot}</span>
+        <span className="absolute top-1 left-1 text-[10px] font-black text-white mono-num leading-none px-1.5 py-0.5 rounded-md bg-black/45 backdrop-blur-[2px]">#{task.slot}</span>
         <span className="absolute top-1 right-1 rounded-full bg-rose p-0.5 shadow"><Lock className="w-2.5 h-2.5 text-white" /></span>
         <div className="absolute bottom-0.5 left-0 right-0 px-1">
           <p className="mono-num text-[11px] font-black text-white text-center drop-shadow leading-none">
@@ -290,7 +290,7 @@ function TaskCell({ task, onClick, onOpenPhoto }: { task: any; onClick: () => vo
   return (
     <button onClick={onClick}
       className={`relative aspect-square rounded-xl ${cellClass} flex flex-col items-center justify-center gap-0.5 btn-press overflow-hidden`}>
-      <span className="absolute top-0.5 left-1 text-[9px] font-black text-white/90 mono-num drop-shadow">#{task.slot}</span>
+      <span className="absolute top-1 left-1 text-[10px] font-black text-white mono-num leading-none px-1.5 py-0.5 rounded-md bg-black/45 backdrop-blur-[2px]">#{task.slot}</span>
       <span>{icon}</span>
       <span className="text-[9px] font-black text-white drop-shadow leading-none">{label}</span>
     </button>
