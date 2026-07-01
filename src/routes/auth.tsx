@@ -254,7 +254,7 @@ export function AuthPage() {
               <input
                 inputMode="numeric" required value={phone}
                 onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 11))}
-                placeholder="01XXXXXXXXX" maxLength={11}
+                placeholder="০১XXXXXXXXX (১১ ডিজিট)" maxLength={11}
                 className="w-full mt-1 px-4 py-3 bg-white border-2 border-border rounded-xl text-sm outline-none focus:border-cyan mono-num text-navy transition"
               />
             </div>
