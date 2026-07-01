@@ -467,24 +467,19 @@
   100% { filter: hue-rotate(360deg) saturate(1.2); }
 }
 .task-cell-empty {
-  background: linear-gradient(135deg, #ff6b9d 0%, #ffd166 35%, #06d6a0 70%, #ef476f 100%);
-  background-size: 220% 220%;
-  animation: aurora-shift 6s ease-in-out infinite, task-hue-cycle 10s linear infinite;
+  background: linear-gradient(135deg, #ff6b9d 0%, #ffd166 45%, #06d6a0 80%, #7b8cff 100%);
   color: white;
-  box-shadow: 0 14px 34px -12px rgba(239,71,111,0.55), inset 0 1px 0 0 rgba(255,255,255,0.35);
+  box-shadow: 0 10px 24px -12px rgba(239,71,111,0.55), inset 0 1px 0 0 rgba(255,255,255,0.35);
 }
 .task-cell-done {
   background: linear-gradient(135deg, #06d6a0, #118ab2 55%, #ffd166);
-  background-size: 220% 220%;
-  animation: aurora-shift 7s ease-in-out infinite;
   color: white;
-  box-shadow: 0 14px 34px -12px rgba(6,214,160,0.6), inset 0 1px 0 0 rgba(255,255,255,0.35);
+  box-shadow: 0 10px 24px -12px rgba(6,214,160,0.6), inset 0 1px 0 0 rgba(255,255,255,0.35);
 }
 .task-cell-reverify {
   background: linear-gradient(135deg, #c77dff 0%, #ef476f 50%, #ffb703 100%);
-  background-size: 220% 220%;
-  animation: aurora-shift 5s ease-in-out infinite, task-hue-cycle 8s linear infinite;
   color: white;
-  box-shadow: 0 18px 40px -12px rgba(199,125,255,0.6), inset 0 1px 0 0 rgba(255,255,255,0.4);
+  box-shadow: 0 14px 30px -12px rgba(199,125,255,0.6), inset 0 1px 0 0 rgba(255,255,255,0.4);
 }
+
 
