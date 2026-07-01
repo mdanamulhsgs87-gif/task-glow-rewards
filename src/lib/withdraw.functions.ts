@@ -14,8 +14,11 @@ export const requestWithdraw = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
-    if (data.amount < MIN_WITHDRAW_BDT) {
-      throw new Error(`Minimum withdraw ${MIN_WITHDRAW_BDT} TK`);
+    // Whole-taka only — no poisha.
+    const amount = Math.floor(data.amount);
+
+    if (amount < MIN_WITHDRAW_BDT) {
+      throw new Error(`সর্বনিম্ন উইথড্র ${MIN_WITHDRAW_BDT}৳`);
     }
 
     const { data: wallet } = await supabase.from("wallets").select("*").eq("user_id", userId).maybeSingle();
