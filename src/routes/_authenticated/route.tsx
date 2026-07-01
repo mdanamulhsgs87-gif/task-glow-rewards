@@ -68,16 +68,16 @@ function AuthedLayout() {
     <div className="min-h-screen pb-24">
       <header className="sticky top-0 z-30 glass">
         <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
-          <Link to="/home" className="font-black text-lg tracking-tight bg-gradient-to-r from-violet-400 via-cyan-400 to-yellow-300 bg-clip-text text-transparent">
-            good-app
-          </Link>
           <div className="flex items-center gap-2">
             <ProfileButton />
-            <button onClick={logout}
-              className="btn-press p-2 rounded-lg bg-surface-2 border border-border text-muted-foreground hover:text-rose">
-              <LogOut className="w-4 h-4" />
-            </button>
+            <Link to="/home" className="font-black text-lg tracking-tight bg-gradient-to-r from-violet-500 via-cyan-500 to-amber-500 bg-clip-text text-transparent">
+              good-app
+            </Link>
           </div>
+          <button onClick={logout}
+            className="btn-press p-2 rounded-lg bg-surface-2 border border-border text-muted-foreground hover:text-rose">
+            <LogOut className="w-4 h-4" />
+          </button>
         </div>
       </header>
 
@@ -87,11 +87,11 @@ function AuthedLayout() {
 
       <nav className="fixed bottom-0 inset-x-0 z-30 glass border-t border-violet/20">
         <div className="max-w-md mx-auto px-2 py-2 grid grid-cols-5 gap-1">
-          <NavItem to="/home" icon={<Home className="w-5 h-5" />} label="হোম" />
-          <NavItem to="/reverify" icon={<RefreshCcw className="w-5 h-5" />} label="রি-ভেরিফাই" />
-          <NavItem to="/referral" icon={<Gift className="w-5 h-5" />} label="রেফার" />
-          <NavItem to="/wallet" icon={<Wallet className="w-5 h-5" />} label="ওয়ালেট" />
-          <NavItem to="/withdraw" icon={<ArrowDownToLine className="w-5 h-5" />} label="উইথড্র" />
+          <NavItem to="/home" icon={<Home className="w-5 h-5" />} label="হোম" tint="cyan" />
+          <NavItem to="/reverify" icon={<RefreshCcw className="w-5 h-5" />} label="রি-ভেরিফাই" tint="violet" />
+          <NavItem to="/referral" icon={<Gift className="w-5 h-5" />} label="রেফার" tint="emerald" />
+          <NavItem to="/wallet" icon={<Wallet className="w-5 h-5" />} label="ওয়ালেট" tint="amber" />
+          <NavItem to="/withdraw" icon={<ArrowDownToLine className="w-5 h-5" />} label="উইথড্র" tint="rose" />
         </div>
       </nav>
     </div>
@@ -109,14 +109,14 @@ function ProfileButton() {
   );
 }
 
-function NavItem({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) {
+function NavItem({ to, icon, label, tint }: { to: string; icon: React.ReactNode; label: string; tint: "cyan"|"violet"|"emerald"|"amber"|"rose" }) {
   return (
     <Link to={to as any}
-      activeProps={{ className: "text-cyan" }}
-      inactiveProps={{ className: "text-muted-foreground" }}
-      className="flex flex-col items-center gap-0.5 py-2 rounded-xl text-[10px] font-bold">
-      {icon}
-      {label}
+      activeProps={{ className: `nav-item-active nav-tint-${tint}` }}
+      inactiveProps={{ className: `nav-tint-${tint} opacity-70` }}
+      className="nav-item relative flex flex-col items-center gap-0.5 py-2 rounded-xl text-[10px] font-black">
+      <span className="nav-icon">{icon}</span>
+      <span>{label}</span>
     </Link>
   );
 }

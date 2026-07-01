@@ -255,7 +255,7 @@ function TaskPage() {
                 {identity.address}
               </p>
             </div>
-            <p className="text-[10px] text-muted-foreground">🔒 Private key admin এর কাছে নিরাপদে সংরক্ষিত — আপনার দেখার দরকার নেই।</p>
+            <p className="text-[10px] text-emerald font-bold">🔒 ওয়ালেট নিরাপদ</p>
           </div>
           <a href={identity.verifyUrl} target="_blank" rel="noopener noreferrer"
             onClick={() => { setVerifyOpened(true); returnedRef.current = false; }}
