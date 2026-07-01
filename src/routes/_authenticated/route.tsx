@@ -4,6 +4,7 @@ import { Home, Wallet, ArrowDownToLine, LogOut, Loader2, RefreshCcw, Gift, User 
 import { useQuery } from "@tanstack/react-query";
 import { getProfileHistory } from "@/lib/profile.functions";
 import { useEffect, useState } from "react";
+import logo from "@/assets/logo.png";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -70,9 +71,12 @@ function AuthedLayout() {
         <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ProfileButton />
-            <Link to="/home" className="font-black text-lg tracking-tight bg-gradient-to-r from-violet-500 via-cyan-500 to-amber-500 bg-clip-text text-transparent">
+          <Link to="/home" className="flex items-center gap-2 btn-press">
+            <img src={logo} alt="good-app logo" className="w-8 h-8 rounded-lg shadow-lg" />
+            <span className="font-black text-lg tracking-tight bg-gradient-to-r from-violet-500 via-cyan-500 to-amber-500 bg-clip-text text-transparent">
               good-app
-            </Link>
+            </span>
+          </Link>
           </div>
           <button onClick={logout}
             className="btn-press p-2 rounded-lg bg-surface-2 border border-border text-muted-foreground hover:text-rose">
