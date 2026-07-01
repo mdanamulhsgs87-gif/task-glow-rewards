@@ -92,11 +92,11 @@ function AuthedLayout() {
 
       <nav className="fixed bottom-0 inset-x-0 z-30 glass border-t border-violet/20">
         <div className="max-w-md mx-auto px-2 py-2 grid grid-cols-5 gap-1">
-          <NavItem to="/home" icon={<Home className="w-5 h-5" />} label="হোম" tint="cyan" />
-          <div data-tour="nav-reverify"><NavItem to="/reverify" icon={<RefreshCcw className="w-5 h-5" />} label="রি-ভেরিফাই" tint="violet" /></div>
-          <div data-tour="nav-referral"><NavItem to="/referral" icon={<Gift className="w-5 h-5" />} label="রেফার" tint="emerald" /></div>
-          <div data-tour="nav-wallet"><NavItem to="/wallet" icon={<Wallet className="w-5 h-5" />} label="ওয়ালেট" tint="amber" /></div>
-          <div data-tour="nav-withdraw"><NavItem to="/withdraw" icon={<ArrowDownToLine className="w-5 h-5" />} label="উইথড্র" tint="rose" /></div>
+          <NavItem to="/home" icon={<Home className="w-5 h-5" />} label="হোম" tint="cyan" voice="home.welcome" />
+          <div data-tour="nav-reverify"><NavItem to="/reverify" icon={<RefreshCcw className="w-5 h-5" />} label="রি-ভেরিফাই" tint="violet" voice="reverify.intro" /></div>
+          <div data-tour="nav-referral"><NavItem to="/referral" icon={<Gift className="w-5 h-5" />} label="রেফার" tint="emerald" voice="referral.intro" /></div>
+          <div data-tour="nav-wallet"><NavItem to="/wallet" icon={<Wallet className="w-5 h-5" />} label="ওয়ালেট" tint="amber" voice="wallet.intro" /></div>
+          <div data-tour="nav-withdraw"><NavItem to="/withdraw" icon={<ArrowDownToLine className="w-5 h-5" />} label="উইথড্র" tint="rose" voice="withdraw.intro" /></div>
         </div>
       </nav>
 
@@ -108,7 +108,7 @@ function AuthedLayout() {
 function ProfileButton() {
   const { data } = useQuery({ queryKey: ["profile-history"], queryFn: () => getProfileHistory(), staleTime: 60_000 });
   return (
-    <Link to="/profile" className="btn-press w-9 h-9 rounded-full overflow-hidden border-2 border-gold/60 glow-gold bg-surface-2 flex items-center justify-center">
+    <Link to="/profile" data-voice="profile.intro" className="btn-press w-9 h-9 rounded-full overflow-hidden border-2 border-gold/60 glow-gold bg-surface-2 flex items-center justify-center">
       {data?.avatar_signed
         ? <img src={data.avatar_signed} className="w-full h-full object-cover" alt="me" />
         : <User className="w-4 h-4 text-gold" />}
@@ -116,9 +116,9 @@ function ProfileButton() {
   );
 }
 
-function NavItem({ to, icon, label, tint }: { to: string; icon: React.ReactNode; label: string; tint: "cyan"|"violet"|"emerald"|"amber"|"rose" }) {
+function NavItem({ to, icon, label, tint, voice }: { to: string; icon: React.ReactNode; label: string; tint: "cyan"|"violet"|"emerald"|"amber"|"rose"; voice?: string }) {
   return (
-    <Link to={to as any}
+    <Link to={to as any} data-voice={voice}
       activeProps={{ className: `nav-item-active nav-tint-${tint}` }}
       inactiveProps={{ className: `nav-tint-${tint} opacity-70` }}
       className="nav-item relative flex flex-col items-center gap-0.5 py-2 rounded-xl text-[10px] font-black">
