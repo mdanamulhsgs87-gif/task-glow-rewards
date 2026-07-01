@@ -248,9 +248,9 @@ function TaskPage() {
       {task.status === "empty" && step === "verify" && identity && (
         <div className="glass rounded-2xl p-4 space-y-4">
           <div className="rounded-xl bg-emerald/10 border border-emerald/30 p-3 space-y-2">
-            <p className="text-xs font-bold text-emerald">✅ ছবি ও identity প্রস্তুত (refresh দিলেও হারাবে না)</p>
+            <p className="text-xs font-bold text-emerald">✅ ছবি ও পরিচয় প্রস্তুত (রিফ্রেশ দিলেও হারাবে না)</p>
             <div>
-              <p className="text-[10px] text-muted-foreground">Wallet ঠিকানা:</p>
+              <p className="text-[10px] text-muted-foreground">ওয়ালেট ঠিকানা:</p>
               <p className="text-[10px] font-mono break-all bg-black/5 p-1.5 rounded cursor-pointer"
                 onClick={() => { navigator.clipboard.writeText(identity.address); toast.success("ঠিকানা কপি হয়েছে"); }}>
                 {identity.address}
