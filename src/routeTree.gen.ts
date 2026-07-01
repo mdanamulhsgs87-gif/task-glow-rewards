@@ -21,6 +21,7 @@ import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminUnverifiedRouteImport } from './routes/admin/unverified'
 import { Route as AdminReverifyRouteImport } from './routes/admin/reverify'
 import { Route as AdminFacesRouteImport } from './routes/admin/faces'
+import { Route as AdminAnnouncementsRouteImport } from './routes/admin/announcements'
 import { Route as AuthenticatedWithdrawRouteImport } from './routes/_authenticated/withdraw'
 import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
 import { Route as AuthenticatedReverifyRouteImport } from './routes/_authenticated/reverify'
@@ -90,6 +91,11 @@ const AdminFacesRoute = AdminFacesRouteImport.update({
   path: '/faces',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAnnouncementsRoute = AdminAnnouncementsRouteImport.update({
+  id: '/announcements',
+  path: '/announcements',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AuthenticatedWithdrawRoute = AuthenticatedWithdrawRouteImport.update({
   id: '/withdraw',
   path: '/withdraw',
@@ -148,6 +154,7 @@ export interface FileRoutesByFullPath {
   '/reverify': typeof AuthenticatedReverifyRoute
   '/wallet': typeof AuthenticatedWalletRoute
   '/withdraw': typeof AuthenticatedWithdrawRoute
+  '/admin/announcements': typeof AdminAnnouncementsRoute
   '/admin/faces': typeof AdminFacesRoute
   '/admin/reverify': typeof AdminReverifyRoute
   '/admin/unverified': typeof AdminUnverifiedRoute
@@ -169,6 +176,7 @@ export interface FileRoutesByTo {
   '/reverify': typeof AuthenticatedReverifyRoute
   '/wallet': typeof AuthenticatedWalletRoute
   '/withdraw': typeof AuthenticatedWithdrawRoute
+  '/admin/announcements': typeof AdminAnnouncementsRoute
   '/admin/faces': typeof AdminFacesRoute
   '/admin/reverify': typeof AdminReverifyRoute
   '/admin/unverified': typeof AdminUnverifiedRoute
@@ -193,6 +201,7 @@ export interface FileRoutesById {
   '/_authenticated/reverify': typeof AuthenticatedReverifyRoute
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
   '/_authenticated/withdraw': typeof AuthenticatedWithdrawRoute
+  '/admin/announcements': typeof AdminAnnouncementsRoute
   '/admin/faces': typeof AdminFacesRoute
   '/admin/reverify': typeof AdminReverifyRoute
   '/admin/unverified': typeof AdminUnverifiedRoute
@@ -217,6 +226,7 @@ export interface FileRouteTypes {
     | '/reverify'
     | '/wallet'
     | '/withdraw'
+    | '/admin/announcements'
     | '/admin/faces'
     | '/admin/reverify'
     | '/admin/unverified'
@@ -238,6 +248,7 @@ export interface FileRouteTypes {
     | '/reverify'
     | '/wallet'
     | '/withdraw'
+    | '/admin/announcements'
     | '/admin/faces'
     | '/admin/reverify'
     | '/admin/unverified'
@@ -261,6 +272,7 @@ export interface FileRouteTypes {
     | '/_authenticated/reverify'
     | '/_authenticated/wallet'
     | '/_authenticated/withdraw'
+    | '/admin/announcements'
     | '/admin/faces'
     | '/admin/reverify'
     | '/admin/unverified'
@@ -368,6 +380,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminFacesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/announcements': {
+      id: '/admin/announcements'
+      path: '/announcements'
+      fullPath: '/admin/announcements'
+      preLoaderRoute: typeof AdminAnnouncementsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/_authenticated/withdraw': {
       id: '/_authenticated/withdraw'
       path: '/withdraw'
@@ -458,6 +477,7 @@ const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 interface AdminRouteChildren {
+  AdminAnnouncementsRoute: typeof AdminAnnouncementsRoute
   AdminFacesRoute: typeof AdminFacesRoute
   AdminReverifyRoute: typeof AdminReverifyRoute
   AdminUnverifiedRoute: typeof AdminUnverifiedRoute
@@ -469,6 +489,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAnnouncementsRoute: AdminAnnouncementsRoute,
   AdminFacesRoute: AdminFacesRoute,
   AdminReverifyRoute: AdminReverifyRoute,
   AdminUnverifiedRoute: AdminUnverifiedRoute,
