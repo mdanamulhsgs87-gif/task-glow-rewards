@@ -39,30 +39,30 @@ function AdminLoginPage() {
     <div className="min-h-[80vh] flex items-center justify-center p-4">
       <form onSubmit={onSubmit} className="glass rounded-2xl p-6 w-full max-w-sm space-y-4">
         <div className="text-center space-y-2">
-          <div className="w-12 h-12 mx-auto rounded-2xl bg-amber/15 flex items-center justify-center">
-            <Shield className="w-6 h-6 text-amber" />
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-amber/15 flex items-center justify-center glow-gold">
+            <img src={logo} alt="good-app logo" className="w-12 h-12 rounded-xl" />
           </div>
-          <h1 className="text-lg font-black">Admin Panel</h1>
+          <h1 className="text-lg font-black">অ্যাডমিন প্যানেল</h1>
           <p className="text-[11px] text-muted-foreground">
-            Sudhu admin password diye dhuken. User account er sathe ei panel er kono somporko nai.
+            শুধু অ্যাডমিন পাসওয়ার্ড দিয়ে প্রবেশ করুন। ইউজার একাউন্টের সাথে এই প্যানেলের কোনো সম্পর্ক নেই।
           </p>
         </div>
         <input
           type="password"
           autoFocus
           autoComplete="current-password"
-          placeholder="Admin password"
+          placeholder="অ্যাডমিন পাসওয়ার্ড"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="w-full px-4 py-3 rounded-xl bg-surface-2 border border-border focus:border-cyan outline-none text-sm mono-num"
         />
-        {error && <p className="text-rose text-[11px] text-center">Wrong password</p>}
+        {error && <p className="text-rose text-[11px] text-center">ভুল পাসওয়ার্ড</p>}
         <button
           type="submit"
           disabled={loading || !password}
           className="w-full py-3 rounded-xl gradient-cta font-black text-sm flex items-center justify-center gap-2 disabled:opacity-50"
         >
-          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Unlock"}
+          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "প্রবেশ করুন"}
         </button>
       </form>
     </div>
