@@ -54,6 +54,17 @@ const DEFAULT_STEPS: TourStep[] = [
 
 const STORAGE_KEY = "good-app-tour-v1";
 
+// In-memory cache: text -> signed URL (persists for the session)
+const urlCache = new Map<string, string>();
+// LocalStorage cache too, so cross-session hits skip the server round trip
+const LS_URL_CACHE = "good-app-tour-urls-v1";
+function readLsUrlCache(): Record<string, string> {
+  try { return JSON.parse(localStorage.getItem(LS_URL_CACHE) || "{}"); } catch { return {}; }
+}
+function writeLsUrlCache(map: Record<string, string>) {
+  try { localStorage.setItem(LS_URL_CACHE, JSON.stringify(map)); } catch {}
+}
+
 function pickBengaliVoice(): SpeechSynthesisVoice | null {
   if (typeof window === "undefined" || !window.speechSynthesis) return null;
   const voices = window.speechSynthesis.getVoices();
@@ -66,8 +77,8 @@ function pickBengaliVoice(): SpeechSynthesisVoice | null {
   );
 }
 
-function speak(text: string, muted: boolean) {
-  if (muted || typeof window === "undefined" || !window.speechSynthesis) return;
+function speakFallback(text: string) {
+  if (typeof window === "undefined" || !window.speechSynthesis) return;
   try {
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
