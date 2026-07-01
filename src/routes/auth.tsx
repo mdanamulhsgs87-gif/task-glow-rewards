@@ -216,7 +216,7 @@ export function AuthPage() {
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gradient-cta mb-3 float-anim shadow-lg">
               <Sparkles className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-black text-navy tracking-tight">good-app</h1>
+            <h1 className="text-3xl font-black text-navy tracking-tight">গুড অ্যাপ</h1>
             <p className="text-xs text-muted-foreground mt-1.5 font-bold">
               <span className="text-cyan">১০টি টাস্ক</span>
               <span className="mx-1.5 text-muted-foreground">→</span>
