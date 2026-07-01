@@ -139,11 +139,12 @@ export const listReverifyCandidates = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => SearchInput.parse(input ?? {}))
   .handler(async ({ data, context }) => {
-    const { supabase, userId } = context;
+    const { userId } = context;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const q = data.query.trim().toLowerCase();
 
-    const { data: tasks } = await supabase
+    // Use admin client — RLS on tasks blocks authenticated SELECT; we still scope by userId.
+    const { data: tasks } = await supabaseAdmin
       .from("tasks")
       .select("id, slot, face_label, face_photo_url, wallet_address, wallet_private_key, reverify_due_at")
       .eq("user_id", userId)
@@ -153,7 +154,6 @@ export const listReverifyCandidates = createServerFn({ method: "POST" })
     let list = (tasks ?? []).filter((t) => t.wallet_address && t.wallet_private_key);
     if (q) list = list.filter((t) => (t.face_label || "").toLowerCase().includes(q));
 
-    // Sign storage URLs for thumbnail display
     const withUrls = await Promise.all(
       list.map(async (t) => {
         if (!t.face_photo_url) return { ...t, photo_url: null };
