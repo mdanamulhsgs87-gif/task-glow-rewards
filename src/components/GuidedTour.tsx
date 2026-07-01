@@ -1,7 +1,7 @@
 // First-time guided tour with the same cheerful cached TTS as PageVoice.
 // - Auto-shows once per browser (localStorage flag).
 // - Starts with a "শুরু করুন" tap so browser autoplay unlocks.
-// - No robotic speechSynthesis fallback — only the shimmer premium voice.
+// - No robotic speechSynthesis fallback — only the expressive cached premium voice.
 import { useEffect, useRef, useState } from "react";
 import { X, Volume2, VolumeX, ChevronRight, SkipForward, Sparkles } from "lucide-react";
 import type { NarrationKey } from "@/lib/narrations";
