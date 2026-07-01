@@ -49,7 +49,7 @@ export const getTourAudio = createServerFn({ method: "POST" })
           input: data.text,
           voice: VOICE,
           response_format: "mp3",
-          instructions: "Speak in warm, friendly, natural Bengali (Bangla). Clear pronunciation, moderate pace.",
+          instructions: "You are a warm, friendly young Bangladeshi woman speaking natural, fluent Bengali (Bangla, bn-BD). Pronounce every Bengali word clearly and correctly with proper Bangla intonation — do NOT read it as English or Hindi. Speak at a calm, gentle, conversational pace. Warm, soft, human tone. Never robotic.",
         }),
       });
 
