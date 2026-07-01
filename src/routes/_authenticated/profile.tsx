@@ -71,13 +71,13 @@ function ProfilePage() {
       </div>
 
       {/* Avatar + basic */}
-      <div className="glass rounded-2xl p-5 flex items-center gap-4">
+      <div className="glass rounded-2xl p-5 flex flex-col items-center gap-3">
         <div className="relative">
-          <div className="w-20 h-20 rounded-2xl overflow-hidden shimmer-border bg-surface-2 flex items-center justify-center">
+          <div className="w-24 h-24 rounded-2xl overflow-hidden shimmer-border bg-surface-2 flex items-center justify-center">
             {data.avatar_signed ? (
               <img src={data.avatar_signed} className="w-full h-full object-cover" alt="avatar" />
             ) : (
-              <User className="w-8 h-8 text-muted-foreground" />
+              <User className="w-10 h-10 text-muted-foreground" />
             )}
           </div>
           <label className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full gradient-cta flex items-center justify-center cursor-pointer btn-press glow-violet">
@@ -86,10 +86,20 @@ function ProfilePage() {
               onChange={(e) => { const f = e.target.files?.[0]; if (f) upload.mutate(f); }} />
           </label>
         </div>
-        <div className="flex-1 min-w-0">
+        <button
+          type="button"
+          onClick={() => { navigator.clipboard.writeText(uid); toast.success("UID কপি হয়েছে"); }}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold/15 border border-gold/40 text-gold font-black text-[11px] btn-press"
+          title="UID কপি করুন"
+        >
+          <IdCard className="w-3.5 h-3.5" />
+          <span className="mono-num tracking-widest">UID: {uid}</span>
+          <Camera className="w-0 h-0" />
+          <span className="text-[10px]">📋</span>
+        </button>
+        <div className="text-center min-w-0 w-full">
           <p className="text-lg font-black truncate">{p.display_name ?? "ইউজার"}</p>
           <p className="text-xs text-muted-foreground mono-num">{p.phone_number ?? "-"}</p>
-          <p className="text-[10px] text-gold font-bold mt-1">UID: <span className="mono-num">{uid}</span></p>
         </div>
       </div>
 
