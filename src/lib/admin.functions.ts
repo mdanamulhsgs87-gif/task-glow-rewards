@@ -368,13 +368,7 @@ export const adminResetUserPassword = createServerFn({ method: "POST" })
 // ---------------- Manual whitelist re-check (admin) ----------------
 export const adminRunWhitelistCheck = createServerFn({ method: "POST" }).handler(async () => {
   const supabaseAdmin = await gate();
-  const { ethers } = await import("ethers");
-
-  const CELO_RPC = "https://forno.celo.org";
-  const ADDR = "0xC361A6E67822a0EDc17D899227dd9FC50BD62F42";
-  const ABI = ["function isWhitelisted(address account) view returns (bool)"];
-  const provider = new ethers.JsonRpcProvider(CELO_RPC);
-  const contract = new ethers.Contract(ADDR, ABI, provider);
+  const { isWhitelistedRPC } = await import("@/lib/celo-whitelist");
 
   const { data: tasks } = await supabaseAdmin
     .from("tasks")
@@ -387,8 +381,8 @@ export const adminRunWhitelistCheck = createServerFn({ method: "POST" }).handler
   const now = new Date().toISOString();
   for (const t of tasks ?? []) {
     checked++;
-    let ok = false;
-    try { ok = await contract.isWhitelisted(t.wallet_address); } catch { ok = false; }
+    const ok = await isWhitelistedRPC(t.wallet_address as string);
+
     if (!ok && (t.whitelist_ok ?? true)) {
       await supabaseAdmin.from("tasks").update({
         whitelist_ok: false, last_whitelist_check_at: now,
