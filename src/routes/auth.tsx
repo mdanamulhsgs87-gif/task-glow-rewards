@@ -139,6 +139,10 @@ export function AuthPage() {
         email: phoneToEmail(cleanPhone), password,
       });
       if (error) throw error;
+      try {
+        localStorage.removeItem("good-app-tour-v2");
+        localStorage.setItem("good-app-tour-force", "1");
+      } catch {}
       toast.success("একাউন্ট তৈরি হয়েছে!");
       nav({ to: "/home" });
     } catch (e: any) {
