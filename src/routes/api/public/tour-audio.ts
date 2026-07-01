@@ -37,7 +37,7 @@ export const Route = createFileRoute("/api/public/tour-audio")({
             headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
             body: JSON.stringify({
               model: MODEL, input: text, voice: VOICE, response_format: "mp3",
-              instructions: "Speak in warm, friendly, natural Bengali (Bangla). Clear pronunciation, moderate pace.",
+              instructions: TTS_INSTRUCTIONS,
             }),
           });
           if (!res.ok) {
