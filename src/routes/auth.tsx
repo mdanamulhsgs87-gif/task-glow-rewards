@@ -149,7 +149,9 @@ export function AuthPage() {
   if (step === "agreement") {
     return (
       <div className="min-h-screen gradient-aurora flex items-center justify-center px-4 py-8">
+        <PageVoice pageId="auth-agreement" steps={["auth.agreement","auth.rule.1","auth.rule.2","auth.rule.3","auth.rule.4","auth.rule.5","auth.rule.6","auth.rule.7","auth.submit"]} />
         <div className="w-full max-w-md premium-panel rounded-3xl p-6 pop-in">
+
           <div className="text-center mb-5">
             <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl gradient-navy mb-3 float-anim">
               <ShieldCheck className="w-7 h-7 text-gold" />
