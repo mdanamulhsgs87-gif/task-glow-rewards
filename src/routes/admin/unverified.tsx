@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { adminListUnverified, adminমুছুনUnverified } from "@/lib/admin.functions";
-import { Loader2, AlertTriangle, Copy, Trash2 } from "lucide-react";
+import { adminListUnverified, adminমুছুনUnverified, adminPromoteUnverified } from "@/lib/admin.functions";
+import { Loader2, AlertTriangle, Copy, Trash2, ArrowUpRight } from "lucide-react";
 import { toast } from "sonner";
+import { useState } from "react";
 
 export const Route = createFileRoute("/admin/unverified")({ component: UnverifiedPage });
 
@@ -14,7 +15,13 @@ function UnverifiedPage() {
 
   const del = useMutation({
     mutationFn: (id: string) => adminমুছুনUnverified({ data: { id } }),
-    onSuccess: () => { toast.success("মুছুনd"); refetch(); },
+    onSuccess: () => { toast.success("মুছে ফেলা হয়েছে"); refetch(); },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  const promote = useMutation({
+    mutationFn: (input: { id: string; slot?: number }) => adminPromoteUnverified({ data: input }),
+    onSuccess: (r: any) => { toast.success(`Slot #${r.slot}-এ যোগ হয়েছে — user এখন রি-ভেরিফাই করতে পারবে`); refetch(); },
     onError: (e: any) => toast.error(e.message),
   });
 
@@ -61,17 +68,44 @@ function UnverifiedPage() {
           <p className="text-[10px] text-muted-foreground">
             ⚠️ {r.reason} · {new Date(r.created_at).toLocaleString()}
           </p>
-          <button onClick={() => { if (confirm("মুছুন this attempt?")) del.mutate(r.id); }}
+          <PromoteRow attemptId={r.id} defaultSlot={r.slot} onPromote={(slot) => promote.mutate({ id: r.id, slot })} pending={promote.isPending} />
+          <button onClick={() => { if (confirm("এই attempt মুছে ফেলবেন?")) del.mutate(r.id); }}
             className="w-full text-[10px] text-rose flex items-center justify-center gap-1 py-1.5 rounded bg-rose/10 border border-rose/20">
-            <Trash2 className="w-3 h-3" /> মুছুন attempt
+            <Trash2 className="w-3 h-3" /> attempt মুছুন
           </button>
         </div>
       ))}
       {(!data || data.length === 0) && (
         <div className="glass rounded-xl p-6 text-center text-xs text-muted-foreground">
-          Kono not-whitelisted attempt nai.
+          কোনো not-whitelisted attempt নেই।
         </div>
       )}
+    </div>
+  );
+}
+
+function PromoteRow({ defaultSlot, onPromote, pending }: {
+  attemptId: string;
+  defaultSlot: number | null;
+  onPromote: (slot?: number) => void;
+  pending: boolean;
+}) {
+  const [slot, setSlot] = useState<string>(defaultSlot ? String(defaultSlot) : "");
+  return (
+    <div className="flex gap-1">
+      <input
+        type="number" min={1} max={1000} value={slot}
+        onChange={(e) => setSlot(e.target.value)}
+        placeholder="Slot # (খালি = auto)"
+        className="w-24 px-2 py-1.5 rounded bg-surface-2 border border-border text-[10px] font-bold outline-none"
+      />
+      <button
+        disabled={pending}
+        onClick={() => onPromote(slot ? Number(slot) : undefined)}
+        className="flex-1 text-[10px] flex items-center justify-center gap-1 py-1.5 rounded bg-emerald/15 border border-emerald/30 text-emerald font-bold disabled:opacity-50"
+      >
+        <ArrowUpRight className="w-3 h-3" /> Slot-এ যোগ করুন (রি-ভেরিফাই প্রস্তুত)
+      </button>
     </div>
   );
 }

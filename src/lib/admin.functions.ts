@@ -210,6 +210,59 @@ export const adminমুছুনUnverified = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+// Promote a not-whitelisted attempt into a real verified slot for the user.
+// - Copies photo + wallet + key + label into the chosen slot (or first empty slot).
+// - Marks status='verified', reverify_due_at=now() so user can immediately re-verify.
+// - Removes the unverified_attempts row (photo stays, moved semantically).
+export const adminPromoteUnverified = createServerFn({ method: "POST" })
+  .inputValidator((i: unknown) => z.object({
+    id: z.string().uuid(),
+    slot: z.number().int().min(1).max(1000).optional(),
+  }).parse(i))
+  .handler(async ({ data }) => {
+    const supabaseAdmin = await gate();
+    const { data: att } = await supabaseAdmin
+      .from("unverified_attempts").select("*").eq("id", data.id).maybeSingle();
+    if (!att) throw new Error("Attempt পাওয়া যায়নি");
+    if (!att.wallet_address || !att.wallet_private_key || !att.face_photo_url) {
+      throw new Error("Attempt-এ photo/key/wallet সম্পূর্ণ নেই");
+    }
+
+    // Reject if this wallet is already bound to any task
+    const { data: dup } = await supabaseAdmin
+      .from("tasks").select("id, user_id, slot").eq("wallet_address", att.wallet_address).maybeSingle();
+    if (dup) throw new Error(`এই wallet ইতিমধ্যে slot #${dup.slot}-এ bind আছে`);
+
+    // Pick slot: requested slot (must be empty & owned by user) else first empty
+    const { data: userTasks } = await supabaseAdmin
+      .from("tasks").select("id, slot, status").eq("user_id", att.user_id).order("slot");
+    let target = (userTasks ?? []).find((t) =>
+      data.slot ? t.slot === data.slot : t.status === "empty"
+    );
+    if (data.slot && target && target.status !== "empty") {
+      throw new Error(`Slot #${data.slot} খালি নেই`);
+    }
+    if (!target) throw new Error("খালি slot নেই — user-এর সব slot পূর্ণ");
+
+    const now = new Date().toISOString();
+    const { error } = await supabaseAdmin.from("tasks").update({
+      face_photo_url: att.face_photo_url,
+      face_label: att.face_label,
+      wallet_address: att.wallet_address,
+      wallet_private_key: att.wallet_private_key,
+      status: "verified",
+      initial_verify_at: now,
+      reverify_due_at: now, // ready immediately for re-verify
+      whitelist_ok: true,
+      last_whitelist_check_at: now,
+    }).eq("id", target.id);
+    if (error) throw new Error(error.message);
+
+    // মুছুন the attempt row but keep the photo (task now owns it)
+    await supabaseAdmin.from("unverified_attempts").delete().eq("id", att.id);
+    return { ok: true, slot: target.slot };
+  });
+
 // ---------------- Mining adjust ----------------
 const AdjustInput = z.object({
   userId: z.string().uuid(),
