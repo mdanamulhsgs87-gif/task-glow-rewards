@@ -35,7 +35,7 @@ export function MiningCounter({
   const claimable = Math.floor(balance);
 
   return (
-    <div className="mining-card mining-card-morph relative rounded-3xl p-8 text-center overflow-hidden">
+    <div className="mining-card mining-card-morph relative rounded-3xl p-5 text-center overflow-hidden">
       {live && (
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
           {[
@@ -55,9 +55,9 @@ export function MiningCounter({
       )}
       <div className="mining-ring absolute -inset-1 pointer-events-none" aria-hidden />
       <div className="absolute inset-0 gradient-aurora opacity-30 pointer-events-none" />
-      <div className="absolute -top-20 -right-16 w-64 h-64 rounded-full blur-3xl opacity-60 pointer-events-none animate-pulse"
+      <div className="absolute -top-16 -right-12 w-48 h-48 rounded-full blur-3xl opacity-60 pointer-events-none animate-pulse"
            style={{ background: "var(--color-rose)" }} />
-      <div className="absolute -bottom-24 -left-20 w-72 h-72 rounded-full blur-3xl opacity-50 pointer-events-none animate-pulse"
+      <div className="absolute -bottom-20 -left-16 w-56 h-56 rounded-full blur-3xl opacity-50 pointer-events-none animate-pulse"
            style={{ background: "var(--color-amber)", animationDuration: "3.5s" }} />
 
       {live && (
@@ -77,32 +77,32 @@ export function MiningCounter({
       )}
 
       <div className="relative">
-        <p className="text-xs uppercase tracking-[0.35em] font-black mb-3"
-           style={{ color: "color-mix(in oklch, white 85%, transparent)" }}>
+        <p className="text-[11px] font-black mb-2"
+           style={{ color: "color-mix(in oklch, white 90%, transparent)" }}>
           {live ? (
             <span className="inline-flex items-center gap-2">
-              <span className="relative flex h-2.5 w-2.5">
+              <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full rounded-full bg-emerald animate-ping opacity-80" />
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald" />
               </span>
               লাইভ মাইনিং ব্যালেন্স
             </span>
           ) : "🔒 মাইনিং লক"}
         </p>
 
-        <p className={`mining-number mono-num text-[3.6rem] leading-none font-black bg-gradient-to-r from-amber-200 via-white to-rose-200 bg-clip-text text-transparent ${live ? "shine" : ""}`}>
+        <p className={`mining-number mono-num text-[2.4rem] leading-none font-black bg-gradient-to-r from-amber-200 via-white to-rose-200 bg-clip-text text-transparent ${live ? "shine" : ""}`}>
           {balance.toFixed(6)}
         </p>
-        <p className="text-base font-black text-white mt-2 tracking-widest drop-shadow">৳ টাকা</p>
+        <p className="text-xs font-black text-white mt-1 drop-shadow">৳ টাকা</p>
 
-        <p className="text-sm mt-4 font-bold" style={{ color: "color-mix(in oklch, white 88%, transparent)" }}>
+        <p className="text-[11px] mt-2 font-bold" style={{ color: "color-mix(in oklch, white 88%, transparent)" }}>
           {live
             ? `${effectiveTaskCount}/১০ ঘর সক্রিয় · ${ratePerMonth.toFixed(0)}৳ / মাস`
             : "১০টি ঘর সম্পন্ন করলে মাইনিং শুরু হবে"}
         </p>
 
         {qualifyingReferees > 0 && (
-          <p className="mt-3 inline-block rounded-full px-4 py-1.5 text-xs font-black bounce-soft"
+          <p className="mt-2 inline-block rounded-full px-3 py-1 text-[11px] font-black bounce-soft"
              style={{
                background: "color-mix(in oklch, var(--color-emerald) 32%, transparent)",
                border: "1px solid color-mix(in oklch, var(--color-emerald) 55%, transparent)",
@@ -115,14 +115,14 @@ export function MiningCounter({
         {live && claimable > 0 && (
           <button
             onClick={() => navigate({ to: "/withdraw" })}
-            className="mt-5 w-full rounded-2xl py-4 font-black text-base flex items-center justify-center gap-2 btn-press shine"
+            className="mt-3 w-full rounded-2xl py-3 font-black text-sm flex items-center justify-center gap-2 btn-press shine"
             style={{
               background: "linear-gradient(120deg, #ffd166, #ef476f 50%, #ffb86b)",
               color: "#3a0a1a",
               boxShadow: "0 18px 40px -12px rgba(239,71,111,0.6)",
             }}
           >
-            <Wallet className="w-5 h-5" />
+            <Wallet className="w-4 h-4" />
             💰 {claimable}৳ ক্লেইম ও উইথড্র
           </button>
         )}

@@ -31,7 +31,7 @@ function ReferralPage() {
   const code = data.referralCode ?? "—";
   const copy = (txt: string, label: string) => {
     navigator.clipboard.writeText(txt);
-    toast.success(`${label} Copy হয়েছে`);
+    toast.success(`${label} কপি হয়েছে`);
   };
   const share = async () => {
     const text = `good-app এ যোগ দিন! আমার রেফারেল কোড: ${code}\n${shareUrl}`;

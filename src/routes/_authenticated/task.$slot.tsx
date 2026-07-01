@@ -76,7 +76,7 @@ function TaskPage() {
       bindFirstVerify({ data: { slot: slotNum, ...input } }),
     onSuccess: () => {
       clearProgress();
-      toast.success("Verify হয়েছে! ৩ দিন পর একবার Re-verify লাগবে, পরের বার যেকোনো সময় admin চাইতে পারে।");
+      toast.success("ভেরিফাই সম্পন্ন! ৩ দিন পর একবার রি-ভেরিফাই লাগবে, পরে যেকোনো সময় অ্যাডমিন চাইতে পারেন।");
       refetch();
       nav({ to: "/home" });
     },
@@ -119,10 +119,10 @@ function TaskPage() {
               privateKey: identity.privateKey,
               walletAddress: identity.address,
               faceLabel: faceLabel.trim(),
-              reason: "GoodDollar whitelist এ পাওয়া যায়নি",
+              reason: "গুডডলার হোয়াইটলিস্টে পাওয়া যায়নি",
             },
           });
-          toast.warning("Whitelist পাওয়া যায়নি — Admin এ save হয়েছে। পরের বার নতুন key তৈরি হবে।");
+          toast.warning("হোয়াইটলিস্টে পাওয়া যায়নি — অ্যাডমিন প্যানেলে সংরক্ষিত হয়েছে। পরের বার নতুন কী তৈরি হবে।");
         } catch (saveErr: any) {
           toast.error("সংরক্ষণ ব্যর্থ: " + saveErr.message);
         }
@@ -162,8 +162,9 @@ function TaskPage() {
 
   return (
     <div className="space-y-4 pt-2">
-      <Link to="/home" className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-        <ArrowLeft className="w-3.5 h-3.5" /> পিছনে
+      <Link to="/home"
+        className="inline-flex items-center gap-2 px-4 py-2 rounded-full gradient-cta text-white text-sm font-black shadow-lg btn-press">
+        <ArrowLeft className="w-4 h-4" /> পিছনে যান
       </Link>
 
       <div className="premium-panel shine rounded-2xl p-5 pop-in">
@@ -173,8 +174,8 @@ function TaskPage() {
         </h1>
         <p className="text-[12px] text-muted-foreground mt-2 font-bold">
           {isDone && <span className="text-emerald">✅ এই ঘর সম্পূর্ণ</span>}
-          {isVerified && <span className="text-amber">⏳ Re-verify প্রস্তুত হলে /reverify পেজ থেকে করবেন</span>}
-          {task.status === "empty" && <span className="text-cyan bounce-soft inline-block">🔵 GoodDollar face verify দিয়ে শুরু করুন</span>}
+          {isVerified && <span className="text-amber">⏳ রি-ভেরিফাই প্রস্তুত হলে রি-ভেরিফাই পেজ থেকে করবেন</span>}
+          {task.status === "empty" && <span className="text-cyan bounce-soft inline-block">🔵 গুডডলার ফেস ভেরিফাই দিয়ে শুরু করুন</span>}
         </p>
       </div>
 
@@ -182,21 +183,21 @@ function TaskPage() {
         <div className="rounded-2xl bg-emerald/10 border border-emerald/40 p-5 text-center">
           <CheckCircle2 className="w-10 h-10 text-emerald mx-auto mb-2" />
           <p className="font-bold">এই ঘর সম্পূর্ণ</p>
-          <Link to="/home" className="inline-block mt-3 px-4 py-2 rounded-xl gradient-cta text-sm font-bold">Home</Link>
+          <Link to="/home" className="inline-block mt-3 px-4 py-2 rounded-xl gradient-cta text-sm font-bold">হোম</Link>
         </div>
       )}
 
       {isVerified && (
         <div className="rounded-2xl bg-amber/10 border border-amber/40 p-5 text-center">
           <Clock className="w-10 h-10 text-amber mx-auto mb-2" />
-          <p className="font-bold">Re-verify এর অপেক্ষায়</p>
+          <p className="font-bold">রি-ভেরিফাইয়ের অপেক্ষায়</p>
           <p className="text-[11px] text-muted-foreground mt-2">
             প্রস্তুত হবে: <span className="text-amber font-bold">
               {task.reverify_due_at ? new Date(task.reverify_due_at).toLocaleString() : "—"}
             </span>
           </p>
           <Link to="/reverify" className="inline-block mt-3 px-4 py-2 rounded-xl gradient-cta text-sm font-bold">
-            Re-verify পেজ
+            রি-ভেরিফাই পেজ
           </Link>
         </div>
       )}
@@ -206,8 +207,8 @@ function TaskPage() {
           <p className="text-xs text-muted-foreground leading-relaxed">
             ১. মুখের মালিকের নাম দিন<br />
             ২. আপনার ছবি তুলুন<br />
-            ৩. GoodDollar এ face verify করুন<br />
-            ৪. ফিরে আসার পর ১০s অপেক্ষা → জমা দিন চাপুন
+            ৩. গুডডলারে ফেস ভেরিফাই করুন<br />
+            ৪. ফিরে আসার পর ১০ সেকেন্ড অপেক্ষা → জমা দিন চাপুন
           </p>
           <button onClick={() => {
               clearProgress();
@@ -247,11 +248,11 @@ function TaskPage() {
       {task.status === "empty" && step === "verify" && identity && (
         <div className="glass rounded-2xl p-4 space-y-4">
           <div className="rounded-xl bg-emerald/10 border border-emerald/30 p-3 space-y-2">
-            <p className="text-xs font-bold text-emerald">✅ ছবি ও identity প্রস্তুত (refresh দিলেও হারাবে না)</p>
+            <p className="text-xs font-bold text-emerald">✅ ছবি ও পরিচয় প্রস্তুত (রিফ্রেশ দিলেও হারাবে না)</p>
             <div>
-              <p className="text-[10px] text-muted-foreground">Wallet ঠিকানা:</p>
+              <p className="text-[10px] text-muted-foreground">ওয়ালেট ঠিকানা:</p>
               <p className="text-[10px] font-mono break-all bg-black/5 p-1.5 rounded cursor-pointer"
-                onClick={() => { navigator.clipboard.writeText(identity.address); toast.success("ঠিকানা Copy হয়েছে"); }}>
+                onClick={() => { navigator.clipboard.writeText(identity.address); toast.success("ঠিকানা কপি হয়েছে"); }}>
                 {identity.address}
               </p>
             </div>
@@ -260,19 +261,19 @@ function TaskPage() {
           <a href={identity.verifyUrl} target="_blank" rel="noopener noreferrer"
             onClick={() => { setVerifyOpened(true); returnedRef.current = false; }}
             className="w-full flex items-center justify-center gap-2 py-4 rounded-xl gradient-cta font-black">
-            <ExternalLink className="w-4 h-4" /> GoodDollar Face Verify খুলুন
+            <ExternalLink className="w-4 h-4" /> গুডডলার ফেস ভেরিফাই খুলুন
           </a>
           {verifyOpened && countdown !== null && countdown > 0 && (
             <div className="text-center py-3 rounded-xl bg-amber/10 border border-amber/30">
               <p className="text-xs text-muted-foreground">জমা দিন বাটন আসবে</p>
-              <p className="text-3xl font-black text-amber mono-num">{countdown}s</p>
+              <p className="text-3xl font-black text-amber mono-num">{countdown} সে.</p>
             </div>
           )}
           {verifyOpened && countdown === 0 && (
             <button onClick={onSubmit} disabled={checking || bindMut.isPending}
               className="w-full py-4 rounded-xl gradient-cta font-black flex items-center justify-center gap-2">
               {checking || bindMut.isPending
-                ? <><Loader2 className="w-4 h-4 animate-spin" /> Whitelist যাচাই হচ্ছে…</>
+                ? <><Loader2 className="w-4 h-4 animate-spin" /> হোয়াইটলিস্ট যাচাই হচ্ছে…</>
                 : <><ShieldCheck className="w-4 h-4" /> জমা দিন</>}
             </button>
           )}
@@ -283,11 +284,11 @@ function TaskPage() {
                 setVerifyOpened(false);
                 setCountdown(null);
                 returnedRef.current = false;
-                toast.success("নতুন key তৈরি হয়েছে");
-              } catch (e: any) { toast.error("Key তৈরি হয়নি: " + e.message); }
+                toast.success("নতুন কী তৈরি হয়েছে");
+              } catch (e: any) { toast.error("কী তৈরি হয়নি: " + e.message); }
             }}
             className="w-full py-3 rounded-xl border border-amber/40 bg-amber/10 text-amber text-xs font-bold">
-            🔄 নতুন key তৈরি করুন
+            🔄 নতুন কী তৈরি করুন
           </button>
           <button onClick={() => { clearProgress(); setStep("intro"); setIdentity(null); setPhotoB64(null); setFaceLabel(""); setVerifyOpened(false); setCountdown(null); returnedRef.current = false; }}
             className="w-full py-2 rounded-xl border border-border text-xs text-muted-foreground">
