@@ -78,8 +78,8 @@ function WithdrawPage() {
           <p className="text-[11px] text-muted-foreground mt-1">সর্বনিম্ন {MIN_WITHDRAW_BDT}৳ ক্লেইমযোগ্য হলে উইথড্র করা যাবে</p>
         </div>
       ) : (
-        <form onSubmit={(e) => { e.preventDefault(); mut.mutate(); }} className="glass rounded-2xl p-5 space-y-4">
-          <div>
+        <form onSubmit={(e) => { e.preventDefault(); mut.mutate(); }} className="glass rounded-2xl p-5 space-y-4" data-voice="withdraw.intro">
+          <div data-voice="withdraw.amount">
             <label className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">পরিমাণ (৳ পূর্ণ টাকা)</label>
             <input type="number" min={MIN_WITHDRAW_BDT} step="1" value={amount}
               onChange={(e) => setAmount(e.target.value.replace(/[^\d]/g, ""))}
@@ -92,6 +92,7 @@ function WithdrawPage() {
             <p className="mono-num"><span className="text-muted-foreground">নম্বর:</span> <span className="font-bold">{wallet.number}</span></p>
           </div>
           <button disabled={mut.isPending || Math.floor(Number(amount) || 0) < MIN_WITHDRAW_BDT || Math.floor(Number(amount) || 0) > claimable}
+            data-voice="withdraw.submit"
             className="w-full py-4 rounded-xl gradient-cta font-black text-base flex items-center justify-center gap-2 disabled:opacity-50">
             {mut.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
             উইথড্র রিকোয়েস্ট করুন
