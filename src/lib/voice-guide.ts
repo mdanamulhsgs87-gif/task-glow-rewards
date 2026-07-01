@@ -183,20 +183,56 @@ export function playVoiceFromGesture(key: NarrationKey) {
   });
 }
 
+export function playVoiceAuto(key: NarrationKey) {
+  if (typeof window === "undefined" || isVoiceMuted()) return;
+  const token = ++playToken;
+  const ready = bufferCache.get(key);
+  if (ready) {
+    void playBuffer(ready);
+    return;
+  }
+  const cachedUrl = urlCache.get(key);
+  if (cachedUrl) {
+    playUrl(cachedUrl);
+    warmDecode(key, cachedUrl);
+    return;
+  }
+  fetchAudioUrl(key).then((url) => {
+    if (!url || token !== playToken || isVoiceMuted()) return;
+    playUrl(url);
+    warmDecode(key, url);
+  });
+}
+
 export function preloadVoices(keys: readonly NarrationKey[] = []) {
   if (typeof window === "undefined") return;
   const unique = Array.from(new Set(keys.filter(isNarrationKey)));
   window.setTimeout(() => {
     unique.forEach((key, index) => {
-      window.setTimeout(() => { void prepareVoice(key); }, index * 180);
+      window.setTimeout(() => { void prepareVoice(key); }, index * 70);
     });
-  }, 350);
+  }, 80);
+}
+
+function warmElementVoice(target: EventTarget | null) {
+  const holder = (target as HTMLElement | null)?.closest?.<HTMLElement>("[data-voice]");
+  if (!holder) return;
+  const key = holder.getAttribute("data-voice") ?? "";
+  if (isNarrationKey(key)) preloadVoices([key]);
+}
+
+function preloadVisibleVoiceKeys() {
+  if (typeof document === "undefined") return;
+  const keys = Array.from(document.querySelectorAll<HTMLElement>("[data-voice]"))
+    .map((el) => el.getAttribute("data-voice") ?? "")
+    .filter(isNarrationKey);
+  preloadVoices(keys);
 }
 
 export function attachVoiceClickListener() {
   if (typeof document === "undefined" || clickListenerAttached) return;
   clickListenerAttached = true;
-  document.addEventListener("click", (event) => {
+  const onSpeak = (event: Event) => {
     const target = event.target as HTMLElement | null;
     const holder = target?.closest<HTMLElement>("[data-voice]");
     if (!holder) return;
@@ -206,7 +242,21 @@ export function attachVoiceClickListener() {
       return;
     }
     playVoiceFromGesture(key);
+  };
+
+  // pointerdown fires before click on mobile, so the hint starts immediately
+  // instead of waiting for the button action / navigation to finish.
+  document.addEventListener("pointerdown", onSpeak, { capture: true });
+  document.addEventListener("keydown", (event) => {
+    const key = (event as KeyboardEvent).key;
+    if (key === "Enter" || key === " ") onSpeak(event);
   }, { capture: true });
+  document.addEventListener("pointerover", (event) => warmElementVoice(event.target), { capture: true, passive: true });
+  document.addEventListener("focusin", (event) => warmElementVoice(event.target), { capture: true });
+
+  preloadVisibleVoiceKeys();
+  const observer = new MutationObserver(() => preloadVisibleVoiceKeys());
+  observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["data-voice"] });
 
   (window as any).__voice = (key: string) => {
     if (isNarrationKey(key)) playVoiceFromGesture(key);
