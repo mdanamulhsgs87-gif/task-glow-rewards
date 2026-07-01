@@ -170,10 +170,9 @@ export function SpeakChip({ narrationKey, label }: { narrationKey: NarrationKey;
       if (url) {
         const a = new Audio(url);
         a.onended = () => setBusy(false);
-        a.onerror = () => { fallbackSpeak(NARRATIONS[narrationKey]); setBusy(false); };
-        a.play().catch(() => { fallbackSpeak(NARRATIONS[narrationKey]); setBusy(false); });
+        a.onerror = () => { setBusy(false); };
+        a.play().catch(() => { setBusy(false); });
       } else {
-        fallbackSpeak(NARRATIONS[narrationKey]);
         setBusy(false);
       }
     } catch { setBusy(false); }
