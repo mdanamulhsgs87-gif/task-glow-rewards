@@ -7,7 +7,7 @@ export const getDashboard = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const TASK_COLS = "id,slot,status,face_label,face_photo_url,wallet_address,verified_at,reverify_due_at,whitelist_ok,created_at,updated_at,user_id";
+    const TASK_COLS = "id,slot,status,face_label,face_photo_url,wallet_address,initial_verify_at,reverify_due_at,done_at,whitelist_ok,last_whitelist_check_at,created_at,user_id";
     const [{ data: profile }, tasksResult, { data: mining }, { data: wallet }, { data: roles }] =
       await Promise.all([
         supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
