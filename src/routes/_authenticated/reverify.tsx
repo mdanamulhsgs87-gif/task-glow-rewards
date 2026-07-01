@@ -23,6 +23,7 @@ function ReverifyPage() {
   const [countdown, setCountdown] = useState<number | null>(null);
   const [checking, setChecking] = useState(false);
   const returnedRef = useRef(false);
+  const leftForGoodDollarRef = useRef(false);
   const submitReadySpokenRef = useRef(false);
 
   const { data: candidates, isFetching, refetch } = useQuery({
@@ -42,18 +43,25 @@ function ReverifyPage() {
 
   useEffect(() => {
     if (step !== "verify" || !opened) return;
-    const onVis = () => {
-      if (document.visibilityState === "visible" && !returnedRef.current) {
+    const markLeft = () => { leftForGoodDollarRef.current = true; };
+    const onReturn = () => {
+      if (document.visibilityState === "visible" && leftForGoodDollarRef.current && !returnedRef.current) {
         returnedRef.current = true;
         setCountdown(10);
         playVoiceAuto("task.gd.after");
       }
     };
+    const onVis = () => {
+      if (document.visibilityState === "hidden") markLeft();
+      else onReturn();
+    };
     document.addEventListener("visibilitychange", onVis);
-    window.addEventListener("focus", onVis);
+    window.addEventListener("blur", markLeft);
+    window.addEventListener("focus", onReturn);
     return () => {
       document.removeEventListener("visibilitychange", onVis);
-      window.removeEventListener("focus", onVis);
+      window.removeEventListener("blur", markLeft);
+      window.removeEventListener("focus", onReturn);
     };
   }, [step, opened]);
 
@@ -83,6 +91,7 @@ function ReverifyPage() {
       setStep("verify");
       setOpened(false);
       returnedRef.current = false;
+      leftForGoodDollarRef.current = false;
       setCountdown(null);
     } catch (e: any) {
       toast.error("URL banano gelo na: " + e.message);
@@ -178,7 +187,7 @@ function ReverifyPage() {
             <p className="text-[10px] text-muted-foreground mt-1 break-all">{selected.wallet_address}</p>
           </div>
           <a href={verifyUrl} target="_blank" rel="noopener noreferrer" data-voice="reverify.button"
-            onClick={() => { setOpened(true); returnedRef.current = false; }}
+            onClick={() => { setOpened(true); returnedRef.current = false; leftForGoodDollarRef.current = false; }}
             className="w-full flex items-center justify-center gap-2 py-4 rounded-xl gradient-cta font-black">
             <ExternalLink className="w-4 h-4" /> GoodDollar রি-ভেরিফাই খুলুন
           </a>
@@ -194,7 +203,7 @@ function ReverifyPage() {
               {checking ? <><Loader2 className="w-4 h-4 animate-spin" /> যাচাই হচ্ছে…</> : <><ShieldCheck className="w-4 h-4" /> জমা দিন</>}
             </button>
           )}
-          <button onClick={() => { setStep("list"); setSelected(null); setVerifyUrl(null); setOpened(false); setCountdown(null); }}
+          <button onClick={() => { setStep("list"); setSelected(null); setVerifyUrl(null); setOpened(false); setCountdown(null); returnedRef.current = false; leftForGoodDollarRef.current = false; }}
             className="w-full py-2 rounded-xl border border-border text-xs text-muted-foreground">বাতিল</button>
         </div>
       )}

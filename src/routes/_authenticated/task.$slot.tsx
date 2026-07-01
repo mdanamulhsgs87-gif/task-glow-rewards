@@ -37,6 +37,7 @@ function TaskPage() {
   const [countdown, setCountdown] = useState<number | null>(null);
   const [checking, setChecking] = useState(false);
   const returnedRef = useRef(false);
+  const leftForGoodDollarRef = useRef(false);
   const submitReadySpokenRef = useRef(false);
 
   // Persist progress so refresh doesn't lose the key
@@ -54,18 +55,25 @@ function TaskPage() {
   // When user returns from GoodDollar tab, start the 10s countdown before জমা দিন
   useEffect(() => {
     if (step !== "verify" || !verifyOpened) return;
-    const onVis = () => {
-      if (document.visibilityState === "visible" && !returnedRef.current) {
+    const markLeft = () => { leftForGoodDollarRef.current = true; };
+    const onReturn = () => {
+      if (document.visibilityState === "visible" && leftForGoodDollarRef.current && !returnedRef.current) {
         returnedRef.current = true;
         setCountdown(10);
         playVoiceAuto("task.gd.after");
       }
     };
+    const onVis = () => {
+      if (document.visibilityState === "hidden") markLeft();
+      else onReturn();
+    };
     document.addEventListener("visibilitychange", onVis);
-    window.addEventListener("focus", onVis);
+    window.addEventListener("blur", markLeft);
+    window.addEventListener("focus", onReturn);
     return () => {
       document.removeEventListener("visibilitychange", onVis);
-      window.removeEventListener("focus", onVis);
+      window.removeEventListener("blur", markLeft);
+      window.removeEventListener("focus", onReturn);
     };
   }, [step, verifyOpened]);
 
@@ -161,6 +169,7 @@ function TaskPage() {
         setVerifyOpened(false);
         setCountdown(null);
         returnedRef.current = false;
+        leftForGoodDollarRef.current = false;
         setFaceLabel("");
         setStep("intro");
         setChecking(false);
@@ -244,6 +253,7 @@ function TaskPage() {
               setVerifyOpened(false);
               setCountdown(null);
               returnedRef.current = false;
+              leftForGoodDollarRef.current = false;
               setStep("name");
             }} data-voice="task.name" className="w-full py-3 rounded-xl gradient-cta font-black flex items-center justify-center gap-2">
             <Sparkles className="w-4 h-4" /> শুরু করুন
@@ -285,7 +295,7 @@ function TaskPage() {
             <p className="text-[10px] text-emerald font-bold">🔒 ওয়ালেট নিরাপদ</p>
           </div>
           <a href={identity.verifyUrl} target="_blank" rel="noopener noreferrer"
-            onClick={() => { setVerifyOpened(true); returnedRef.current = false; }}
+            onClick={() => { setVerifyOpened(true); returnedRef.current = false; leftForGoodDollarRef.current = false; }}
             data-voice="task.gd"
             className="w-full flex items-center justify-center gap-2 py-4 rounded-xl gradient-cta font-black">
             <ExternalLink className="w-4 h-4" /> গুডডলার ফেস ভেরিফাই খুলুন
@@ -312,13 +322,14 @@ function TaskPage() {
                 setVerifyOpened(false);
                 setCountdown(null);
                 returnedRef.current = false;
+                leftForGoodDollarRef.current = false;
                 toast.success("নতুন কী তৈরি হয়েছে");
               } catch (e: any) { toast.error("কী তৈরি হয়নি: " + e.message); }
             }}
             data-voice="task.gd" className="w-full py-3 rounded-xl border border-amber/40 bg-amber/10 text-amber text-xs font-bold">
             🔄 নতুন কী তৈরি করুন
           </button>
-          <button onClick={() => { clearProgress(); setStep("intro"); setIdentity(null); setPhotoB64(null); setFaceLabel(""); setVerifyOpened(false); setCountdown(null); returnedRef.current = false; }} data-voice="common.back"
+          <button onClick={() => { clearProgress(); setStep("intro"); setIdentity(null); setPhotoB64(null); setFaceLabel(""); setVerifyOpened(false); setCountdown(null); returnedRef.current = false; leftForGoodDollarRef.current = false; }} data-voice="common.back"
             className="w-full py-2 rounded-xl border border-border text-xs text-muted-foreground">
             বাতিল ও সব মুছে ফেলুন
           </button>
