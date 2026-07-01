@@ -3,7 +3,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { createHash } from "crypto";
 
 const BUCKET = "tour-audio";
-const VOICE = "alloy";
+const VOICE = "shimmer";
 const MODEL = "openai/gpt-4o-mini-tts";
 const SIGN_TTL = 60 * 60 * 24 * 365; // 1 year
 
