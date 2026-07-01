@@ -30,19 +30,9 @@ async function fetchAudioUrl(key: NarrationKey): Promise<string | null> {
   } catch { return null; }
 }
 
-function fallbackSpeak(text: string) {
-  if (typeof window === "undefined" || !window.speechSynthesis) return;
-  try {
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    const voices = window.speechSynthesis.getVoices();
-    const v = voices.find(v => v.lang === "bn-BD") || voices.find(v => v.lang?.startsWith("bn")) || voices.find(v => v.lang?.startsWith("hi"));
-    if (v) u.voice = v;
-    u.lang = v?.lang || "bn-BD";
-    u.rate = 0.95; u.pitch = 1.05;
-    window.speechSynthesis.speak(u);
-  } catch {}
-}
+// Browser speechSynthesis fallback removed — it sounded robotic and could
+// overlap with the premium cached audio. Silent fail is preferred.
+
 
 export interface PageVoiceProps {
   pageId: string;                 // storage key for "seen"
@@ -88,7 +78,7 @@ export function PageVoice({ pageId, steps, autoStart = true, compact = false }: 
     setIdx(at);
     setPlaying(true);
     const url = await fetchAudioUrl(key);
-    if (!url) { fallbackSpeak(NARRATIONS[key]); setPlaying(false); return; }
+    if (!url) { setPlaying(false); return; }
     const a = new Audio(url);
     audioRef.current = a;
     a.onended = () => {
@@ -97,8 +87,8 @@ export function PageVoice({ pageId, steps, autoStart = true, compact = false }: 
       if (at + 1 < steps.length) { void play(at + 1); }
       else { try { localStorage.setItem(storageKey, "1"); } catch {} }
     };
-    a.onerror = () => { fallbackSpeak(NARRATIONS[key]); setPlaying(false); };
-    a.play().catch(() => { fallbackSpeak(NARRATIONS[key]); setPlaying(false); });
+    a.onerror = () => { setPlaying(false); };
+    a.play().catch(() => { setPlaying(false); });
   };
 
   const replay = () => { setVisible(true); void play(0); };
@@ -180,10 +170,9 @@ export function SpeakChip({ narrationKey, label }: { narrationKey: NarrationKey;
       if (url) {
         const a = new Audio(url);
         a.onended = () => setBusy(false);
-        a.onerror = () => { fallbackSpeak(NARRATIONS[narrationKey]); setBusy(false); };
-        a.play().catch(() => { fallbackSpeak(NARRATIONS[narrationKey]); setBusy(false); });
+        a.onerror = () => { setBusy(false); };
+        a.play().catch(() => { setBusy(false); });
       } else {
-        fallbackSpeak(NARRATIONS[narrationKey]);
         setBusy(false);
       }
     } catch { setBusy(false); }
