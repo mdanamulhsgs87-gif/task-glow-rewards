@@ -207,8 +207,8 @@ function TaskPage() {
           <p className="text-xs text-muted-foreground leading-relaxed">
             ১. মুখের মালিকের নাম দিন<br />
             ২. আপনার ছবি তুলুন<br />
-            ৩. GoodDollar এ face verify করুন<br />
-            ৪. ফিরে আসার পর ১০s অপেক্ষা → জমা দিন চাপুন
+            ৩. গুডডলারে ফেস ভেরিফাই করুন<br />
+            ৪. ফিরে আসার পর ১০ সেকেন্ড অপেক্ষা → জমা দিন চাপুন
           </p>
           <button onClick={() => {
               clearProgress();
