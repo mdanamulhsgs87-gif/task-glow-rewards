@@ -9,12 +9,14 @@ import { createHash } from "crypto";
 import { NARRATIONS, isNarrationKey } from "@/lib/narrations";
 
 const BUCKET = "tour-audio";
-const VOICE = "shimmer"; // natural warm female voice
+const VOICE = "nova"; // brighter female voice for a happier, less robotic guide
+const FALLBACK_VOICE = "shimmer";
 const MODEL = "openai/gpt-4o-mini-tts";
-const SPEED = 1.15; // slightly faster than default — feels lively, not sluggish
+const SPEED = 1.25; // lively pace — removes the slow robotic feel
+const CACHE_VERSION = "v4-nova-expressive-bn";
 const SIGN_TTL = 60 * 60 * 24 * 365; // 1 year
 const TTS_INSTRUCTIONS =
-  "You are a cheerful, upbeat young Bangladeshi woman (আপা) speaking natural, everyday spoken Bangla the way close friends talk in Dhaka — never bookish, never formal, never like a news reader. Smile in your voice, sound genuinely happy and encouraging. Pronounce every Bangla word crisply and correctly with proper বাংলা intonation — do not use Hindi or English phonemes. When you see স্বাগত / স্বাগতম say it the natural Bangladeshi way (\"sha-goto\" / \"sha-go-tom\"), never robotic. Pace lively and conversational, with warm, playful energy — like a caring older sister excitedly guiding a younger sibling. Absolutely no monotone, no robotic reading.";
+  "Speak only in natural Bangladeshi Bangla (bn-BD), like a cheerful young woman/apu smiling while helping a younger sibling. Use expressive pitch, friendly excitement, tiny natural pauses, and warm playful energy. Sound human, happy, encouraging, and conversational — never monotone, never robotic, never news-reader style, never bookish. Pronounce Bangla naturally: স্বাগত as sha-goto, টাকা as taka, গুডডলার as good-dollar. Keep the pace quick and lively but clear.";
 
 export const Route = createFileRoute("/api/public/tour-audio")({
   server: {
@@ -28,7 +30,7 @@ export const Route = createFileRoute("/api/public/tour-audio")({
         // Include voice + speed + persona version in hash so any tweak to
         // voice / speed / instructions automatically invalidates the cache.
         const hash = createHash("sha256")
-          .update(`${VOICE}|${SPEED}|v2-cheerful|${text}`)
+          .update(`${VOICE}|${SPEED}|${CACHE_VERSION}|${TTS_INSTRUCTIONS}|${text}`)
           .digest("hex");
         const path = `cache/${hash}.mp3`;
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -38,15 +40,24 @@ export const Route = createFileRoute("/api/public/tour-audio")({
         if (!list || list.length === 0) {
           const apiKey = process.env.LOVABLE_API_KEY;
           if (!apiKey) return json({ error: "missing LOVABLE_API_KEY" }, 500);
-          const res = await fetch("https://ai.gateway.lovable.dev/v1/audio/speech", {
+          const requestBody = {
+            model: MODEL, input: text, voice: VOICE, response_format: "mp3",
+            stream_format: "audio",
+            speed: SPEED,
+            instructions: TTS_INSTRUCTIONS,
+          };
+          let res = await fetch("https://ai.gateway.lovable.dev/v1/audio/speech", {
             method: "POST",
             headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-            body: JSON.stringify({
-              model: MODEL, input: text, voice: VOICE, response_format: "mp3",
-              speed: SPEED,
-              instructions: TTS_INSTRUCTIONS,
-            }),
+            body: JSON.stringify(requestBody),
           });
+          if (res.status === 400) {
+            res = await fetch("https://ai.gateway.lovable.dev/v1/audio/speech", {
+              method: "POST",
+              headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+              body: JSON.stringify({ ...requestBody, voice: FALLBACK_VOICE }),
+            });
+          }
           if (!res.ok) {
             const errTxt = await res.text().catch(() => "");
             if (res.status === 402) return json({ error: "credits শেষ" }, 402);
