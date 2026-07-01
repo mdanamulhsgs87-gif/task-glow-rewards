@@ -67,7 +67,9 @@ function ReferralPage() {
 
   return (
     <div className="space-y-5 pt-2 pb-6">
+      <PageVoice pageId="referral" steps={["referral.intro","referral.bonus"]} />
       <div className="text-center">
+
         <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl gradient-emerald mb-2 float-anim">
           <Gift className="w-7 h-7 text-white" />
         </div>
