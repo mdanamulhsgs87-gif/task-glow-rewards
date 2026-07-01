@@ -261,12 +261,12 @@ function TaskPage() {
           <a href={identity.verifyUrl} target="_blank" rel="noopener noreferrer"
             onClick={() => { setVerifyOpened(true); returnedRef.current = false; }}
             className="w-full flex items-center justify-center gap-2 py-4 rounded-xl gradient-cta font-black">
-            <ExternalLink className="w-4 h-4" /> GoodDollar Face Verify খুলুন
+            <ExternalLink className="w-4 h-4" /> গুডডলার ফেস ভেরিফাই খুলুন
           </a>
           {verifyOpened && countdown !== null && countdown > 0 && (
             <div className="text-center py-3 rounded-xl bg-amber/10 border border-amber/30">
               <p className="text-xs text-muted-foreground">জমা দিন বাটন আসবে</p>
-              <p className="text-3xl font-black text-amber mono-num">{countdown}s</p>
+              <p className="text-3xl font-black text-amber mono-num">{countdown} সে.</p>
             </div>
           )}
           {verifyOpened && countdown === 0 && (
