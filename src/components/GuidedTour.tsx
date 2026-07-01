@@ -1,5 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { X, Volume2, VolumeX, ChevronRight, SkipForward } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { getTourAudio } from "@/lib/tour-audio.functions";
 
 export type TourStep = {
   selector: string;
@@ -52,6 +54,17 @@ const DEFAULT_STEPS: TourStep[] = [
 
 const STORAGE_KEY = "good-app-tour-v1";
 
+// In-memory cache: text -> signed URL (persists for the session)
+const urlCache = new Map<string, string>();
+// LocalStorage cache too, so cross-session hits skip the server round trip
+const LS_URL_CACHE = "good-app-tour-urls-v1";
+function readLsUrlCache(): Record<string, string> {
+  try { return JSON.parse(localStorage.getItem(LS_URL_CACHE) || "{}"); } catch { return {}; }
+}
+function writeLsUrlCache(map: Record<string, string>) {
+  try { localStorage.setItem(LS_URL_CACHE, JSON.stringify(map)); } catch {}
+}
+
 function pickBengaliVoice(): SpeechSynthesisVoice | null {
   if (typeof window === "undefined" || !window.speechSynthesis) return null;
   const voices = window.speechSynthesis.getVoices();
@@ -64,8 +77,8 @@ function pickBengaliVoice(): SpeechSynthesisVoice | null {
   );
 }
 
-function speak(text: string, muted: boolean) {
-  if (muted || typeof window === "undefined" || !window.speechSynthesis) return;
+function speakFallback(text: string) {
+  if (typeof window === "undefined" || !window.speechSynthesis) return;
   try {
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
@@ -83,14 +96,47 @@ export function GuidedTour({ steps = DEFAULT_STEPS, autoStart = true }: { steps?
   const [idx, setIdx] = useState(0);
   const [rect, setRect] = useState<DOMRect | null>(null);
   const [muted, setMuted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const startedRef = useRef(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const fetchAudio = useServerFn(getTourAudio);
+
+  // Play cached premium voice; fallback to browser voice on any error
+  const play = async (text: string) => {
+    if (muted) return;
+    try {
+      if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
+      window.speechSynthesis?.cancel();
+
+      let url = urlCache.get(text);
+      if (!url) {
+        const ls = readLsUrlCache();
+        if (ls[text]) { url = ls[text]; urlCache.set(text, url); }
+      }
+      if (!url) {
+        setLoading(true);
+        const res = await fetchAudio({ data: { text } });
+        url = res.url;
+        urlCache.set(text, url);
+        const ls = readLsUrlCache();
+        ls[text] = url;
+        writeLsUrlCache(ls);
+        setLoading(false);
+      }
+      const audio = new Audio(url);
+      audioRef.current = audio;
+      audio.play().catch(() => speakFallback(text));
+    } catch {
+      setLoading(false);
+      speakFallback(text);
+    }
+  };
 
   useEffect(() => {
     if (!autoStart || startedRef.current) return;
     if (typeof window === "undefined") return;
     if (localStorage.getItem(STORAGE_KEY) === "done") return;
     startedRef.current = true;
-    // wait a beat for the DOM & voices
     const t = setTimeout(() => {
       window.speechSynthesis?.getVoices();
       setActive(true);
@@ -105,12 +151,11 @@ export function GuidedTour({ steps = DEFAULT_STEPS, autoStart = true }: { steps?
     const el = document.querySelector(step.selector) as HTMLElement | null;
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "center" });
-      // give scroll a moment before measuring
       setTimeout(() => setRect(el.getBoundingClientRect()), 350);
     } else {
       setRect(null);
     }
-    speak(step.text, muted);
+    void play(step.text);
     const onResize = () => {
       const e = document.querySelector(step.selector) as HTMLElement | null;
       if (e) setRect(e.getBoundingClientRect());
@@ -121,11 +166,13 @@ export function GuidedTour({ steps = DEFAULT_STEPS, autoStart = true }: { steps?
       window.removeEventListener("resize", onResize);
       window.removeEventListener("scroll", onResize, true);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active, idx, steps, muted]);
 
   const finish = () => {
     setActive(false);
     try { window.speechSynthesis?.cancel(); } catch {}
+    try { audioRef.current?.pause(); audioRef.current = null; } catch {}
     try { localStorage.setItem(STORAGE_KEY, "done"); } catch {}
   };
 
@@ -214,7 +261,7 @@ export function GuidedTour({ steps = DEFAULT_STEPS, autoStart = true }: { steps?
         <div className="flex items-start justify-between gap-2 mb-2">
           <div className="min-w-0">
             <p className="text-[10px] uppercase tracking-[0.15em] font-black text-violet-500">
-              ধাপ {idx + 1} / {steps.length}
+              ধাপ {idx + 1} / {steps.length} {loading && <span className="ml-1 text-amber-500">🎙️ লোড হচ্ছে…</span>}
             </p>
             <h3 className="text-base font-black text-navy mt-0.5 leading-tight">{step.title}</h3>
           </div>
@@ -223,8 +270,12 @@ export function GuidedTour({ steps = DEFAULT_STEPS, autoStart = true }: { steps?
               onClick={() => {
                 const m = !muted;
                 setMuted(m);
-                if (m) { try { window.speechSynthesis?.cancel(); } catch {} }
-                else speak(step.text, false);
+                if (m) {
+                  try { window.speechSynthesis?.cancel(); } catch {}
+                  try { audioRef.current?.pause(); } catch {}
+                } else {
+                  void play(step.text);
+                }
               }}
               className="p-2 rounded-lg bg-violet-100 hover:bg-violet-200 text-violet-600"
               title={muted ? "ভয়েস চালু" : "ভয়েস বন্ধ"}
