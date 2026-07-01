@@ -4,6 +4,8 @@ import { getMyReferrals } from "@/lib/referral.functions";
 import { Copy, Share2, Users, Gift, CheckCircle2, Clock, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
+import { PageVoice } from "@/components/PageVoice";
+
 
 export const Route = createFileRoute("/_authenticated/referral")({
   ssr: false,
