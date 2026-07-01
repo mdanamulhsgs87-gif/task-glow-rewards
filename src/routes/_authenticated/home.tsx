@@ -37,12 +37,12 @@ function HomePage() {
   const pct = total ? Math.round((doneCount / total) * 100) : 0;
 
   return (
-    <div className="space-y-6 pt-3">
+    <div className="space-y-3 pt-2">
       <AnnouncementTicker />
 
       <div className="text-center">
-        <p className="text-sm text-muted-foreground">স্বাগতম,</p>
-        <h1 className="text-3xl font-black mt-1">
+        <p className="text-[11px] text-muted-foreground">স্বাগতম,</p>
+        <h1 className="text-xl font-black mt-0.5">
           {data.profile?.display_name ?? "ইউজার"} 👋
         </h1>
       </div>
@@ -56,32 +56,32 @@ function HomePage() {
         qualifyingReferees={Number(data.mining?.qualifying_referees ?? 0)}
       />
 
-      <div className="premium-panel rounded-3xl p-5">
-        <div className="flex items-center justify-between mb-5">
+      <div className="premium-panel rounded-2xl p-3">
+        <div className="flex items-center justify-between mb-3">
           <div>
-            <p className="text-xs uppercase text-muted-foreground tracking-[0.2em] font-bold">টাস্ক প্রগ্রেস</p>
-            <p className="text-3xl font-black mt-1 text-navy">
-              {doneCount}<span className="text-muted-foreground text-lg">/{total}</span>
-              <span className="text-sm font-bold text-emerald ml-2">সম্পন্ন</span>
+            <p className="text-[10px] uppercase text-muted-foreground tracking-[0.15em] font-bold">টাস্ক প্রগ্রেস</p>
+            <p className="text-xl font-black mt-0.5 text-navy">
+              {doneCount}<span className="text-muted-foreground text-sm">/{total}</span>
+              <span className="text-xs font-bold text-emerald ml-2">সম্পন্ন</span>
             </p>
             {verifiedCount > 0 && (
-              <p className="text-xs text-violet mt-1 font-bold">{verifiedCount} টি রি-ভেরিফাইয়ের অপেক্ষায়</p>
+              <p className="text-[10px] text-violet mt-0.5 font-bold">{verifiedCount} টি রি-ভেরিফাইয়ের অপেক্ষায়</p>
             )}
           </div>
-          <div className="relative w-20 h-20">
-            <svg viewBox="0 0 36 36" className="w-20 h-20 -rotate-90">
+          <div className="relative w-12 h-12">
+            <svg viewBox="0 0 36 36" className="w-12 h-12 -rotate-90">
               <circle cx="18" cy="18" r="15" stroke="currentColor" strokeWidth="3" fill="none" className="text-surface-2" />
               <circle cx="18" cy="18" r="15" stroke="currentColor" strokeWidth="3" fill="none"
                 strokeDasharray={`${(pct / 100) * 94.2} 94.2`}
                 strokeLinecap="round" className="text-rose transition-all" />
             </svg>
-            <div className="absolute inset-0 flex items-center justify-center text-sm font-black text-rose">
+            <div className="absolute inset-0 flex items-center justify-center text-[10px] font-black text-rose">
               {pct}%
             </div>
           </div>
         </div>
 
-        <div className={`grid gap-3.5 ${total === 10 ? "grid-cols-2" : "grid-cols-3"}`}>
+        <div className={`grid gap-1.5 ${total === 10 ? "grid-cols-5" : total <= 12 ? "grid-cols-4" : "grid-cols-5"}`}>
           {tasks.map((t: any) => (
             <TaskCell key={t.slot} task={t}
               onClick={() => router.navigate({ to: "/task/$slot", params: { slot: String(t.slot) } })}
@@ -91,10 +91,10 @@ function HomePage() {
 
         {allDone && (
           <button onClick={() => addSlots.mutate()} disabled={addSlots.isPending}
-            className="mt-5 w-full gradient-cta rounded-2xl py-4 font-black text-base flex items-center justify-center gap-2 disabled:opacity-60 active:scale-[0.98] transition">
+            className="mt-3 w-full gradient-cta rounded-xl py-2.5 font-black text-sm flex items-center justify-center gap-2 disabled:opacity-60 active:scale-[0.98] transition">
             {addSlots.isPending
-              ? <><Loader2 className="w-5 h-5 animate-spin" /> খোলা হচ্ছে…</>
-              : <><Plus className="w-5 h-5" /> আরও ১০টি ঘর যোগ করুন</>}
+              ? <><Loader2 className="w-4 h-4 animate-spin" /> খোলা হচ্ছে…</>
+              : <><Plus className="w-4 h-4" /> আরও ১০টি ঘর যোগ করুন</>}
           </button>
         )}
       </div>
