@@ -94,8 +94,8 @@ export const getPublicCardDetails = createServerFn({ method: "GET" })
       await Promise.all([
         supabaseAdmin.from("mining_state").select("accrued_amount,withdrawn_amount,is_active").eq("user_id", profileRow.id).maybeSingle(),
         supabaseAdmin.from("tasks").select("status,whitelist_ok").eq("user_id", profileRow.id),
-        supabaseAdmin.from("withdrawals").select("amount,status").eq("user_id", profileRow.id).eq("status", "approved"),
-        supabaseAdmin.from("profiles").select("id", { count: "exact", head: true }).eq("referred_by_code", profileRow.referral_code),
+        supabaseAdmin.from("withdrawals").select("amount,status").eq("user_id", profileRow.id).eq("status", "paid"),
+        supabaseAdmin.from("profiles").select("id", { count: "exact", head: true }).eq("referred_by", profileRow.referral_code),
       ]);
 
     let avatar_signed: string | null = null;
