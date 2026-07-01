@@ -34,7 +34,7 @@ function TaskPage() {
   const [photoB64, setPhotoB64] = useState<string | null>(initial?.photoB64 ?? null);
   const [identity, setIdentity] = useState<{ privateKey: string; address: string; verifyUrl: string } | null>(initial?.identity ?? null);
   const [verifyOpened, setVerifyOpened] = useState<boolean>(initial?.verifyOpened ?? false);
-  const [countdown, setCountdown] = useState<number | null>(initial?.verifyOpened ? 0 : null);
+  const [countdown, setCountdown] = useState<number | null>(null);
   const [checking, setChecking] = useState(false);
   const returnedRef = useRef(!!initial?.verifyOpened);
   const submitReadySpokenRef = useRef(false);
@@ -267,7 +267,7 @@ function TaskPage() {
 
       {task.status === "empty" && step === "photo" && (
         <div className="glass rounded-2xl p-4" data-voice="task.photo">
-          <FaceCapture title="আপনার মুখের ছবি" onCapture={onPhoto} onCancel={() => setStep("name")} />
+          <FaceCapture title="আপনার মুখের ছবি" submitLabel="গুডডলার ধাপে যান" onCapture={onPhoto} onCancel={() => setStep("name")} />
         </div>
       )}
 
