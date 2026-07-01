@@ -98,7 +98,7 @@ function TaskPage() {
       setIdentity(id);
       setStep("verify");
     } catch (e: any) {
-      toast.error("Key generate hoini: " + e.message);
+      toast.error("Key তৈরি হয়নি: " + e.message);
       setStep("photo");
     }
   };
@@ -168,9 +168,9 @@ function TaskPage() {
 
       <div className="glass rounded-2xl p-4">
         <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Task</p>
-        <h1 className="text-2xl font-black">#{task.slot} of 10</h1>
+        <h1 className="text-2xl font-black">#{task.slot} নং ঘর</h1>
         <p className="text-[11px] text-muted-foreground mt-1">
-          {isDone && "✅ Ei task complete"}
+          {isDone && "✅ এই ঘর সম্পূর্ণ"}
           {isVerified && "⏳ Re-verify প্রস্তুত হলে /reverify পেজ থেকে করবেন"}
           {task.status === "empty" && "🔵 GoodDollar face verify দিয়ে শুরু করুন"}
         </p>
@@ -179,7 +179,7 @@ function TaskPage() {
       {isDone && (
         <div className="rounded-2xl bg-emerald/10 border border-emerald/40 p-5 text-center">
           <CheckCircle2 className="w-10 h-10 text-emerald mx-auto mb-2" />
-          <p className="font-bold">Ei task complete</p>
+          <p className="font-bold">এই ঘর সম্পূর্ণ</p>
           <Link to="/home" className="inline-block mt-3 px-4 py-2 rounded-xl gradient-cta text-sm font-bold">Home</Link>
         </div>
       )}
@@ -203,8 +203,8 @@ function TaskPage() {
         <div className="glass rounded-2xl p-4 space-y-3">
           <p className="text-xs text-muted-foreground leading-relaxed">
             ১. মুখের মালিকের নাম দিন<br />
-            ২. Apnar photo tulun<br />
-            ৩. GoodDollar e face verify koren<br />
+            ২. আপনার ছবি তুলুন<br />
+            ৩. GoodDollar এ face verify করুন<br />
             ৪. ফিরে আসার পর ১০s অপেক্ষা → জমা দিন চাপুন
           </p>
           <button onClick={() => {
@@ -247,13 +247,13 @@ function TaskPage() {
           <div className="rounded-xl bg-emerald/10 border border-emerald/30 p-3 space-y-2">
             <p className="text-xs font-bold text-emerald">✅ ছবি ও identity প্রস্তুত (refresh দিলেও হারাবে না)</p>
             <div>
-              <p className="text-[10px] text-muted-foreground">Wallet address:</p>
+              <p className="text-[10px] text-muted-foreground">Wallet ঠিকানা:</p>
               <p className="text-[10px] font-mono break-all bg-black/5 p-1.5 rounded cursor-pointer"
                 onClick={() => { navigator.clipboard.writeText(identity.address); toast.success("ঠিকানা কপি হয়েছে"); }}>
                 {identity.address}
               </p>
             </div>
-            <p className="text-[10px] text-muted-foreground">🔒 Private key admin er kache securely save thake — apnar dekhar dorkar nei.</p>
+            <p className="text-[10px] text-muted-foreground">🔒 Private key admin এর কাছে নিরাপদে সংরক্ষিত — আপনার দেখার দরকার নেই।</p>
           </div>
           <a href={identity.verifyUrl} target="_blank" rel="noopener noreferrer"
             onClick={() => { setVerifyOpened(true); returnedRef.current = false; }}
@@ -270,7 +270,7 @@ function TaskPage() {
             <button onClick={onSubmit} disabled={checking || bindMut.isPending}
               className="w-full py-4 rounded-xl gradient-cta font-black flex items-center justify-center gap-2">
               {checking || bindMut.isPending
-                ? <><Loader2 className="w-4 h-4 animate-spin" /> Whitelist check…</>
+                ? <><Loader2 className="w-4 h-4 animate-spin" /> Whitelist যাচাই হচ্ছে…</>
                 : <><ShieldCheck className="w-4 h-4" /> জমা দিন</>}
             </button>
           )}
@@ -282,7 +282,7 @@ function TaskPage() {
                 setCountdown(null);
                 returnedRef.current = false;
                 toast.success("নতুন key তৈরি হয়েছে");
-              } catch (e: any) { toast.error("Key generate hoini: " + e.message); }
+              } catch (e: any) { toast.error("Key তৈরি হয়নি: " + e.message); }
             }}
             className="w-full py-3 rounded-xl border border-amber/40 bg-amber/10 text-amber text-xs font-bold">
             🔄 নতুন key তৈরি করুন
