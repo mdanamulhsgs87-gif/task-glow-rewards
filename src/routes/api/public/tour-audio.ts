@@ -9,11 +9,11 @@ import { createHash } from "crypto";
 import { NARRATIONS, isNarrationKey } from "@/lib/narrations";
 
 const BUCKET = "tour-audio";
-const VOICE = "echo"; // warm male-style voice for a more human guide
-const FALLBACK_VOICE = "onyx";
+const VOICE = "onyx"; // warm male-style voice for a more human guide
+const FALLBACK_VOICE = "echo";
 const MODEL = "openai/gpt-4o-mini-tts";
 const SPEED = 1.08; // natural human pace; too fast made Bangla sound robotic
-const CACHE_VERSION = "v8-echo-smiling-bangla-guide";
+const CACHE_VERSION = "v8-onyx-smiling-bangla-guide";
 const SIGN_TTL = 60 * 60 * 24 * 365; // 1 year
 const TTS_INSTRUCTIONS =
   "Speak only in natural Dhakai/Bangladeshi Bangla (bn-BD), like a real cheerful young Bangladeshi man/bhaiya on a friendly phone call. Start with a tiny genuine smiling chuckle only when it feels natural, then speak with playful warmth, clear ups-and-downs in pitch, and human expression. Do NOT sound robotic, flat, formal, news-reader, school-book, or announcement-style. Keep every line conversational, short, and helpful. Pronounce naturally: সাগতম as sa-go-tom, টাকা as taka, গুডডলার as good-dollar, ভেরিফাই as verify, জমা দিন as joma din, শাকখি as shakkhi.";

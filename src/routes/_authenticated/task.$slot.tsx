@@ -36,7 +36,7 @@ function TaskPage() {
   const [verifyOpened, setVerifyOpened] = useState<boolean>(initial?.verifyOpened ?? false);
   const [countdown, setCountdown] = useState<number | null>(null);
   const [checking, setChecking] = useState(false);
-  const returnedRef = useRef(!!initial?.verifyOpened);
+  const returnedRef = useRef(false);
   const submitReadySpokenRef = useRef(false);
 
   // Persist progress so refresh doesn't lose the key
