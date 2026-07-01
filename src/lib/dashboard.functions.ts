@@ -6,17 +6,18 @@ export const getDashboard = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
 
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const TASK_COLS = "id,slot,status,face_label,face_photo_url,wallet_address,verified_at,reverify_due_at,whitelist_ok,created_at,updated_at,user_id";
     const [{ data: profile }, { data: tasks }, { data: mining }, { data: wallet }, { data: roles }] =
       await Promise.all([
         supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
-        supabase.from("tasks").select("*").eq("user_id", userId).order("slot"),
+        supabaseAdmin.from("tasks").select(TASK_COLS).eq("user_id", userId).order("slot"),
         supabase.from("mining_state").select("*").eq("user_id", userId).maybeSingle(),
         supabase.from("wallets").select("*").eq("user_id", userId).maybeSingle(),
         supabase.from("user_roles").select("role").eq("user_id", userId),
       ]);
 
     const isAdmin = (roles ?? []).some((r) => r.role === "admin");
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const tasksWithPhotos = await Promise.all(
       (tasks ?? []).map(async (task: any) => {
         if (!task.face_photo_url) return { ...task, signed_face_url: null };
