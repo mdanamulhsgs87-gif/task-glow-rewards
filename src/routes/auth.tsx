@@ -214,8 +214,8 @@ export function AuthPage() {
         {/* Hero / Auth card */}
         <div className="premium-panel rounded-3xl p-7 pop-in shimmer-border">
           <div className="text-center mb-6">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gradient-cta mb-3 float-anim shadow-lg">
-              <Sparkles className="w-8 h-8 text-white" />
+            <div className="inline-flex items-center justify-center w-18 h-18 rounded-2xl mb-3 float-anim shadow-lg glow-gold">
+              <img src={logo} alt="good-app logo" className="w-16 h-16 rounded-xl" />
             </div>
             <h1 className="text-3xl font-black text-navy tracking-tight">গুড অ্যাপ</h1>
             <p className="text-xs text-muted-foreground mt-1.5 font-bold">
