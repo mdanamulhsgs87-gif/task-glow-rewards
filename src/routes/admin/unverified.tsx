@@ -83,3 +83,29 @@ function UnverifiedPage() {
     </div>
   );
 }
+
+function PromoteRow({ defaultSlot, onPromote, pending }: {
+  attemptId: string;
+  defaultSlot: number | null;
+  onPromote: (slot?: number) => void;
+  pending: boolean;
+}) {
+  const [slot, setSlot] = useState<string>(defaultSlot ? String(defaultSlot) : "");
+  return (
+    <div className="flex gap-1">
+      <input
+        type="number" min={1} max={1000} value={slot}
+        onChange={(e) => setSlot(e.target.value)}
+        placeholder="Slot # (খালি = auto)"
+        className="w-24 px-2 py-1.5 rounded bg-surface-2 border border-border text-[10px] font-bold outline-none"
+      />
+      <button
+        disabled={pending}
+        onClick={() => onPromote(slot ? Number(slot) : undefined)}
+        className="flex-1 text-[10px] flex items-center justify-center gap-1 py-1.5 rounded bg-emerald/15 border border-emerald/30 text-emerald font-bold disabled:opacity-50"
+      >
+        <ArrowUpRight className="w-3 h-3" /> Slot-এ যোগ করুন (রি-ভেরিফাই প্রস্তুত)
+      </button>
+    </div>
+  );
+}
