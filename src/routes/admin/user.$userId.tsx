@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { adminUserDetail, adminAdjustBalance, adminToggleMining, adminResetTask, adminমুছুনUser } from "@/lib/admin.functions";
-import { ArrowLeft, Loader2, Power, Plus, Minus, RefreshCw, Trash2, Copy } from "lucide-react";
+import { adminUserDetail, adminAdjustBalance, adminToggleMining, adminResetTask, adminমুছুনUser, adminResetUserPassword } from "@/lib/admin.functions";
+import { ArrowLeft, Loader2, Power, Plus, Minus, RefreshCw, Trash2, Copy, KeyRound } from "lucide-react";
 import { computeLiveBalance } from "@/lib/mining";
 import { toast } from "sonner";
 import { useState } from "react";
@@ -16,6 +16,13 @@ function UserDetail() {
   });
 
   const [delta, setDelta] = useState("");
+  const [newPass, setNewPass] = useState("");
+
+  const resetPass = useMutation({
+    mutationFn: (pwd: string) => adminResetUserPassword({ data: { userId, newPassword: pwd } }),
+    onSuccess: () => { toast.success("পাসওয়ার্ড রিসেট হয়েছে"); setNewPass(""); },
+    onError: (e: any) => toast.error(e.message),
+  });
 
   const adjust = useMutation({
     mutationFn: (d: number) => adminAdjustBalance({ data: { userId, delta: d } }),
@@ -105,6 +112,36 @@ function UserDetail() {
         ) : (
           <p className="text-[11px] text-muted-foreground mt-1">Not set</p>
         )}
+      </div>
+
+      {/* Password reset */}
+      <div className="glass rounded-2xl p-4 space-y-2">
+        <div className="flex items-center gap-2">
+          <KeyRound className="w-4 h-4 text-violet" />
+          <p className="text-[10px] uppercase tracking-widest text-violet font-bold">পাসওয়ার্ড রিসেট</p>
+        </div>
+        <p className="text-[10px] text-muted-foreground">
+          ইউজার পাসওয়ার্ড ভুলে গেলে এখানে নতুন পাসওয়ার্ড সেট করে দিন। ইউজারকে জানিয়ে দিন।
+        </p>
+        <div className="flex gap-2">
+          <input
+            type="text" value={newPass} onChange={(e) => setNewPass(e.target.value)}
+            placeholder="নতুন পাসওয়ার্ড (min 6)"
+            className="flex-1 px-3 py-2 rounded-xl bg-surface-2 border border-border text-sm mono-num focus:outline-none focus:border-violet"
+          />
+          <button
+            onClick={() => {
+              if (newPass.length < 6) return toast.error("কমপক্ষে ৬ অক্ষর দিন");
+              if (!confirm(`পাসওয়ার্ড রিসেট করবেন?\nনতুন: ${newPass}`)) return;
+              resetPass.mutate(newPass);
+            }}
+            disabled={resetPass.isPending}
+            className="px-3 py-2 rounded-xl bg-violet/20 text-violet font-bold text-xs flex items-center gap-1 disabled:opacity-50"
+          >
+            {resetPass.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <KeyRound className="w-3 h-3" />}
+            রিসেট
+          </button>
+        </div>
       </div>
 
       {/* Tasks */}

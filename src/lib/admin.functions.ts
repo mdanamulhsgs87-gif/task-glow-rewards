@@ -294,6 +294,21 @@ export const adminমুছুনUser = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+// ---------------- Reset user password ----------------
+export const adminResetUserPassword = createServerFn({ method: "POST" })
+  .inputValidator((i: unknown) => z.object({
+    userId: z.string().uuid(),
+    newPassword: z.string().min(6).max(72),
+  }).parse(i))
+  .handler(async ({ data }) => {
+    const supabaseAdmin = await gate();
+    const { error } = await supabaseAdmin.auth.admin.updateUserById(data.userId, {
+      password: data.newPassword,
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 // ---------------- Manual whitelist re-check (admin) ----------------
 export const adminRunWhitelistCheck = createServerFn({ method: "POST" }).handler(async () => {
   const supabaseAdmin = await gate();

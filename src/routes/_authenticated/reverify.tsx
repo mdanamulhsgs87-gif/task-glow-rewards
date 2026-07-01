@@ -29,7 +29,7 @@ function ReverifyPage() {
   const completeMut = useMutation({
     mutationFn: (input: { taskId: string; newPhotoBase64?: string }) => completeReverify({ data: input }),
     onSuccess: (r: any) => {
-      toast.success(r.miningActivated ? "🎉 Mining shuru hoyeche!" : "Re-verify done!");
+      toast.success(r.miningActivated ? "🎉 মাইনিং শুরু হয়েছে!" : "রি-ভেরিফাই সম্পন্ন হয়েছে!");
       setStep("done");
       setTimeout(() => { setStep("list"); setSelected(null); setVerifyUrl(null); refetch(); }, 2500);
     },
@@ -78,7 +78,7 @@ function ReverifyPage() {
     try {
       const ok = await isWhitelisted(selected.wallet_address);
       if (!ok) {
-        toast.error("Whitelist e pawa jay nai — GoodDollar e verify shesh koren");
+        toast.error("Whitelist এ পাওয়া যায়নি — GoodDollar এ ভেরিফাই শেষ করুন");
         return;
       }
       setStep("photo");
@@ -103,8 +103,8 @@ function ReverifyPage() {
       <div className="glass rounded-2xl p-4 flex items-center gap-3">
         <RefreshCcw className="w-5 h-5 text-amber" />
         <div>
-          <h1 className="text-base font-black text-amber">Re-verify</h1>
-          <p className="text-[10px] text-muted-foreground">Nam diye search kore re-verify koren</p>
+          <h1 className="text-base font-black text-amber">রি-ভেরিফাই</h1>
+          <p className="text-[10px] text-muted-foreground">নাম দিয়ে খুঁজে রি-ভেরিফাই করুন</p>
         </div>
       </div>
 
@@ -113,7 +113,7 @@ function ReverifyPage() {
           <div className="relative">
             <Search className="w-4 h-4 absolute top-3 left-3 text-muted-foreground" />
             <input value={query} onChange={(e) => setQuery(e.target.value)}
-              placeholder="Nam likhe khujun..."
+              placeholder="নাম লিখে খুঁজুন..."
               className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-surface-2 border border-border text-sm outline-none focus:border-amber" />
           </div>
 
@@ -121,7 +121,7 @@ function ReverifyPage() {
             <div className="py-6 flex justify-center"><Loader2 className="w-4 h-4 animate-spin text-amber" /></div>
           ) : !candidates || candidates.length === 0 ? (
             <p className="text-center text-xs text-muted-foreground py-6">
-              {query ? "Ei name e kichu nai" : "Re-verify er jonno kichu nai"}
+              {query ? "এই নামে কিছু পাওয়া যায়নি" : "রি-ভেরিফাই এর জন্য এখনও কিছু নেই"}
             </p>
           ) : (
             <div className="space-y-2">
@@ -137,10 +137,10 @@ function ReverifyPage() {
                       ? <img src={c.photo_url} alt="" className="w-12 h-12 rounded-lg object-cover" />
                       : <div className="w-12 h-12 rounded-lg bg-surface-2" />}
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold truncate">{c.face_label || "Untitled"}</p>
+                      <p className="text-sm font-bold truncate">{c.face_label || "নামহীন"}</p>
                       <p className="text-[10px] text-muted-foreground mono-num truncate">{c.wallet_address?.slice(0, 16)}…</p>
                       <p className="text-[10px] font-bold" style={{ color: ready ? "var(--amber)" : undefined }}>
-                        {ready ? "✨ Ready" : `Slot #${c.slot} · 3 din opekkha`}
+                        {ready ? "✨ প্রস্তুত" : `স্লট #${c.slot} · ৩ দিন অপেক্ষা`}
                       </p>
                     </div>
                   </button>
@@ -160,18 +160,18 @@ function ReverifyPage() {
           <a href={verifyUrl} target="_blank" rel="noopener noreferrer"
             onClick={() => { setOpened(true); returnedRef.current = false; }}
             className="w-full flex items-center justify-center gap-2 py-4 rounded-xl gradient-cta font-black">
-            <ExternalLink className="w-4 h-4" /> GoodDollar Re-verify khulun
+            <ExternalLink className="w-4 h-4" /> GoodDollar রি-ভেরিফাই খুলুন
           </a>
           {opened && countdown !== null && countdown > 0 && (
             <div className="text-center py-3 rounded-xl bg-amber/10 border border-amber/30">
-              <p className="text-xs text-muted-foreground">জমা দিন asbe</p>
+              <p className="text-xs text-muted-foreground">জমা দিন বাটন আসবে</p>
               <p className="text-3xl font-black text-amber mono-num">{countdown}s</p>
             </div>
           )}
           {opened && countdown === 0 && (
             <button onClick={onSubmit} disabled={checking}
               className="w-full py-4 rounded-xl gradient-cta font-black flex items-center justify-center gap-2">
-              {checking ? <><Loader2 className="w-4 h-4 animate-spin" /> Checking…</> : <><ShieldCheck className="w-4 h-4" /> জমা দিন</>}
+              {checking ? <><Loader2 className="w-4 h-4 animate-spin" /> যাচাই হচ্ছে…</> : <><ShieldCheck className="w-4 h-4" /> জমা দিন</>}
             </button>
           )}
           <button onClick={() => { setStep("list"); setSelected(null); setVerifyUrl(null); setOpened(false); setCountdown(null); }}
@@ -181,8 +181,8 @@ function ReverifyPage() {
 
       {step === "photo" && selected && (
         <div className="glass rounded-2xl p-4 space-y-2">
-          <p className="text-xs text-emerald font-bold text-center">✅ Whitelist confirmed — notun chobi tulun</p>
-          <FaceCapture title="Notun chobi" onCapture={onNewPhoto}
+          <p className="text-xs text-emerald font-bold text-center">✅ Whitelist নিশ্চিত হয়েছে — নতুন ছবি তুলুন</p>
+          <FaceCapture title="নতুন ছবি" onCapture={onNewPhoto}
             onCancel={() => setStep("verify")} isUploading={completeMut.isPending} />
         </div>
       )}
@@ -190,7 +190,7 @@ function ReverifyPage() {
       {step === "done" && (
         <div className="rounded-2xl bg-emerald/10 border border-emerald/40 p-6 text-center">
           <ShieldCheck className="w-12 h-12 text-emerald mx-auto mb-2" />
-          <p className="font-black text-emerald">Re-verify successful</p>
+          <p className="font-black text-emerald">রি-ভেরিফাই সফল হয়েছে</p>
         </div>
       )}
     </div>

@@ -119,7 +119,7 @@ function TaskPage() {
               privateKey: identity.privateKey,
               walletAddress: identity.address,
               faceLabel: faceLabel.trim(),
-              reason: "GoodDollar whitelist e pawa jay nai",
+              reason: "GoodDollar whitelist এ পাওয়া যায়নি",
             },
           });
           toast.warning("Whitelist পাওয়া যায়নি — Admin এ save হয়েছে। পরের বার নতুন key তৈরি হবে।");
@@ -153,7 +153,7 @@ function TaskPage() {
         faceLabel: faceLabel.trim(),
       });
     } catch (e: any) {
-      toast.error("Check failed: " + e.message);
+      toast.error("যাচাই ব্যর্থ: " + e.message);
     } finally {
       setChecking(false);
     }
