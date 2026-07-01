@@ -150,6 +150,7 @@ function playUrl(url: string) {
   stopCurrent();
   const audio = new Audio(url);
   audio.preload = "auto";
+  audio.volume = 1.0;
   currentAudio = audio;
   void audio.play().catch((error) => {
     console.warn("[voice] audio play blocked", error?.message ?? error);
