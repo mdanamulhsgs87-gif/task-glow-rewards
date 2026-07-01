@@ -171,10 +171,11 @@ function HomePage() {
         </p>
       </div>
 
-      <div className="text-center py-2">
+      <div className="text-center py-2 space-y-2">
         <p className="text-[11px] text-muted-foreground italic">
           🌸 "হাজার জনের সহযোগিতা, একজনের হাসি" 🌸
         </p>
+        <TourReplayButton />
       </div>
 
       {lightbox && (
