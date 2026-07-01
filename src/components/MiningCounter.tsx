@@ -31,7 +31,24 @@ export function MiningCounter({
   const bonusMonth = 500 * 0.10 * qualifyingReferees;
 
   return (
-    <div className="mining-card relative rounded-3xl p-6 text-center overflow-hidden">
+    <div className="mining-card mining-card-morph relative rounded-3xl p-6 text-center overflow-hidden">
+      {/* sparkles */}
+      {live && (
+        <div className="absolute inset-0 pointer-events-none" aria-hidden>
+          {[
+            { l: "12%", t: "70%", sx: "18px", sy: "-60px", d: "0s",  e: "✨" },
+            { l: "82%", t: "60%", sx: "-24px", sy: "-70px", d: "0.7s", e: "⭐" },
+            { l: "48%", t: "80%", sx: "0px", sy: "-80px", d: "1.4s", e: "💎" },
+            { l: "30%", t: "20%", sx: "18px", sy: "40px",  d: "2.1s", e: "✦" },
+            { l: "68%", t: "18%", sx: "-16px", sy: "50px", d: "2.8s", e: "✧" },
+          ].map((s, i) => (
+            <span key={i} className="mining-sparkle"
+              style={{ left: s.l, top: s.t, ["--sx" as any]: s.sx, ["--sy" as any]: s.sy, animationDelay: s.d }}>
+              {s.e}
+            </span>
+          ))}
+        </div>
+      )}
       {/* rotating conic ring */}
       <div className="mining-ring absolute -inset-1 pointer-events-none" aria-hidden />
       {/* aurora wash */}
