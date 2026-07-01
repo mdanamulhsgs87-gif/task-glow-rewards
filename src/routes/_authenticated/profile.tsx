@@ -84,7 +84,7 @@ function ProfilePage() {
               <User className="w-10 h-10 text-muted-foreground" />
             )}
           </div>
-          <label className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full gradient-cta flex items-center justify-center cursor-pointer btn-press glow-violet">
+          <label data-voice="profile.avatar" className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full gradient-cta flex items-center justify-center cursor-pointer btn-press glow-violet">
             {upload.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
             <input type="file" accept="image/*" className="hidden"
               onChange={(e) => { const f = e.target.files?.[0]; if (f) upload.mutate(f); }} />
@@ -115,7 +115,7 @@ function ProfilePage() {
       </div>
 
       {tab === "card" && (
-        <div className="space-y-3">
+        <div className="space-y-3" data-voice="profile.card">
           <div id="print-card" className="id-card p-5 pop-in">
             <div className="id-watermark">GOOD</div>
             <div className="relative flex items-start justify-between">

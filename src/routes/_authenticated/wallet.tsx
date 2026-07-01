@@ -56,8 +56,8 @@ function WalletPage() {
           </div>
         </div>
       ) : (
-        <form onSubmit={(e) => { e.preventDefault(); mut.mutate(); }} className="glass rounded-2xl p-5 space-y-4">
-          <div>
+        <form onSubmit={(e) => { e.preventDefault(); mut.mutate(); }} className="glass rounded-2xl p-5 space-y-4" data-voice="wallet.intro">
+          <div data-voice="wallet.provider">
             <label className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">প্রোভাইডার নির্বাচন</label>
             <div className="grid grid-cols-2 gap-2 mt-2">
               {(["bkash", "nagad"] as const).map((p) => (
@@ -70,7 +70,7 @@ function WalletPage() {
               ))}
             </div>
           </div>
-          <div>
+          <div data-voice="wallet.number">
             <label className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">মোবাইল নম্বর</label>
             <input value={number} onChange={(e) => setNumber(e.target.value.replace(/\D/g, "").slice(0, 11))}
               inputMode="numeric" placeholder="০১XXXXXXXXX (১১ ডিজিট)" maxLength={11}
@@ -79,7 +79,7 @@ function WalletPage() {
               <ShieldCheck className="w-3 h-3" /> একবার সেভ করার পর নম্বর আর পরিবর্তন করা যাবে না। ভেবে-চিন্তে দিন।
             </p>
           </div>
-          <button disabled={mut.isPending || number.length !== 11}
+          <button disabled={mut.isPending || number.length !== 11} data-voice="wallet.save"
             className="w-full py-3 rounded-xl gradient-cta font-black text-sm flex items-center justify-center gap-2 disabled:opacity-50">
             {mut.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
             সেভ করুন

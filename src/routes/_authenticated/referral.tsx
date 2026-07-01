@@ -79,19 +79,19 @@ function ReferralPage() {
         </p>
       </div>
 
-      <div className="premium-panel rounded-3xl p-5 text-center">
+      <div className="premium-panel rounded-3xl p-5 text-center" data-voice="referral.intro">
         <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground font-bold">আপনার কোড</p>
         <p className="mono-num text-4xl font-black text-emerald mt-2 tracking-widest">{code}</p>
         <div className="grid grid-cols-2 gap-2 mt-4">
-          <button onClick={() => copy(code, "কোড")} className="py-2.5 rounded-xl gradient-cta font-black text-xs flex items-center justify-center gap-1.5 btn-press">
+          <button onClick={() => copy(code, "কোড")} data-voice="referral.copy" className="py-2.5 rounded-xl gradient-cta font-black text-xs flex items-center justify-center gap-1.5 btn-press">
             <Copy className="w-3.5 h-3.5" /> কোড Copy
           </button>
-          <button onClick={share} className="py-2.5 rounded-xl gradient-emerald font-black text-xs flex items-center justify-center gap-1.5 btn-press">
+          <button onClick={share} data-voice="referral.bonus" className="py-2.5 rounded-xl gradient-emerald font-black text-xs flex items-center justify-center gap-1.5 btn-press">
             <Share2 className="w-3.5 h-3.5" /> শেয়ার
           </button>
         </div>
         {shareUrl && (
-          <button onClick={() => copy(shareUrl, "লিংক")}
+          <button onClick={() => copy(shareUrl, "লিংক")} data-voice="referral.copy"
             className="mt-2 w-full py-2 rounded-lg bg-surface-2 border border-border text-[11px] text-navy/80 font-bold truncate">
             🔗 {shareUrl}
           </button>

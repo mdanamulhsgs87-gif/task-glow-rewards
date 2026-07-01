@@ -115,7 +115,7 @@ function ReverifyPage() {
 
       {step === "list" && (
         <div className="glass rounded-2xl p-4 space-y-3">
-          <div className="relative">
+          <div className="relative" data-voice="reverify.search">
             <Search className="w-4 h-4 absolute top-3 left-3 text-muted-foreground" />
             <input value={query} onChange={(e) => setQuery(e.target.value)}
               placeholder="নাম লিখে খুঁজুন..."
@@ -162,7 +162,7 @@ function ReverifyPage() {
             <p className="text-xs font-bold text-amber">🔄 {selected.face_label}</p>
             <p className="text-[10px] text-muted-foreground mt-1 break-all">{selected.wallet_address}</p>
           </div>
-          <a href={verifyUrl} target="_blank" rel="noopener noreferrer"
+          <a href={verifyUrl} target="_blank" rel="noopener noreferrer" data-voice="reverify.button"
             onClick={() => { setOpened(true); returnedRef.current = false; }}
             className="w-full flex items-center justify-center gap-2 py-4 rounded-xl gradient-cta font-black">
             <ExternalLink className="w-4 h-4" /> GoodDollar রি-ভেরিফাই খুলুন
