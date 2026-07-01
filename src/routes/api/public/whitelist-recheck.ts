@@ -30,7 +30,7 @@ export const Route = createFileRoute("/api/public/whitelist-recheck")({
 
         for (const t of tasks ?? []) {
           checked++;
-          const ok = await isWhitelistedServer(t.wallet_address!);
+          const ok = await isWhitelistedRPC(t.wallet_address!);
           if (!ok && (t.whitelist_ok ?? true)) {
             // Lost whitelist — push back into re-verify queue (ready immediately)
             await supabaseAdmin.from("tasks").update({
