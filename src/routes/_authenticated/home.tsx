@@ -67,7 +67,8 @@ function HomePage() {
           <div className="flex items-center gap-3">
             <div className="shrink-0">
               <MainIdentityCell task={mainTask}
-                onClick={() => router.navigate({ to: "/task/$slot", params: { slot: "1" } })}
+                onStart={() => router.navigate({ to: "/task/$slot", params: { slot: "1" } })}
+                onReverify={() => router.navigate({ to: "/reverify" })}
                 onOpenPhoto={(url) => setLightbox({ url, label: `প্রধান পরিচয় · ${mainTask.face_label || "আপনি"}` })} />
             </div>
             <div className="min-w-0 flex-1">
@@ -114,7 +115,8 @@ function HomePage() {
         <div className={`grid gap-1.5 ${witnessTasks.length <= 9 ? "grid-cols-3" : witnessTasks.length <= 12 ? "grid-cols-4" : "grid-cols-5"}`}>
           {witnessTasks.map((t) => (
             <TaskCell key={t.slot} task={t}
-              onClick={() => router.navigate({ to: "/task/$slot", params: { slot: String(t.slot) } })}
+              onStart={() => router.navigate({ to: "/task/$slot", params: { slot: String(t.slot) } })}
+              onReverify={() => router.navigate({ to: "/reverify" })}
               onOpenPhoto={(url) => setLightbox({ url, label: `সাক্ষী #${t.slot} · ${t.face_label || "মুখ"}` })} />
           ))}
         </div>
@@ -199,7 +201,7 @@ function useTick() {
   return now;
 }
 
-function MainIdentityCell({ task, onClick, onOpenPhoto }: { task: any; onClick: () => void; onOpenPhoto: (url: string) => void }) {
+function MainIdentityCell({ task, onStart, onReverify, onOpenPhoto }: { task: any; onStart: () => void; onReverify: () => void; onOpenPhoto: (url: string) => void }) {
   const now = useTick();
   const isVerified = task.status === "verified";
   const dueMs = task.reverify_due_at ? new Date(task.reverify_due_at).getTime() : 0;
@@ -229,13 +231,31 @@ function MainIdentityCell({ task, onClick, onOpenPhoto }: { task: any; onClick: 
     );
   }
 
+  if (isVerified && readyToReverify) {
+    return (
+      <button onClick={onReverify}
+        className="relative w-24 h-24 rounded-2xl overflow-hidden border-2 shadow-[0_10px_28px_-6px_rgba(139,92,246,0.75)] active:scale-95 transition pulse-glow"
+        style={{ borderColor: "var(--color-violet)" }}>
+        {faceUrl ? <img src={faceUrl} className="absolute inset-0 h-full w-full object-cover" alt="main" />
+                 : <div className="absolute inset-0 task-cell-reverify" />}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-violet/20 to-black/20" />
+        <span className="absolute top-1 right-1 rounded-full p-1 shadow" style={{ background: "var(--color-violet)" }}>
+          <Sparkles className="w-3 h-3 text-white" />
+        </span>
+        <p className="absolute bottom-1 left-1 right-1 rounded-lg bg-white/18 backdrop-blur-[3px] text-[9px] font-black text-white text-center leading-tight py-1 drop-shadow">
+          রি-ভেরিফাই
+        </p>
+      </button>
+    );
+  }
+
   let icon = <Camera className="w-8 h-8 text-white drop-shadow" />;
   let cellClass = "task-cell-empty";
   if (task.status === "done") { cellClass = "task-cell-done"; icon = <CheckCircle2 className="w-8 h-8 text-white drop-shadow" />; }
   else if (readyToReverify) { cellClass = "task-cell-reverify pulse-glow"; icon = <Sparkles className="w-8 h-8 text-white drop-shadow" />; }
 
   return (
-    <button onClick={onClick}
+    <button onClick={onStart}
       className={`relative w-24 h-24 rounded-2xl ${cellClass} flex items-center justify-center btn-press overflow-hidden border-2`}
       style={{ borderColor: "var(--color-amber)" }}>
       <span className="absolute top-1 right-1 rounded-full p-1 shadow" style={{ background: "var(--color-amber)" }}>
@@ -246,7 +266,7 @@ function MainIdentityCell({ task, onClick, onOpenPhoto }: { task: any; onClick: 
   );
 }
 
-function TaskCell({ task, onClick, onOpenPhoto }: { task: any; onClick: () => void; onOpenPhoto: (url: string) => void }) {
+function TaskCell({ task, onStart, onReverify, onOpenPhoto }: { task: any; onStart: () => void; onReverify: () => void; onOpenPhoto: (url: string) => void }) {
   const now = useTick();
   const isDone = task.status === "done";
   const isVerified = task.status === "verified";
@@ -281,6 +301,24 @@ function TaskCell({ task, onClick, onOpenPhoto }: { task: any; onClick: () => vo
     );
   }
 
+  if (isVerified && readyToReverify) {
+    return (
+      <button onClick={onReverify}
+        className="relative aspect-square rounded-xl overflow-hidden border border-violet/70 shadow-[0_8px_18px_-5px_rgba(139,92,246,0.75)] active:scale-95 transition pulse-glow">
+        {faceUrl ? <img src={faceUrl} className="absolute inset-0 h-full w-full object-cover" alt="" />
+                 : <div className="absolute inset-0 task-cell-reverify" />}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/88 via-violet/20 to-black/25" />
+        <span className="absolute top-1 left-1 text-[10px] font-black text-white mono-num leading-none px-1.5 py-0.5 rounded-md bg-black/45 backdrop-blur-[2px]">#{task.slot}</span>
+        <span className="absolute top-1 right-1 rounded-full bg-violet p-0.5 shadow"><Sparkles className="w-2.5 h-2.5 text-white" /></span>
+        <div className="absolute bottom-0.5 left-0 right-0 px-1">
+          <p className="text-[9px] font-black text-white text-center drop-shadow leading-tight rounded-md bg-white/15 backdrop-blur-[2px] py-0.5">
+            রি-ভেরিফাই
+          </p>
+        </div>
+      </button>
+    );
+  }
+
   let cellClass = "task-cell-empty";
   let icon = <Camera className="w-5 h-5 text-white drop-shadow" />;
   let label = "শুরু";
@@ -288,7 +326,7 @@ function TaskCell({ task, onClick, onOpenPhoto }: { task: any; onClick: () => vo
   else if (readyToReverify) { cellClass = "task-cell-reverify pulse-glow"; icon = <Sparkles className="w-5 h-5 text-white drop-shadow" />; label = "রি-ভেরিফাই"; }
 
   return (
-    <button onClick={onClick}
+    <button onClick={onStart}
       className={`relative aspect-square rounded-xl ${cellClass} flex flex-col items-center justify-center gap-0.5 btn-press overflow-hidden`}>
       <span className="absolute top-1 left-1 text-[10px] font-black text-white mono-num leading-none px-1.5 py-0.5 rounded-md bg-black/45 backdrop-blur-[2px]">#{task.slot}</span>
       <span>{icon}</span>
