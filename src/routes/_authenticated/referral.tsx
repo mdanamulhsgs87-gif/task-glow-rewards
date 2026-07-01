@@ -33,11 +33,34 @@ function ReferralPage() {
     navigator.clipboard.writeText(txt);
     toast.success(`${label} কপি হয়েছে`);
   };
+  const buildShareText = (withUrl: boolean) => {
+    const lines = [
+      "🎁 আসসালামু আলাইকুম!",
+      "",
+      "আমি good-app ব্যবহার করছি — একটি আর্থিক সহায়ক প্ল্যাটফর্ম, যেখানে শুধু ফেস ভেরিফাই করেই প্রতি মাসে ৫০০৳ পর্যন্ত আয় করা যায়। ১০০% ফ্রি, কোনো ইনভেস্ট নেই।",
+      "",
+      "✨ আমার রেফারেল কোড ব্যবহার করে জয়েন করলে আপনি ও আমি — দুজনেই বোনাস পাব।",
+      "",
+      `🔐 রেফারেল কোড: ${code}`,
+    ];
+    if (withUrl) {
+      lines.push("", "👇 নিচের লিংকে ক্লিক করে এখনই শুরু করুন:", shareUrl);
+    }
+    return lines.join("\n");
+  };
   const share = async () => {
-    const text = `good-app এ যোগ দিন! আমার রেফারেল কোড: ${code}\n${shareUrl}`;
-    if (navigator.share) {
-      try { await navigator.share({ title: "good-app", text, url: shareUrl }); } catch {}
-    } else { copy(text, "শেয়ার লিংক"); }
+    // When passing `url`, most apps append it themselves — so send text WITHOUT url to avoid duplication.
+    if (typeof navigator !== "undefined" && (navigator as any).share) {
+      try {
+        await (navigator as any).share({
+          title: "good-app — মাসে ৫০০৳ আয়",
+          text: buildShareText(false),
+          url: shareUrl,
+        });
+        return;
+      } catch {}
+    }
+    copy(buildShareText(true), "শেয়ার টেক্সট");
   };
 
   return (
