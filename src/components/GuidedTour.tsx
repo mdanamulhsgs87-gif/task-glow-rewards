@@ -261,7 +261,7 @@ export function GuidedTour({ steps = DEFAULT_STEPS, autoStart = true }: { steps?
         <div className="flex items-start justify-between gap-2 mb-2">
           <div className="min-w-0">
             <p className="text-[10px] uppercase tracking-[0.15em] font-black text-violet-500">
-              ধাপ {idx + 1} / {steps.length}
+              ধাপ {idx + 1} / {steps.length} {loading && <span className="ml-1 text-amber-500">🎙️ লোড হচ্ছে…</span>}
             </p>
             <h3 className="text-base font-black text-navy mt-0.5 leading-tight">{step.title}</h3>
           </div>
