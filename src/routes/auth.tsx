@@ -78,6 +78,23 @@ export function AuthPage() {
   const [referralCode, setReferralCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [scanOpen, setScanOpen] = useState(false);
+  const resolveUid = useServerFn(resolveCardUidForLogin);
+
+  const handleScan = async (raw: string) => {
+    setScanOpen(false);
+    try {
+      // Extract UID from QR — could be full URL or plain uid
+      const m = raw.match(/card\/([0-9a-f-]{8,})/i);
+      const candidate = m?.[1] ?? raw.trim();
+      const res = await resolveUid({ data: { uid: candidate } });
+      setPhone(res.phone);
+      setMode("login");
+      toast.success("UID পাওয়া গেছে — এবার পাসওয়ার্ড দিন");
+    } catch (e: any) {
+      toast.error(e?.message ?? "QR পড়া যায়নি");
+    }
+  };
 
   useEffect(() => {
     // Pre-fill referral code from ?ref=XYZ
