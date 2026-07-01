@@ -137,7 +137,9 @@ async function playBuffer(buffer: AudioBuffer) {
   stopCurrent();
   const source = ctx.createBufferSource();
   source.buffer = buffer;
-  source.connect(ctx.destination);
+  const gain = ctx.createGain();
+  gain.gain.value = 1.8; // boost loudness so voice is clearly audible
+  source.connect(gain).connect(ctx.destination);
   currentSource = source;
   source.start(Math.max(ctx.currentTime + 0.015, ctx.currentTime));
   source.onended = () => {
