@@ -166,13 +166,15 @@ function TaskPage() {
         <ArrowLeft className="w-3.5 h-3.5" /> পিছনে
       </Link>
 
-      <div className="glass rounded-2xl p-4">
-        <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Task</p>
-        <h1 className="text-2xl font-black">#{task.slot} নং ঘর</h1>
-        <p className="text-[11px] text-muted-foreground mt-1">
-          {isDone && "✅ এই ঘর সম্পূর্ণ"}
-          {isVerified && "⏳ Re-verify প্রস্তুত হলে /reverify পেজ থেকে করবেন"}
-          {task.status === "empty" && "🔵 GoodDollar face verify দিয়ে শুরু করুন"}
+      <div className="premium-panel shine rounded-2xl p-5 pop-in">
+        <p className="text-[10px] uppercase tracking-[0.3em] text-violet font-black">টাস্ক</p>
+        <h1 className="text-3xl font-black bg-gradient-to-r from-violet via-cyan to-gold bg-clip-text text-transparent mining-number">
+          #{task.slot} নং ঘর
+        </h1>
+        <p className="text-[12px] text-muted-foreground mt-2 font-bold">
+          {isDone && <span className="text-emerald">✅ এই ঘর সম্পূর্ণ</span>}
+          {isVerified && <span className="text-amber">⏳ Re-verify প্রস্তুত হলে /reverify পেজ থেকে করবেন</span>}
+          {task.status === "empty" && <span className="text-cyan bounce-soft inline-block">🔵 GoodDollar face verify দিয়ে শুরু করুন</span>}
         </p>
       </div>
 
