@@ -7,6 +7,7 @@ import { ArrowLeft, ExternalLink, Loader2, RefreshCcw, Search, ShieldCheck } fro
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { PageVoice } from "@/components/PageVoice";
+import { playVoiceAuto } from "@/lib/voice-guide";
 
 
 export const Route = createFileRoute("/_authenticated/reverify")({ component: ReverifyPage });
@@ -22,6 +23,7 @@ function ReverifyPage() {
   const [countdown, setCountdown] = useState<number | null>(null);
   const [checking, setChecking] = useState(false);
   const returnedRef = useRef(false);
+  const submitReadySpokenRef = useRef(false);
 
   const { data: candidates, isFetching, refetch } = useQuery({
     queryKey: ["reverify-candidates", query],
@@ -44,6 +46,7 @@ function ReverifyPage() {
       if (document.visibilityState === "visible" && !returnedRef.current) {
         returnedRef.current = true;
         setCountdown(10);
+        playVoiceAuto("task.gd.after");
       }
     };
     document.addEventListener("visibilitychange", onVis);
@@ -56,9 +59,17 @@ function ReverifyPage() {
 
   useEffect(() => {
     if (countdown === null || countdown <= 0) return;
+    submitReadySpokenRef.current = false;
     const t = setTimeout(() => setCountdown((c) => (c === null ? null : c - 1)), 1000);
     return () => clearTimeout(t);
   }, [countdown]);
+
+  useEffect(() => {
+    if (step === "verify" && opened && countdown === 0 && !submitReadySpokenRef.current) {
+      submitReadySpokenRef.current = true;
+      playVoiceAuto("reverify.submit.ready");
+    }
+  }, [step, opened, countdown]);
 
   const onSelect = async (cand: any) => {
     setSelected(cand);
@@ -98,7 +109,7 @@ function ReverifyPage() {
 
   return (
     <div className="space-y-4 pt-2">
-      <PageVoice pageId="reverify" steps={["reverify.intro","reverify.search","reverify.button"]} />
+      <PageVoice pageId="reverify" steps={["reverify.intro","reverify.search","reverify.button","task.gd.after","reverify.submit.ready","reverify.submit.clicked","reverify.photo"]} />
       <Link to="/home" data-voice="common.back"
 
         className="inline-flex items-center gap-2 px-4 py-2 rounded-full gradient-cta text-white text-sm font-black shadow-lg btn-press">
@@ -174,7 +185,7 @@ function ReverifyPage() {
             </div>
           )}
           {opened && countdown === 0 && (
-            <button onClick={onSubmit} disabled={checking} data-voice="task.submit"
+            <button onClick={onSubmit} disabled={checking} data-voice="reverify.submit.clicked"
               className="w-full py-4 rounded-xl gradient-cta font-black flex items-center justify-center gap-2">
               {checking ? <><Loader2 className="w-4 h-4 animate-spin" /> যাচাই হচ্ছে…</> : <><ShieldCheck className="w-4 h-4" /> জমা দিন</>}
             </button>
@@ -187,7 +198,7 @@ function ReverifyPage() {
       {step === "photo" && selected && (
         <div className="glass rounded-2xl p-4 space-y-2">
           <p className="text-xs text-emerald font-bold text-center">✅ Whitelist নিশ্চিত হয়েছে — নতুন ছবি তুলুন</p>
-          <FaceCapture title="নতুন ছবি" onCapture={onNewPhoto}
+          <FaceCapture title="নতুন ছবি" onCapture={onNewPhoto} readyVoice="reverify.photo"
             onCancel={() => setStep("verify")} isUploading={completeMut.isPending} />
         </div>
       )}
