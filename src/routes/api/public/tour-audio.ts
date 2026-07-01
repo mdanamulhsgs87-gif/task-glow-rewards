@@ -9,14 +9,14 @@ import { createHash } from "crypto";
 import { NARRATIONS, isNarrationKey } from "@/lib/narrations";
 
 const BUCKET = "tour-audio";
-const VOICE = "nova"; // brighter female voice for a happier, less robotic guide
-const FALLBACK_VOICE = "shimmer";
+const VOICE = "coral"; // warmer, brighter female voice with more natural smile
+const FALLBACK_VOICE = "nova";
 const MODEL = "openai/gpt-4o-mini-tts";
-const SPEED = 1.25; // lively pace — removes the slow robotic feel
-const CACHE_VERSION = "v4-nova-expressive-bn";
+const SPEED = 1.18; // quick and lively, but not rushed/robotic
+const CACHE_VERSION = "v6-coral-happy-bn";
 const SIGN_TTL = 60 * 60 * 24 * 365; // 1 year
 const TTS_INSTRUCTIONS =
-  "Speak only in natural Bangladeshi Bangla (bn-BD), like a cheerful young woman/apu smiling while helping a younger sibling. Use expressive pitch, friendly excitement, tiny natural pauses, and warm playful energy. Sound human, happy, encouraging, and conversational — never monotone, never robotic, never news-reader style, never bookish. Pronounce Bangla naturally: স্বাগত as sha-goto, টাকা as taka, গুডডলার as good-dollar. Keep the pace quick and lively but clear.";
+  "Speak only in natural Dhakai/Bangladeshi Bangla (bn-BD), like a real cheerful young Bangladeshi woman/apu helping with a big smile. Put a visible smile in the voice, playful warmth, friendly excitement, expressive pitch, and tiny natural laughs where the text says 'হিহি' or 'ইয়েস'. Sound like a happy human friend in a phone call — never robotic, never flat, never formal, never news-reader, never school-book recitation. Keep it lively and clear. Pronounce words naturally: সাগতম like sa-go-tom, টাকা like taka, গুডডলার like good-dollar, ভেরিফাই like verify.";
 
 export const Route = createFileRoute("/api/public/tour-audio")({
   server: {
