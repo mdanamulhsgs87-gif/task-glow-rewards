@@ -274,7 +274,7 @@ export function AuthPage() {
                 <input
                   value={referralCode}
                   onChange={(e) => setReferralCode(e.target.value.toUpperCase().slice(0, 12))}
-                  placeholder="যেমন: ABC1234"
+                  placeholder="উদাহরণ: ABC1234"
                   className="w-full mt-1 px-4 py-3 bg-white border-2 border-border rounded-xl text-sm outline-none focus:border-emerald mono-num tracking-widest text-navy transition"
                 />
                 <p className="text-[10px] text-muted-foreground mt-1">কেউ আপনাকে রেফার করলে তাঁর কোড লিখুন।</p>
