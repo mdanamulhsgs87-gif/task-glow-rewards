@@ -88,7 +88,7 @@ function HomePage() {
       )}
 
       {/* Witness grid */}
-      <div className="premium-panel rounded-2xl p-3">
+      <div data-tour="witness-grid" className="premium-panel rounded-2xl p-3">
         <div className="flex items-center justify-between mb-2.5">
           <div className="min-w-0">
             <p className="text-[10px] uppercase text-muted-foreground tracking-[0.15em] font-bold flex items-center gap-1">
