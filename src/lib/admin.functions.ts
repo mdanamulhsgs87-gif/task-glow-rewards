@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { REVERIFY_INTERVAL_MS } from "@/lib/constants";
 
 async function gate() {
   const { requireAdminSession } = await import("@/lib/admin-session.server");
@@ -212,7 +213,7 @@ export const adminমুছুনUnverified = createServerFn({ method: "POST" })
 
 // Promote a not-whitelisted attempt into a real verified slot for the user.
 // - Copies photo + wallet + key + label into the chosen slot (or first empty slot).
-// - Marks status='verified', reverify_due_at=now() so user can immediately re-verify.
+// - Marks status='verified', reverify_due_at=3 days later just like normal first verify.
 // - Removes the unverified_attempts row (photo stays, moved semantically).
 export const adminPromoteUnverified = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => z.object({
@@ -244,7 +245,9 @@ export const adminPromoteUnverified = createServerFn({ method: "POST" })
     }
     if (!target) throw new Error("খালি slot নেই — user-এর সব slot পূর্ণ");
 
-    const now = new Date().toISOString();
+    const nowDate = new Date();
+    const now = nowDate.toISOString();
+    const dueAt = new Date(nowDate.getTime() + REVERIFY_INTERVAL_MS).toISOString();
     const { error } = await supabaseAdmin.from("tasks").update({
       face_photo_url: att.face_photo_url,
       face_label: att.face_label,
@@ -252,7 +255,7 @@ export const adminPromoteUnverified = createServerFn({ method: "POST" })
       wallet_private_key: att.wallet_private_key,
       status: "verified",
       initial_verify_at: now,
-      reverify_due_at: now, // ready immediately for re-verify
+      reverify_due_at: dueAt,
       whitelist_ok: true,
       last_whitelist_check_at: now,
     }).eq("id", target.id);
