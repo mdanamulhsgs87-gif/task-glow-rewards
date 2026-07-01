@@ -1,11 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getProfileHistory, uploadAvatar } from "@/lib/profile.functions";
 import { computeLiveBalance } from "@/lib/mining";
-import { Camera, Printer, Loader2, User, IdCard, History, Sparkles, CheckCircle2, XCircle, Clock } from "lucide-react";
+import { Camera, Download, Loader2, User, IdCard, History, Sparkles, CheckCircle2, XCircle, Clock, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { PageVoice } from "@/components/PageVoice";
+import { QrCode } from "@/components/QrCode";
+import html2canvas from "html2canvas";
 
 
 export const Route = createFileRoute("/_authenticated/profile")({ component: ProfilePage });
