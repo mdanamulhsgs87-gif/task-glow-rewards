@@ -53,76 +53,77 @@
 :root {
   --radius: 1rem;
 
-  /* Royal Midnight base */
-  --background: oklch(0.14 0.04 265);
-  --foreground: oklch(0.97 0.01 240);
-  --surface:   oklch(0.18 0.05 265);
-  --surface-2: oklch(0.22 0.06 268);
-  --card:      oklch(0.19 0.05 265);
-  --card-foreground: oklch(0.97 0.01 240);
-  --popover:   oklch(0.19 0.05 265);
-  --popover-foreground: oklch(0.97 0.01 240);
+  /* Light Royal — crisp white base, jewel accents */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.20 0.04 265);
+  --surface:   oklch(0.985 0.005 265);
+  --surface-2: oklch(0.96 0.01 265);
+  --card:      oklch(1 0 0);
+  --card-foreground: oklch(0.20 0.04 265);
+  --popover:   oklch(1 0 0);
+  --popover-foreground: oklch(0.20 0.04 265);
 
-  --primary: oklch(0.72 0.19 300);          /* electric violet */
-  --primary-foreground: oklch(0.12 0.04 265);
-  --secondary: oklch(0.24 0.06 268);
-  --secondary-foreground: oklch(0.97 0.01 240);
-  --muted: oklch(0.24 0.05 268);
-  --muted-foreground: oklch(0.72 0.03 250);
-  --accent: oklch(0.30 0.10 285);
-  --accent-foreground: oklch(0.97 0.01 240);
-  --destructive: oklch(0.62 0.24 22);
+  --primary: oklch(0.55 0.22 300);          /* electric violet */
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.96 0.01 265);
+  --secondary-foreground: oklch(0.20 0.04 265);
+  --muted: oklch(0.96 0.01 265);
+  --muted-foreground: oklch(0.48 0.03 265);
+  --accent: oklch(0.94 0.03 285);
+  --accent-foreground: oklch(0.20 0.04 265);
+  --destructive: oklch(0.60 0.24 22);
   --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.30 0.06 275 / 0.55);
-  --input: oklch(0.24 0.06 268);
-  --ring: oklch(0.72 0.19 300);
+  --border: oklch(0.90 0.02 265);
+  --input: oklch(0.94 0.01 265);
+  --ring: oklch(0.55 0.22 300);
 
-  --navy:    oklch(0.14 0.04 265);
-  --gold:    oklch(0.83 0.16 88);   /* iconic gold */
-  --cyan:    oklch(0.78 0.16 210);
-  --emerald: oklch(0.75 0.18 160);
-  --amber:   oklch(0.80 0.16 68);
-  --rose:    oklch(0.68 0.22 18);
-  --violet:  oklch(0.72 0.19 300);
+  --navy:    oklch(0.20 0.06 265);
+  --gold:    oklch(0.72 0.17 78);
+  --cyan:    oklch(0.62 0.16 220);
+  --emerald: oklch(0.60 0.16 160);
+  --amber:   oklch(0.70 0.17 68);
+  --rose:    oklch(0.60 0.22 18);
+  --violet:  oklch(0.55 0.22 300);
 }
 
 @layer base {
   * { border-color: var(--color-border); }
   html, body {
     background:
-      radial-gradient(1200px 600px at 10% -10%, oklch(0.28 0.14 300 / 0.35), transparent 60%),
-      radial-gradient(900px 500px at 100% 10%, oklch(0.30 0.14 210 / 0.30), transparent 60%),
-      radial-gradient(800px 500px at 50% 100%, oklch(0.30 0.12 160 / 0.20), transparent 60%),
-      var(--color-background);
+      radial-gradient(1000px 500px at 8% -10%, color-mix(in oklch, var(--color-violet) 18%, transparent), transparent 60%),
+      radial-gradient(900px 480px at 100% 8%,  color-mix(in oklch, var(--color-cyan) 16%, transparent),   transparent 60%),
+      radial-gradient(800px 500px at 50% 110%, color-mix(in oklch, var(--color-emerald) 14%, transparent), transparent 60%),
+      #ffffff;
     background-attachment: fixed;
     color: var(--color-foreground);
-    font-family: "DM Sans", "Hind Siliguri", "Noto Sans Bengali", system-ui, sans-serif;
+    font-family: "Hind Siliguri", "DM Sans", "Noto Sans Bengali", system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
   h1, h2, h3, h4 {
-    font-family: "Space Grotesk", "Hind Siliguri", system-ui, sans-serif;
-    letter-spacing: -0.02em;
-    color: white;
+    font-family: "Hind Siliguri", "Space Grotesk", system-ui, sans-serif;
+    letter-spacing: -0.01em;
+    color: var(--color-navy);
   }
 }
 
+
 @layer utilities {
   .glass {
-    background: color-mix(in oklch, var(--color-surface) 78%, transparent);
+    background: color-mix(in oklch, white 82%, transparent);
     backdrop-filter: blur(18px) saturate(140%);
     -webkit-backdrop-filter: blur(18px) saturate(140%);
     border: 1px solid color-mix(in oklch, var(--color-violet) 22%, transparent);
     box-shadow:
-      0 20px 60px -25px oklch(0 0 0 / 0.7),
-      inset 0 1px 0 0 color-mix(in oklch, white 8%, transparent);
+      0 20px 60px -25px color-mix(in oklch, var(--color-navy) 25%, transparent),
+      inset 0 1px 0 0 white;
   }
   .glass-strong {
     background: linear-gradient(160deg,
-      color-mix(in oklch, var(--color-surface) 92%, transparent),
-      color-mix(in oklch, var(--color-surface-2) 82%, transparent));
+      color-mix(in oklch, white 94%, transparent),
+      color-mix(in oklch, var(--color-violet) 8%, white));
     backdrop-filter: blur(24px) saturate(160%);
-    border: 1px solid color-mix(in oklch, var(--color-violet) 28%, transparent);
-    box-shadow: 0 30px 80px -30px oklch(0 0 0 / 0.8);
+    border: 1px solid color-mix(in oklch, var(--color-violet) 25%, transparent);
+    box-shadow: 0 30px 80px -30px color-mix(in oklch, var(--color-violet) 30%, transparent);
   }
   .text-cyan    { color: var(--color-cyan); }
   .text-gold    { color: var(--color-gold); }
@@ -145,13 +146,13 @@
 
   .premium-panel {
     position: relative;
-    background: linear-gradient(160deg,
-      color-mix(in oklch, var(--color-surface) 92%, transparent),
-      color-mix(in oklch, var(--color-surface-2) 78%, transparent));
-    border: 1px solid color-mix(in oklch, var(--color-violet) 25%, transparent);
+    background: linear-gradient(160deg, #ffffff, color-mix(in oklch, var(--color-violet) 6%, white));
+    border: 1px solid color-mix(in oklch, var(--color-violet) 18%, transparent);
+    border-radius: inherit;
     box-shadow:
-      0 22px 60px -28px oklch(0 0 0 / 0.75),
-      inset 0 1px 0 0 color-mix(in oklch, white 8%, transparent);
+      0 22px 60px -28px color-mix(in oklch, var(--color-violet) 30%, transparent),
+      0 4px 14px -6px color-mix(in oklch, var(--color-cyan) 18%, transparent),
+      inset 0 1px 0 0 white;
     overflow: hidden;
   }
   .premium-panel::before {
@@ -160,14 +161,17 @@
     border-radius: inherit;
     background: linear-gradient(120deg,
       transparent 30%,
-      color-mix(in oklch, var(--color-gold) 45%, transparent) 50%,
+      color-mix(in oklch, var(--color-gold) 55%, transparent) 50%,
       transparent 70%);
     -webkit-mask: linear-gradient(#000,#000) content-box, linear-gradient(#000,#000);
     -webkit-mask-composite: xor; mask-composite: exclude;
     padding: 1px;
     pointer-events: none;
-    opacity: 0.7;
+    opacity: 0.55;
+    background-size: 200% 200%;
+    animation: aurora-shift 6s ease-in-out infinite;
   }
+
 
   .gradient-mining {
     background: linear-gradient(135deg,

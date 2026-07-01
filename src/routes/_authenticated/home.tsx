@@ -174,31 +174,34 @@ function TaskCell({ task, onClick, onOpenPhoto }: { task: any; onClick: () => vo
     );
   }
 
-  let bg = "bg-white border-border";
-  let icon = <Camera className="w-5 h-5 text-cyan" />;
+  let bg = "bg-white";
+  let border = "border-2 border-dashed border-cyan/40";
+  let icon = <Camera className="w-6 h-6 text-cyan drop-shadow" />;
   let label = "শুরু";
   let labelColor = "text-cyan";
-  let ring = "";
+  let extra = "hover:border-cyan hover:shadow-[0_10px_28px_-10px_color-mix(in_oklch,var(--color-cyan)_60%,transparent)]";
 
   if (isDone) {
-    bg = "bg-gradient-to-br from-emerald/15 to-white border-emerald/50";
-    ring = "shadow-[0_10px_24px_-12px_rgba(16,185,129,0.6)]";
-    icon = <CheckCircle2 className="w-5 h-5 text-emerald" />;
+    bg = "bg-gradient-to-br from-emerald/20 via-white to-cyan/10";
+    border = "border-2 border-emerald/60";
+    icon = <CheckCircle2 className="w-6 h-6 text-emerald drop-shadow bounce-soft" />;
     label = "সম্পন্ন";
     labelColor = "text-emerald";
+    extra = "shadow-[0_12px_30px_-12px_color-mix(in_oklch,var(--color-emerald)_65%,transparent)]";
   } else if (readyToReverify) {
-    bg = "bg-gradient-to-br from-cyan/15 to-white border-cyan/60";
-    ring = "shadow-[0_10px_24px_-12px_rgba(56,189,248,0.7)] animate-pulse";
-    icon = <Sparkles className="w-5 h-5 text-cyan" />;
+    bg = "bg-gradient-to-br from-violet/20 via-white to-cyan/15";
+    border = "border-2 border-violet/60";
+    icon = <Sparkles className="w-6 h-6 text-violet drop-shadow spin-slow" />;
     label = "রি-ভেরিফাই";
-    labelColor = "text-cyan";
+    labelColor = "text-violet";
+    extra = "pulse-glow shadow-[0_12px_30px_-10px_color-mix(in_oklch,var(--color-violet)_70%,transparent)]";
   }
 
   return (
     <button onClick={onClick}
-      className={`relative aspect-square rounded-2xl border-2 ${bg} ${ring} flex flex-col items-center justify-center gap-1.5 transition hover:scale-[1.03] active:scale-95`}>
-      <span className="absolute top-1.5 left-2 text-[10px] font-black text-muted-foreground">#{task.slot}</span>
-      {icon}
+      className={`relative aspect-square rounded-2xl ${border} ${bg} ${extra} flex flex-col items-center justify-center gap-1.5 btn-press overflow-hidden`}>
+      <span className="absolute top-1 left-1.5 text-[10px] font-black text-navy/50 mono-num">#{task.slot}</span>
+      <span className="relative">{icon}</span>
       <span className={`text-[10px] font-black ${labelColor}`}>{label}</span>
     </button>
   );

@@ -216,7 +216,7 @@ export function AuthPage() {
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gradient-cta mb-3 float-anim shadow-lg">
               <Sparkles className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-black text-navy tracking-tight">good-app</h1>
+            <h1 className="text-3xl font-black text-navy tracking-tight">গুড অ্যাপ</h1>
             <p className="text-xs text-muted-foreground mt-1.5 font-bold">
               <span className="text-cyan">১০টি টাস্ক</span>
               <span className="mx-1.5 text-muted-foreground">→</span>
@@ -254,7 +254,7 @@ export function AuthPage() {
               <input
                 inputMode="numeric" required value={phone}
                 onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 11))}
-                placeholder="01XXXXXXXXX" maxLength={11}
+                placeholder="০১XXXXXXXXX (১১ ডিজিট)" maxLength={11}
                 className="w-full mt-1 px-4 py-3 bg-white border-2 border-border rounded-xl text-sm outline-none focus:border-cyan mono-num text-navy transition"
               />
             </div>
@@ -274,7 +274,7 @@ export function AuthPage() {
                 <input
                   value={referralCode}
                   onChange={(e) => setReferralCode(e.target.value.toUpperCase().slice(0, 12))}
-                  placeholder="যেমন: ABC1234"
+                  placeholder="উদাহরণ: ABC1234"
                   className="w-full mt-1 px-4 py-3 bg-white border-2 border-border rounded-xl text-sm outline-none focus:border-emerald mono-num tracking-widest text-navy transition"
                 />
                 <p className="text-[10px] text-muted-foreground mt-1">কেউ আপনাকে রেফার করলে তাঁর কোড লিখুন।</p>
