@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 import { registerWithPhone } from "@/lib/auth.functions";
 import logo from "@/assets/logo.png";
+import { PageVoice } from "@/components/PageVoice";
+
 
 export const Route = createFileRoute("/auth")({ ssr: false, component: AuthPage });
 
