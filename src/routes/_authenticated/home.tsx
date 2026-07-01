@@ -334,7 +334,7 @@ function TaskCell({ task, onStart, onReverify, onOpenPhoto }: { task: any; onSta
   else if (readyToReverify) { cellClass = "task-cell-reverify pulse-glow"; icon = <Sparkles className="w-5 h-5 text-white drop-shadow" />; label = "রি-ভেরিফাই"; }
 
   return (
-    <button onClick={onStart}
+    <button onClick={onStart} data-voice="home.tap.slot"
       className={`relative aspect-square rounded-xl ${cellClass} flex flex-col items-center justify-center gap-0.5 btn-press overflow-hidden`}>
       <span className="absolute top-1 left-1 text-[10px] font-black text-white mono-num leading-none px-1.5 py-0.5 rounded-md bg-black/45 backdrop-blur-[2px]">#{task.slot}</span>
       <span>{icon}</span>
