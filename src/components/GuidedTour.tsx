@@ -54,16 +54,12 @@ const DEFAULT_STEPS: TourStep[] = [
 
 const STORAGE_KEY = "good-app-tour-v1";
 
-// In-memory cache: text -> signed URL (persists for the session)
+// In-memory cache only (session-scoped). The actual MP3 lives in Supabase
+// Storage — new browsers just fetch a signed URL (0 credits), no need to
+// duplicate URLs into localStorage where they'd expire and get stale.
 const urlCache = new Map<string, string>();
-// LocalStorage cache too, so cross-session hits skip the server round trip
-const LS_URL_CACHE = "good-app-tour-urls-v1";
-function readLsUrlCache(): Record<string, string> {
-  try { return JSON.parse(localStorage.getItem(LS_URL_CACHE) || "{}"); } catch { return {}; }
-}
-function writeLsUrlCache(map: Record<string, string>) {
-  try { localStorage.setItem(LS_URL_CACHE, JSON.stringify(map)); } catch {}
-}
+
+
 
 function pickBengaliVoice(): SpeechSynthesisVoice | null {
   if (typeof window === "undefined" || !window.speechSynthesis) return null;
