@@ -36,12 +36,12 @@ export const bindFirstVerify = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => BindInput.parse(input))
   .handler(async ({ data, context }) => {
-    const { supabase, userId } = context;
+    const { userId } = context;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const { data: task } = await supabase
+    const { data: task } = await supabaseAdmin
       .from("tasks").select("*").eq("user_id", userId).eq("slot", data.slot).maybeSingle();
-    if (!task) throw new Error("Task slot na");
+    if (!task) throw new Error("এই স্লট পাওয়া যায়নি");
     if (task.status !== "empty") throw new Error("Ei slot already verified");
 
     // Reject duplicate wallet across the whole app
@@ -227,13 +227,13 @@ export const completeReverify = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => CompleteInput.parse(input))
   .handler(async ({ data, context }) => {
-    const { supabase, userId } = context;
+    const { userId } = context;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const { data: task } = await supabase
+    const { data: task } = await supabaseAdmin
       .from("tasks").select("*").eq("id", data.taskId).eq("user_id", userId).maybeSingle();
-    if (!task) throw new Error("Task na");
-    if (task.status !== "verified") throw new Error("Re-verify ready na");
+    if (!task) throw new Error("টাস্ক পাওয়া যায়নি");
+    if (task.status !== "verified") throw new Error("রি-ভেরিফাই প্রস্তুত নয়");
 
     let newPath = task.face_photo_url;
     if (data.newPhotoBase64) {
