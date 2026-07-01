@@ -8,7 +8,7 @@ export const getDashboard = createServerFn({ method: "GET" })
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const TASK_COLS = "id,slot,status,face_label,face_photo_url,wallet_address,verified_at,reverify_due_at,whitelist_ok,created_at,updated_at,user_id";
-    const [{ data: profile }, { data: tasks }, { data: mining }, { data: wallet }, { data: roles }] =
+    const [{ data: profile }, tasksResult, { data: mining }, { data: wallet }, { data: roles }] =
       await Promise.all([
         supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
         supabaseAdmin.from("tasks").select(TASK_COLS).eq("user_id", userId).order("slot"),
@@ -16,6 +16,30 @@ export const getDashboard = createServerFn({ method: "GET" })
         supabase.from("wallets").select("*").eq("user_id", userId).maybeSingle(),
         supabase.from("user_roles").select("role").eq("user_id", userId),
       ]);
+
+    if (tasksResult.error) throw new Error(tasksResult.error.message);
+
+    let tasks = tasksResult.data ?? [];
+    if (tasks.length === 0) {
+      const rows = Array.from({ length: 10 }, (_, index) => ({
+        user_id: userId,
+        slot: index + 1,
+        status: "empty" as const,
+      }));
+
+      const { error: seedError } = await supabaseAdmin
+        .from("tasks")
+        .upsert(rows, { onConflict: "user_id,slot", ignoreDuplicates: true });
+      if (seedError) throw new Error(seedError.message);
+
+      const { data: seededTasks, error: refetchError } = await supabaseAdmin
+        .from("tasks")
+        .select(TASK_COLS)
+        .eq("user_id", userId)
+        .order("slot");
+      if (refetchError) throw new Error(refetchError.message);
+      tasks = seededTasks ?? [];
+    }
 
     const isAdmin = (roles ?? []).some((r) => r.role === "admin");
     const tasksWithPhotos = await Promise.all(
