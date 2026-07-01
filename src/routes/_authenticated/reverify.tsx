@@ -72,7 +72,7 @@ function ReverifyPage() {
     }
   };
 
-  const onজমা দিন = async () => {
+  const onSubmit = async () => {
     if (!selected) return;
     setChecking(true);
     try {
@@ -169,7 +169,7 @@ function ReverifyPage() {
             </div>
           )}
           {opened && countdown === 0 && (
-            <button onClick={onজমা দিন} disabled={checking}
+            <button onClick={onSubmit} disabled={checking}
               className="w-full py-4 rounded-xl gradient-cta font-black flex items-center justify-center gap-2">
               {checking ? <><Loader2 className="w-4 h-4 animate-spin" /> Checking…</> : <><ShieldCheck className="w-4 h-4" /> জমা দিন</>}
             </button>
@@ -183,7 +183,7 @@ function ReverifyPage() {
         <div className="glass rounded-2xl p-4 space-y-2">
           <p className="text-xs text-emerald font-bold text-center">✅ Whitelist confirmed — notun chobi tulun</p>
           <FaceCapture title="Notun chobi" onCapture={onNewPhoto}
-            onবাতিল={() => setStep("verify")} isUploading={completeMut.isPending} />
+            onCancel={() => setStep("verify")} isUploading={completeMut.isPending} />
         </div>
       )}
 

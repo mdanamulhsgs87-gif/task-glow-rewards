@@ -3,12 +3,12 @@ import { Camera, X, Loader2, Scan, AlertTriangle } from "lucide-react";
 
 type FaceCaptureProps = {
   onCapture: (photoBase64: string) => void;
-  onবাতিল: () => void;
+  onCancel: () => void;
   isUploading?: boolean;
   title?: string;
 };
 
-export function FaceCapture({ onCapture, onবাতিল, isUploading, title }: FaceCaptureProps) {
+export function FaceCapture({ onCapture, onCancel, isUploading, title }: FaceCaptureProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -157,7 +157,7 @@ export function FaceCapture({ onCapture, onবাতিল, isUploading, title }
         </div>
       )}
       <canvas ref={canvasRef} className="hidden" />
-      <button onClick={onবাতিল}
+      <button onClick={onCancel}
         className="w-full py-2 rounded-xl border border-border text-xs text-muted-foreground flex items-center justify-center gap-1">
         <X className="w-3 h-3" /> বাতিল
       </button>

@@ -52,7 +52,7 @@ function WalletPage() {
           </div>
         </div>
       ) : (
-        <form onজমা দিন={(e) => { e.preventDefault(); mut.mutate(); }} className="glass rounded-2xl p-5 space-y-4">
+        <form onSubmit={(e) => { e.preventDefault(); mut.mutate(); }} className="glass rounded-2xl p-5 space-y-4">
           <div>
             <label className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">Provider</label>
             <div className="grid grid-cols-2 gap-2 mt-2">

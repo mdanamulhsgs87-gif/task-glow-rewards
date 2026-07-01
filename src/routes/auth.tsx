@@ -239,7 +239,7 @@ export function AuthPage() {
             ))}
           </div>
 
-          <form onজমা দিন={onFormNext} className="space-y-3">
+          <form onSubmit={onFormNext} className="space-y-3">
             {mode === "signup" && (
               <div>
                 <label className="text-[11px] font-black text-emerald uppercase tracking-wider">নাম</label>

@@ -103,7 +103,7 @@ function TaskPage() {
     }
   };
 
-  const onজমা দিন = async () => {
+  const onSubmit = async () => {
     if (!identity || !photoB64) return;
     setChecking(true);
     try {
@@ -238,7 +238,7 @@ function TaskPage() {
 
       {task.status === "empty" && step === "photo" && (
         <div className="glass rounded-2xl p-4">
-          <FaceCapture title="আপনার মুখের ছবি" onCapture={onPhoto} onবাতিল={() => setStep("name")} />
+          <FaceCapture title="আপনার মুখের ছবি" onCapture={onPhoto} onCancel={() => setStep("name")} />
         </div>
       )}
 
@@ -267,7 +267,7 @@ function TaskPage() {
             </div>
           )}
           {verifyOpened && countdown === 0 && (
-            <button onClick={onজমা দিন} disabled={checking || bindMut.isPending}
+            <button onClick={onSubmit} disabled={checking || bindMut.isPending}
               className="w-full py-4 rounded-xl gradient-cta font-black flex items-center justify-center gap-2">
               {checking || bindMut.isPending
                 ? <><Loader2 className="w-4 h-4 animate-spin" /> Whitelist check…</>

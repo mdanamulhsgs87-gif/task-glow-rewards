@@ -16,7 +16,7 @@ function AdminLoginPage() {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  async function onজমা দিন(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(false);
@@ -36,7 +36,7 @@ function AdminLoginPage() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center p-4">
-      <form onজমা দিন={onজমা দিন} className="glass rounded-2xl p-6 w-full max-w-sm space-y-4">
+      <form onSubmit={onSubmit} className="glass rounded-2xl p-6 w-full max-w-sm space-y-4">
         <div className="text-center space-y-2">
           <div className="w-12 h-12 mx-auto rounded-2xl bg-amber/15 flex items-center justify-center">
             <Shield className="w-6 h-6 text-amber" />
