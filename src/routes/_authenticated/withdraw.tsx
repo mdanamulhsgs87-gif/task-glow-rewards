@@ -16,7 +16,7 @@ function WithdrawPage() {
     queryKey: ["withdrawals"], queryFn: () => getMyWithdrawals(),
   });
 
-  const [amount, setAmount] = useState<string>("50");
+  const [amount, setAmount] = useState<string>("");
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 500);
@@ -24,9 +24,10 @@ function WithdrawPage() {
   }, []);
 
   const mut = useMutation({
-    mutationFn: () => requestWithdraw({ data: { amount: Number(amount) } }),
+    mutationFn: () => requestWithdraw({ data: { amount: Math.floor(Number(amount) || 0) } }),
     onSuccess: () => {
       toast.success("উইথড্র রিকোয়েস্ট পাঠানো হয়েছে! অ্যাডমিন শীঘ্রই প্রসেস করবেন।");
+      setAmount("");
       refetch(); refetchHistory();
     },
     onError: (e: any) => toast.error(e.message),
@@ -40,18 +41,27 @@ function WithdrawPage() {
     accrued: Number(mining.accrued_amount), withdrawn: Number(mining.withdrawn_amount),
     isActive: mining.is_active, lastCreditedAt: mining.last_credited_at, now,
   }) : 0;
+  const claimable = Math.floor(balance);
 
   return (
     <div className="space-y-4 pt-2">
       <div className="text-center">
-        <ArrowDownToLine className="w-8 h-8 text-cyan mx-auto" />
-        <h1 className="text-xl font-black mt-1">উইথড্র</h1>
+        <ArrowDownToLine className="w-8 h-8 text-rose mx-auto" />
+        <h1 className="text-2xl font-black mt-1">উইথড্র</h1>
       </div>
 
-      <div className="gradient-mining rounded-2xl p-5 text-center border border-cyan/20">
-        <p className="text-[10px] uppercase tracking-widest text-muted-foreground">উপলব্ধ ব্যালেন্স</p>
-        <p className="mono-num text-3xl font-black text-cyan mt-1">{balance.toFixed(4)} ৳</p>
+      <div className="mining-card mining-card-morph rounded-2xl p-6 text-center relative overflow-hidden">
+        <p className="text-xs uppercase tracking-widest text-white/80 font-black">ক্লেইমযোগ্য ব্যালেন্স</p>
+        <p className="mono-num text-5xl font-black text-white mt-2 drop-shadow">{claimable} <span className="text-2xl">৳</span></p>
+        <p className="text-[11px] text-white/70 mt-2">লাইভ: {balance.toFixed(4)}৳ · শুধুমাত্র পূর্ণ টাকা উইথড্র করা যাবে</p>
+        {claimable >= 50 && (
+          <button type="button" onClick={() => setAmount(String(claimable))}
+            className="mt-4 rounded-xl px-5 py-2.5 font-black text-sm bg-white text-rose btn-press shine">
+            💰 সম্পূর্ণ {claimable}৳ ক্লেইম করুন
+          </button>
+        )}
       </div>
+
 
       {!wallet ? (
         <Link to="/wallet" className="block rounded-2xl border border-amber/40 bg-amber/10 p-4 text-center">
