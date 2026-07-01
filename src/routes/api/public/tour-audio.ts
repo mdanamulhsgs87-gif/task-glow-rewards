@@ -9,14 +9,14 @@ import { createHash } from "crypto";
 import { NARRATIONS, isNarrationKey } from "@/lib/narrations";
 
 const BUCKET = "tour-audio";
-const VOICE = "coral"; // warmer, brighter female voice with more natural smile
-const FALLBACK_VOICE = "nova";
+const VOICE = "shimmer"; // different brighter female-style voice, less flat than coral
+const FALLBACK_VOICE = "sage";
 const MODEL = "openai/gpt-4o-mini-tts";
-const SPEED = 1.18; // quick and lively, but not rushed/robotic
-const CACHE_VERSION = "v6-coral-happy-bn";
+const SPEED = 1.1; // natural human pace; too fast made Bangla sound robotic
+const CACHE_VERSION = "v7-shimmer-laughing-bn";
 const SIGN_TTL = 60 * 60 * 24 * 365; // 1 year
 const TTS_INSTRUCTIONS =
-  "Speak only in natural Dhakai/Bangladeshi Bangla (bn-BD), like a real cheerful young Bangladeshi woman/apu helping with a big smile. Put a visible smile in the voice, playful warmth, friendly excitement, expressive pitch, and tiny natural laughs where the text says 'হিহি' or 'ইয়েস'. Sound like a happy human friend in a phone call — never robotic, never flat, never formal, never news-reader, never school-book recitation. Keep it lively and clear. Pronounce words naturally: সাগতম like sa-go-tom, টাকা like taka, গুডডলার like good-dollar, ভেরিফাই like verify.";
+  "Speak only in natural Dhakai/Bangladeshi Bangla (bn-BD), like a real happy young Bangladeshi woman/apu on a friendly phone call. Smile while speaking, add a tiny audible smiling chuckle when the line contains 'হা হা' or 'হিহি', use cheerful ups-and-downs in pitch, and sound playful, warm, excited, and human. Do NOT sound robotic, flat, formal, news-reader, school-book, or announcement-style. Keep the Bangla conversational and clear. Pronounce naturally: সাগতম as sa-go-tom, টাকা as taka, গুডডলার as good-dollar, ভেরিফাই as verify, জমা দিন as joma din.";
 
 export const Route = createFileRoute("/api/public/tour-audio")({
   server: {
