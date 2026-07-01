@@ -107,32 +107,59 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string
+          date_of_birth: string | null
           display_name: string | null
+          district: string | null
           email: string | null
+          father_name: string | null
+          full_address: string | null
           id: string
+          mother_name: string | null
+          nid_number: string | null
           phone_number: string | null
+          post_office: string | null
           referral_code: string
           referred_by: string | null
+          thana_upazila: string | null
+          village_area: string | null
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string
+          date_of_birth?: string | null
           display_name?: string | null
+          district?: string | null
           email?: string | null
+          father_name?: string | null
+          full_address?: string | null
           id: string
+          mother_name?: string | null
+          nid_number?: string | null
           phone_number?: string | null
+          post_office?: string | null
           referral_code: string
           referred_by?: string | null
+          thana_upazila?: string | null
+          village_area?: string | null
         }
         Update: {
           avatar_url?: string | null
           created_at?: string
+          date_of_birth?: string | null
           display_name?: string | null
+          district?: string | null
           email?: string | null
+          father_name?: string | null
+          full_address?: string | null
           id?: string
+          mother_name?: string | null
+          nid_number?: string | null
           phone_number?: string | null
+          post_office?: string | null
           referral_code?: string
           referred_by?: string | null
+          thana_upazila?: string | null
+          village_area?: string | null
         }
         Relationships: [
           {
