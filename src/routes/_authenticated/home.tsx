@@ -81,7 +81,7 @@ function HomePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-3.5">
+        <div className={`grid gap-3.5 ${total === 10 ? "grid-cols-2" : "grid-cols-3"}`}>
           {tasks.map((t: any) => (
             <TaskCell key={t.slot} task={t}
               onClick={() => router.navigate({ to: "/task/$slot", params: { slot: String(t.slot) } })}
@@ -136,7 +136,8 @@ function TaskCell({ task, onClick, onOpenPhoto }: { task: any; onClick: () => vo
   const isDone = task.status === "done";
   const isVerified = task.status === "verified";
   const dueMs = task.reverify_due_at ? new Date(task.reverify_due_at).getTime() : 0;
-  const readyToReverify = isVerified && dueMs <= now;
+  const whitelistLost = task.whitelist_ok === false;
+  const readyToReverify = isVerified && (whitelistLost || dueMs <= now);
   const remainingMs = Math.max(0, dueMs - now);
   const faceUrl: string | undefined = task.signed_face_url;
 
