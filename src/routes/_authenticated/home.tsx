@@ -148,58 +148,49 @@ function TaskCell({ task, onClick, onOpenPhoto }: { task: any; onClick: () => vo
     const s = totalSec % 60;
     return (
       <button onClick={() => faceUrl && onOpenPhoto(faceUrl)}
-        className="relative aspect-square rounded-2xl overflow-hidden border-2 border-violet/60 shadow-[0_10px_30px_-10px_rgba(139,92,246,0.6)] active:scale-95 transition">
+        className="relative aspect-square rounded-2xl overflow-hidden border-[3px] border-rose/70 shadow-[0_16px_36px_-10px_rgba(239,71,111,0.7)] active:scale-95 transition">
         {faceUrl ? (
           <img src={faceUrl} alt={`Slot ${task.slot}`} className="absolute inset-0 h-full w-full object-cover" />
         ) : (
           <div className="absolute inset-0 bg-surface-2" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/40" />
-        <div className="absolute top-1.5 left-1.5 right-1.5 flex items-center justify-between">
-          <span className="text-[10px] font-black text-white drop-shadow">#{task.slot}</span>
-          <span className="rounded-full bg-rose p-0.5 shadow"><Lock className="w-2.5 h-2.5 text-white" /></span>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/45" />
+        <div className="absolute top-2 left-2 right-2 flex items-center justify-between">
+          <span className="text-xs font-black text-white drop-shadow">#{task.slot}</span>
+          <span className="rounded-full bg-rose p-1 shadow"><Lock className="w-3 h-3 text-white" /></span>
         </div>
-        <div className="absolute bottom-1 left-0 right-0 px-1">
+        <div className="absolute bottom-1.5 left-0 right-0 px-1">
           <div className="flex items-end justify-center gap-0.5 mono-num leading-none text-white drop-shadow">
-            <span className="text-sm font-black">{d}</span><span className="text-[8px] mb-0.5 opacity-80">d</span>
-            <span className="text-sm font-black ml-0.5">{String(h).padStart(2,"0")}</span><span className="text-[8px] mb-0.5 opacity-80">h</span>
-            <span className="text-sm font-black ml-0.5">{String(m).padStart(2,"0")}</span><span className="text-[8px] mb-0.5 opacity-80">m</span>
+            <span className="text-lg font-black">{d}</span><span className="text-[10px] mb-1 opacity-80">d</span>
+            <span className="text-lg font-black ml-1">{String(h).padStart(2,"0")}</span><span className="text-[10px] mb-1 opacity-80">h</span>
+            <span className="text-lg font-black ml-1">{String(m).padStart(2,"0")}</span><span className="text-[10px] mb-1 opacity-80">m</span>
           </div>
-          <p className="mono-num text-[10px] text-white text-center mt-0.5 drop-shadow font-bold">{String(s).padStart(2,"0")}s</p>
+          <p className="mono-num text-xs text-white text-center mt-0.5 drop-shadow font-bold">{String(s).padStart(2,"0")}s</p>
         </div>
       </button>
     );
   }
 
-  let bg = "bg-white";
-  let border = "border-2 border-dashed border-cyan/40";
-  let icon = <Camera className="w-6 h-6 text-cyan drop-shadow" />;
+  let cellClass = "task-cell-empty";
+  let icon = <Camera className="w-8 h-8 text-white drop-shadow-lg" />;
   let label = "শুরু";
-  let labelColor = "text-cyan";
-  let extra = "hover:border-cyan hover:shadow-[0_10px_28px_-10px_color-mix(in_oklch,var(--color-cyan)_60%,transparent)]";
 
   if (isDone) {
-    bg = "bg-gradient-to-br from-emerald/20 via-white to-cyan/10";
-    border = "border-2 border-emerald/60";
-    icon = <CheckCircle2 className="w-6 h-6 text-emerald drop-shadow bounce-soft" />;
+    cellClass = "task-cell-done";
+    icon = <CheckCircle2 className="w-8 h-8 text-white drop-shadow-lg bounce-soft" />;
     label = "সম্পন্ন";
-    labelColor = "text-emerald";
-    extra = "shadow-[0_12px_30px_-12px_color-mix(in_oklch,var(--color-emerald)_65%,transparent)]";
   } else if (readyToReverify) {
-    bg = "bg-gradient-to-br from-violet/20 via-white to-cyan/15";
-    border = "border-2 border-violet/60";
-    icon = <Sparkles className="w-6 h-6 text-violet drop-shadow spin-slow" />;
+    cellClass = "task-cell-reverify pulse-glow";
+    icon = <Sparkles className="w-8 h-8 text-white drop-shadow-lg spin-slow" />;
     label = "রি-ভেরিফাই";
-    labelColor = "text-violet";
-    extra = "pulse-glow shadow-[0_12px_30px_-10px_color-mix(in_oklch,var(--color-violet)_70%,transparent)]";
   }
 
   return (
     <button onClick={onClick}
-      className={`relative aspect-square rounded-2xl ${border} ${bg} ${extra} flex flex-col items-center justify-center gap-1.5 btn-press overflow-hidden`}>
-      <span className="absolute top-1 left-1.5 text-[10px] font-black text-navy/50 mono-num">#{task.slot}</span>
+      className={`relative aspect-square rounded-2xl ${cellClass} flex flex-col items-center justify-center gap-2 btn-press overflow-hidden`}>
+      <span className="absolute top-1.5 left-2 text-xs font-black text-white/90 mono-num drop-shadow">#{task.slot}</span>
       <span className="relative">{icon}</span>
-      <span className={`text-[10px] font-black ${labelColor}`}>{label}</span>
+      <span className="text-xs font-black text-white drop-shadow">{label}</span>
     </button>
   );
 }
