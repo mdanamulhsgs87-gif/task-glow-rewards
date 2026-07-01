@@ -7,6 +7,8 @@ import { computeLiveBalance } from "@/lib/mining";
 import { useState, useEffect } from "react";
 import { ArrowDownToLine, Loader2, Lock } from "lucide-react";
 import { toast } from "sonner";
+import { PageVoice } from "@/components/PageVoice";
+
 
 export const Route = createFileRoute("/_authenticated/withdraw")({ component: WithdrawPage });
 
