@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getProfileHistory } from "@/lib/profile.functions";
 import { useEffect, useState } from "react";
 import logo from "@/assets/logo.png";
+import { GuidedTour } from "@/components/GuidedTour";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -70,7 +71,7 @@ function AuthedLayout() {
       <header className="sticky top-0 z-30 glass">
         <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <ProfileButton />
+            <div data-tour="profile"><ProfileButton /></div>
           <Link to="/home" className="flex items-center gap-2 btn-press">
             <img src={logo} alt="good-app logo" className="w-8 h-8 rounded-lg shadow-lg" />
             <span className="font-black text-lg tracking-tight bg-gradient-to-r from-violet-500 via-cyan-500 to-amber-500 bg-clip-text text-transparent">
@@ -92,12 +93,14 @@ function AuthedLayout() {
       <nav className="fixed bottom-0 inset-x-0 z-30 glass border-t border-violet/20">
         <div className="max-w-md mx-auto px-2 py-2 grid grid-cols-5 gap-1">
           <NavItem to="/home" icon={<Home className="w-5 h-5" />} label="হোম" tint="cyan" />
-          <NavItem to="/reverify" icon={<RefreshCcw className="w-5 h-5" />} label="রি-ভেরিফাই" tint="violet" />
-          <NavItem to="/referral" icon={<Gift className="w-5 h-5" />} label="রেফার" tint="emerald" />
-          <NavItem to="/wallet" icon={<Wallet className="w-5 h-5" />} label="ওয়ালেট" tint="amber" />
-          <NavItem to="/withdraw" icon={<ArrowDownToLine className="w-5 h-5" />} label="উইথড্র" tint="rose" />
+          <div data-tour="nav-reverify"><NavItem to="/reverify" icon={<RefreshCcw className="w-5 h-5" />} label="রি-ভেরিফাই" tint="violet" /></div>
+          <div data-tour="nav-referral"><NavItem to="/referral" icon={<Gift className="w-5 h-5" />} label="রেফার" tint="emerald" /></div>
+          <div data-tour="nav-wallet"><NavItem to="/wallet" icon={<Wallet className="w-5 h-5" />} label="ওয়ালেট" tint="amber" /></div>
+          <div data-tour="nav-withdraw"><NavItem to="/withdraw" icon={<ArrowDownToLine className="w-5 h-5" />} label="উইথড্র" tint="rose" /></div>
         </div>
       </nav>
+
+      <GuidedTour />
     </div>
   );
 }
