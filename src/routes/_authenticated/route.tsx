@@ -4,6 +4,7 @@ import { Home, Wallet, ArrowDownToLine, LogOut, Loader2, RefreshCcw, Gift, User 
 import { useQuery } from "@tanstack/react-query";
 import { getProfileHistory } from "@/lib/profile.functions";
 import { useEffect, useState } from "react";
+import logo from "@/assets/logo.png";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
