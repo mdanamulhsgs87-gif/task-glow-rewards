@@ -50,7 +50,7 @@ function UserDetail() {
     accrued: Number(m.accrued_amount), withdrawn: Number(m.withdrawn_amount),
     isActive: m.is_active, lastCreditedAt: m.last_credited_at,
   }) : 0;
-  const copy = (s: string) => { navigator.clipboard.writeText(s); toast.success("কপি হয়েছে"); };
+  const copy = (s: string) => { navigator.clipboard.writeText(s); toast.success("Copy হয়েছে"); };
 
   return (
     <div className="space-y-3">
@@ -125,7 +125,7 @@ function UserDetail() {
                 {t.face_label && <p className="text-[10px] text-amber truncate">{t.face_label}</p>}
                 {t.wallet_address && (
                   <button onClick={() => copy(t.wallet_address)} className="flex items-center gap-1 text-[9px] text-cyan mono-num truncate w-full">
-                    <span className="truncate">{t.wallet_address}</span><কপি className="w-2.5 h-2.5 shrink-0" />
+                    <span className="truncate">{t.wallet_address}</span><Copy className="w-2.5 h-2.5 shrink-0" />
                   </button>
                 )}
               </div>

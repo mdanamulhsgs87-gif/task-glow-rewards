@@ -31,7 +31,7 @@ function ReferralPage() {
   const code = data.referralCode ?? "—";
   const copy = (txt: string, label: string) => {
     navigator.clipboard.writeText(txt);
-    toast.success(`${label} কপি হয়েছে`);
+    toast.success(`${label} Copy হয়েছে`);
   };
   const share = async () => {
     const text = `good-app এ যোগ দিন! আমার রেফারেল কোড: ${code}\n${shareUrl}`;
@@ -57,7 +57,7 @@ function ReferralPage() {
         <p className="mono-num text-4xl font-black text-emerald mt-2 tracking-widest">{code}</p>
         <div className="grid grid-cols-2 gap-2 mt-4">
           <button onClick={() => copy(code, "কোড")} className="py-2.5 rounded-xl gradient-cta font-black text-xs flex items-center justify-center gap-1.5 btn-press">
-            <কপি className="w-3.5 h-3.5" /> কোড কপি
+            <Copy className="w-3.5 h-3.5" /> কোড Copy
           </button>
           <button onClick={share} className="py-2.5 rounded-xl gradient-emerald font-black text-xs flex items-center justify-center gap-1.5 btn-press">
             <Share2 className="w-3.5 h-3.5" /> শেয়ার
@@ -87,7 +87,7 @@ function ReferralPage() {
       <div className="premium-panel rounded-3xl p-5">
         <h2 className="font-black text-navy text-sm mb-3">📘 কিভাবে রেফার করবেন</h2>
         <ol className="space-y-2 text-[12px] text-navy/85 leading-relaxed">
-          <li><b className="text-cyan">১.</b> উপরের কোড বা লিংক কপি করে বন্ধুকে পাঠান।</li>
+          <li><b className="text-cyan">১.</b> উপরের কোড বা লিংক Copy করে বন্ধুকে পাঠান।</li>
           <li><b className="text-cyan">২.</b> বন্ধু সাইন আপ ফর্মে কোডটি বসিয়ে একাউন্ট খুলবেন।</li>
           <li><b className="text-cyan">৩.</b> বন্ধু যখন ১০টি ঘর Face Verify সম্পন্ন করবেন, তখনই আপনার বোনাস <b className="text-emerald">+১০% rate</b> চালু হয়ে যাবে — লাইভ মাইনিং কাউন্টারে যোগ হবে।</li>
           <li><b className="text-amber">⚠️</b> যদি কোনো একটি ঘরও Re-verify না করার কারণে whitelist হারায়, ঐ বন্ধুর জন্য বোনাস বন্ধ হয়ে যাবে। আবার Re-verify করালে বোনাস ফিরে আসবে।</li>

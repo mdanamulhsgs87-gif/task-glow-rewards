@@ -8,7 +8,7 @@ export const Route = createFileRoute("/admin/wallets")({ component: AdminWallets
 
 function AdminWallets() {
   const { data, isLoading } = useQuery({ queryKey: ["admin-wallets"], queryFn: () => adminListWallets() });
-  const copy = (s: string) => { navigator.clipboard.writeText(s); toast.success("কপি হয়েছে"); };
+  const copy = (s: string) => { navigator.clipboard.writeText(s); toast.success("Copy হয়েছে"); };
   if (isLoading) return <div className="py-10 flex justify-center"><Loader2 className="w-5 h-5 animate-spin text-cyan" /></div>;
 
   return (
@@ -32,7 +32,7 @@ function AdminWallets() {
             <p className="mono-num font-black text-sm">{w.number}</p>
             <p className="text-[9px] uppercase font-bold text-amber">{w.provider}</p>
           </div>
-          <কপি className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+          <Copy className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
         </button>
       ))}
       {(data ?? []).length === 0 && <p className="text-center text-xs text-muted-foreground py-10">No wallets set yet</p>}

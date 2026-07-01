@@ -133,11 +133,11 @@ export const saveNotWhitelisted = createServerFn({ method: "POST" })
  * Re-verify search: list this user's verified tasks (re-verify ready) matching name query.
  * Returns the stored private_key so the client can sign a fresh GoodDollar URL.
  */
-const খুঁজুনInput = z.object({ query: z.string().default("") });
+const SearchInput = z.object({ query: z.string().default("") });
 
 export const listReverifyCandidates = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => খুঁজুনInput.parse(input ?? {}))
+  .inputValidator((input: unknown) => SearchInput.parse(input ?? {}))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

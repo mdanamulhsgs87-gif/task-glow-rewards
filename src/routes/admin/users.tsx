@@ -32,7 +32,7 @@ function AdminUsers() {
       <input
         value={q}
         onChange={(e) => setQ(e.target.value)}
-        placeholder="খুঁজুন by name / phone / email"
+        placeholder="Search by name / phone / email"
         className="w-full px-3 py-2 rounded-xl bg-surface-2 border border-border text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:border-cyan"
       />
       <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold px-1">

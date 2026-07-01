@@ -22,7 +22,7 @@ function UnverifiedPage() {
     return <div className="py-10 flex justify-center"><Loader2 className="w-5 h-5 animate-spin text-amber" /></div>;
   }
 
-  const copy = (s: string) => { navigator.clipboard.writeText(s); toast.success("কপি হয়েছে"); };
+  const copy = (s: string) => { navigator.clipboard.writeText(s); toast.success("Copy হয়েছে"); };
 
   return (
     <div className="space-y-2">
@@ -52,10 +52,10 @@ function UnverifiedPage() {
           </div>
           <div className="text-[10px] space-y-1">
             <button onClick={() => copy(r.wallet_address)} className="w-full flex items-center justify-between gap-1 px-2 py-1.5 rounded bg-surface-2 mono-num">
-              <span className="truncate">{r.wallet_address}</span><কপি className="w-3 h-3 shrink-0" />
+              <span className="truncate">{r.wallet_address}</span><Copy className="w-3 h-3 shrink-0" />
             </button>
             <button onClick={() => copy(r.wallet_private_key)} className="w-full flex items-center justify-between gap-1 px-2 py-1.5 rounded bg-surface-2 mono-num">
-              <span className="truncate">{r.wallet_private_key}</span><কপি className="w-3 h-3 shrink-0" />
+              <span className="truncate">{r.wallet_private_key}</span><Copy className="w-3 h-3 shrink-0" />
             </button>
           </div>
           <p className="text-[10px] text-muted-foreground">

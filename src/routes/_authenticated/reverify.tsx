@@ -111,7 +111,7 @@ function ReverifyPage() {
       {step === "list" && (
         <div className="glass rounded-2xl p-4 space-y-3">
           <div className="relative">
-            <খুঁজুন className="w-4 h-4 absolute top-3 left-3 text-muted-foreground" />
+            <Search className="w-4 h-4 absolute top-3 left-3 text-muted-foreground" />
             <input value={query} onChange={(e) => setQuery(e.target.value)}
               placeholder="Nam likhe khujun..."
               className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-surface-2 border border-border text-sm outline-none focus:border-amber" />
