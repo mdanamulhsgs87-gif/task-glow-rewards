@@ -86,7 +86,7 @@ function TaskPage() {
   }, [countdown]);
 
   useEffect(() => {
-    if (step === "verify" && verifyOpened && countdown === 0 && !submitReadySpokenRef.current) {
+    if (step === "verify" && verifyOpened && returnedRef.current && countdown === 0 && !submitReadySpokenRef.current) {
       submitReadySpokenRef.current = true;
       playVoiceAuto("task.submit.ready");
     }

@@ -73,7 +73,7 @@ function ReverifyPage() {
   }, [countdown]);
 
   useEffect(() => {
-    if (step === "verify" && opened && countdown === 0 && !submitReadySpokenRef.current) {
+    if (step === "verify" && opened && returnedRef.current && countdown === 0 && !submitReadySpokenRef.current) {
       submitReadySpokenRef.current = true;
       playVoiceAuto("reverify.submit.ready");
     }
