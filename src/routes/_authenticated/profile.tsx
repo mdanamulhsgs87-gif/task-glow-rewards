@@ -57,19 +57,37 @@ function ProfilePage() {
   }
 
   const p = data.profile!;
-  const uid = String(p.id).replace(/-/g, "").slice(0, 12).toUpperCase();
+  const uidFull = String(p.id);
+  const uid = uidFull.replace(/-/g, "").slice(0, 12).toUpperCase();
+  const cardUrl = typeof window !== "undefined" ? `${window.location.origin}/card/${uidFull}` : `/card/${uidFull}`;
   const mining = data.mining;
   const balance = mining ? computeLiveBalance({
     accrued: Number(mining.accrued_amount), withdrawn: Number(mining.withdrawn_amount),
     isActive: !!mining.is_active, lastCreditedAt: mining.last_credited_at, now,
   }) : 0;
   const doneCount = (data.tasks ?? []).filter((t: any) => t.status === "done" && (t.whitelist_ok ?? true)).length;
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [downloading, setDownloading] = useState(false);
+
+  const downloadCard = async () => {
+    if (!cardRef.current) return;
+    setDownloading(true);
+    try {
+      const canvas = await html2canvas(cardRef.current, { backgroundColor: null, scale: 2, useCORS: true });
+      const link = document.createElement("a");
+      link.download = `good-app-card-${uid}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+      toast.success("কার্ড ডাউনলোড হয়েছে ✨");
+    } catch (e: any) {
+      toast.error(e?.message ?? "ডাউনলোড ব্যর্থ");
+    } finally { setDownloading(false); }
+  };
 
   return (
     <div className="space-y-5 pt-2 pop-in">
-      <PageVoice pageId="profile" steps={["profile.intro","profile.avatar","profile.card","profile.history"]} />
+      <PageVoice pageId="profile" steps={["profile.intro","profile.avatar","profile.uid","profile.card","profile.qr","profile.download"]} />
       <div className="text-center">
-
         <h1 className="text-2xl font-black flex items-center justify-center gap-2">
           <Sparkles className="w-5 h-5 text-gold bounce-soft" /> আমার প্রোফাইল
         </h1>
