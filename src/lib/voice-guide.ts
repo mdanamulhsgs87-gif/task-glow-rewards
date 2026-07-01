@@ -71,6 +71,19 @@ async function fetchAudioUrl(key: NarrationKey): Promise<string | null> {
   return null;
 }
 
+function warmDecode(key: NarrationKey, url: string) {
+  if (bufferCache.has(key)) return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  void fetch(url, { cache: "force-cache" })
+    .then((response) => (response.ok ? response.arrayBuffer() : null))
+    .then((arrayBuffer) => arrayBuffer ? ctx.decodeAudioData(arrayBuffer.slice(0)) : null)
+    .then((decoded) => {
+      if (decoded) bufferCache.set(key, decoded);
+    })
+    .catch((error) => console.warn("[voice] background decode failed", key, error));
+}
+
 async function prepareVoice(key: NarrationKey): Promise<AudioBuffer | string | null> {
   const ready = bufferCache.get(key);
   if (ready) return ready;
@@ -154,10 +167,19 @@ export function playVoiceFromGesture(key: NarrationKey) {
   }
 
   stopCurrent();
-  prepareVoice(key).then((prepared) => {
-    if (!prepared || token !== playToken || isVoiceMuted()) return;
-    if (prepared instanceof AudioBuffer) void playBuffer(prepared);
-    else playUrl(prepared);
+  const cachedUrl = urlCache.get(key);
+  if (cachedUrl) {
+    playUrl(cachedUrl);
+    warmDecode(key, cachedUrl);
+    return;
+  }
+
+  fetchAudioUrl(key).then((url) => {
+    if (!url || token !== playToken || isVoiceMuted()) return;
+    // Start the signed MP3 immediately; decode in the background for the next tap.
+    // Waiting for decode first made clicks feel late and robotic.
+    playUrl(url);
+    warmDecode(key, url);
   });
 }
 
