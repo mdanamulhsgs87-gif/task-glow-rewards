@@ -9,14 +9,14 @@ import { createHash } from "crypto";
 import { NARRATIONS, isNarrationKey } from "@/lib/narrations";
 
 const BUCKET = "tour-audio";
-const VOICE = "onyx"; // warm male-style voice for a more human guide
-const FALLBACK_VOICE = "echo";
+const VOICE = "ash"; // brighter, more expressive male voice
+const FALLBACK_VOICE = "onyx";
 const MODEL = "openai/gpt-4o-mini-tts";
-const SPEED = 1.08; // natural human pace; too fast made Bangla sound robotic
-const CACHE_VERSION = "v8-onyx-smiling-bangla-guide";
+const SPEED = 1.05;
+const CACHE_VERSION = "v9-loud-cheerful-bhaiya";
 const SIGN_TTL = 60 * 60 * 24 * 365; // 1 year
 const TTS_INSTRUCTIONS =
-  "Speak only in natural Dhakai/Bangladeshi Bangla (bn-BD), like a real cheerful young Bangladeshi man/bhaiya on a friendly phone call. Start with a tiny genuine smiling chuckle only when it feels natural, then speak with playful warmth, clear ups-and-downs in pitch, and human expression. Do NOT sound robotic, flat, formal, news-reader, school-book, or announcement-style. Keep every line conversational, short, and helpful. Pronounce naturally: সাগতম as sa-go-tom, টাকা as taka, গুডডলার as good-dollar, ভেরিফাই as verify, জমা দিন as joma din, শাকখি as shakkhi.";
+  "Speak ONLY in natural Dhakai/Bangladeshi Bangla (bn-BD). Persona: a real, VERY cheerful, smiling, excited young Bangladeshi bhaiya talking loudly and joyfully to a close friend. Sound genuinely happy — smile audibly through every sentence, laugh a tiny bit naturally where it fits, use big warm energy, playful enthusiasm, and lively ups-and-downs in pitch. Volume must be LOUD, full, and clear — never soft, whispery, ghostly, sleepy, flat, robotic, formal, news-reader, or announcement-style. Push energy and excitement high, like cheering someone on. Keep lines short, conversational, encouraging. Pronounce naturally: সাগতম = sa-go-tom, টাকা = taka, গুডডলার = good-dollar, ভেরিফাই = verify, জমা দিন = joma din, শাকখি = shakkhi.";
 
 export const Route = createFileRoute("/api/public/tour-audio")({
   server: {
