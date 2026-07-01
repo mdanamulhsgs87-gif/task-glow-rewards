@@ -96,14 +96,47 @@ export function GuidedTour({ steps = DEFAULT_STEPS, autoStart = true }: { steps?
   const [idx, setIdx] = useState(0);
   const [rect, setRect] = useState<DOMRect | null>(null);
   const [muted, setMuted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const startedRef = useRef(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const fetchAudio = useServerFn(getTourAudio);
+
+  // Play cached premium voice; fallback to browser voice on any error
+  const play = async (text: string) => {
+    if (muted) return;
+    try {
+      if (audioRef.current) { audioRef.current.pause(); audioRef.current = null; }
+      window.speechSynthesis?.cancel();
+
+      let url = urlCache.get(text);
+      if (!url) {
+        const ls = readLsUrlCache();
+        if (ls[text]) { url = ls[text]; urlCache.set(text, url); }
+      }
+      if (!url) {
+        setLoading(true);
+        const res = await fetchAudio({ data: { text } });
+        url = res.url;
+        urlCache.set(text, url);
+        const ls = readLsUrlCache();
+        ls[text] = url;
+        writeLsUrlCache(ls);
+        setLoading(false);
+      }
+      const audio = new Audio(url);
+      audioRef.current = audio;
+      audio.play().catch(() => speakFallback(text));
+    } catch {
+      setLoading(false);
+      speakFallback(text);
+    }
+  };
 
   useEffect(() => {
     if (!autoStart || startedRef.current) return;
     if (typeof window === "undefined") return;
     if (localStorage.getItem(STORAGE_KEY) === "done") return;
     startedRef.current = true;
-    // wait a beat for the DOM & voices
     const t = setTimeout(() => {
       window.speechSynthesis?.getVoices();
       setActive(true);
@@ -118,12 +151,11 @@ export function GuidedTour({ steps = DEFAULT_STEPS, autoStart = true }: { steps?
     const el = document.querySelector(step.selector) as HTMLElement | null;
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "center" });
-      // give scroll a moment before measuring
       setTimeout(() => setRect(el.getBoundingClientRect()), 350);
     } else {
       setRect(null);
     }
-    speak(step.text, muted);
+    void play(step.text);
     const onResize = () => {
       const e = document.querySelector(step.selector) as HTMLElement | null;
       if (e) setRect(e.getBoundingClientRect());
@@ -134,6 +166,7 @@ export function GuidedTour({ steps = DEFAULT_STEPS, autoStart = true }: { steps?
       window.removeEventListener("resize", onResize);
       window.removeEventListener("scroll", onResize, true);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active, idx, steps, muted]);
 
   const finish = () => {
