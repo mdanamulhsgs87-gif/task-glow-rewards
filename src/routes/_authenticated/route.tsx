@@ -79,7 +79,7 @@ function AuthedLayout() {
             </span>
           </Link>
           </div>
-          <button onClick={logout}
+          <button onClick={logout} data-voice="common.logout"
             className="btn-press p-2 rounded-lg bg-surface-2 border border-border text-muted-foreground hover:text-rose">
             <LogOut className="w-4 h-4" />
           </button>
