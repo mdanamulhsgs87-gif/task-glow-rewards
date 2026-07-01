@@ -213,7 +213,11 @@ export function AuthPage() {
 
   return (
     <div className="min-h-screen gradient-aurora">
+      <PageVoice pageId={`auth-${mode}`} steps={mode === "signup"
+        ? ["auth.welcome","auth.mode.signup","auth.name","auth.phone","auth.password","auth.referral","auth.agreement"]
+        : ["auth.welcome","auth.mode.login","auth.phone","auth.password","auth.login.submit"]} />
       <div className="max-w-md mx-auto px-4 py-8 space-y-6">
+
 
         {/* Hero / Auth card */}
         <div className="premium-panel rounded-3xl p-7 pop-in shimmer-border">
