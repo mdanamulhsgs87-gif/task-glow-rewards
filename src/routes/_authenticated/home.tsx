@@ -290,7 +290,7 @@ function TaskCell({ task, onClick, onOpenPhoto }: { task: any; onClick: () => vo
   return (
     <button onClick={onClick}
       className={`relative aspect-square rounded-xl ${cellClass} flex flex-col items-center justify-center gap-0.5 btn-press overflow-hidden`}>
-      <span className="absolute top-0.5 left-1 text-[9px] font-black text-white/90 mono-num drop-shadow">#{task.slot}</span>
+      <span className="absolute top-1 left-1 text-[10px] font-black text-white mono-num leading-none px-1.5 py-0.5 rounded-md bg-black/45 backdrop-blur-[2px]">#{task.slot}</span>
       <span>{icon}</span>
       <span className="text-[9px] font-black text-white drop-shadow leading-none">{label}</span>
     </button>
