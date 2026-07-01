@@ -162,8 +162,9 @@ function TaskPage() {
 
   return (
     <div className="space-y-4 pt-2">
-      <Link to="/home" className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-        <ArrowLeft className="w-3.5 h-3.5" /> পিছনে
+      <Link to="/home"
+        className="inline-flex items-center gap-2 px-4 py-2 rounded-full gradient-cta text-white text-sm font-black shadow-lg btn-press">
+        <ArrowLeft className="w-4 h-4" /> পিছনে যান
       </Link>
 
       <div className="premium-panel shine rounded-2xl p-5 pop-in">
