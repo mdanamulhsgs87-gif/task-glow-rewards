@@ -109,9 +109,9 @@ function ProfilePage() {
 
       {/* Tabs */}
       <div className="grid grid-cols-3 gap-2">
-        <TabBtn active={tab === "card"}    onClick={() => setTab("card")}    icon={<IdCard className="w-4 h-4" />} label="কার্ড" />
-        <TabBtn active={tab === "withdraw"} onClick={() => setTab("withdraw")} icon={<History className="w-4 h-4" />} label="উইথড্র" />
-        <TabBtn active={tab === "claim"}    onClick={() => setTab("claim")}    icon={<Sparkles className="w-4 h-4" />} label="ক্লেইম" />
+        <TabBtn active={tab === "card"}    onClick={() => setTab("card")}    icon={<IdCard className="w-4 h-4" />} label="কার্ড" voice="profile.card" />
+        <TabBtn active={tab === "withdraw"} onClick={() => setTab("withdraw")} icon={<History className="w-4 h-4" />} label="উইথড্র" voice="profile.history" />
+        <TabBtn active={tab === "claim"}    onClick={() => setTab("claim")}    icon={<Sparkles className="w-4 h-4" />} label="ক্লেইম" voice="profile.history" />
       </div>
 
       {tab === "card" && (
@@ -198,9 +198,9 @@ function ProfilePage() {
   );
 }
 
-function TabBtn({ active, onClick, icon, label }: any) {
+function TabBtn({ active, onClick, icon, label, voice }: any) {
   return (
-    <button onClick={onClick}
+    <button onClick={onClick} data-voice={voice}
       className={`btn-press py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 border transition-all ${
         active ? "gradient-cta border-transparent glow-violet" : "bg-surface-2 border-border text-muted-foreground"
       }`}>
