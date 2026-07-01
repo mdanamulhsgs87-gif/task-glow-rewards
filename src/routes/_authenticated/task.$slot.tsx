@@ -8,6 +8,7 @@ import { ArrowLeft, CheckCircle2, Loader2, Sparkles, Clock, ExternalLink, Shield
 import { toast } from "sonner";
 import { useEffect, useRef, useState } from "react";
 import { PageVoice } from "@/components/PageVoice";
+import { playVoiceAuto } from "@/lib/voice-guide";
 
 
 export const Route = createFileRoute("/_authenticated/task/$slot")({ component: TaskPage });
@@ -36,6 +37,7 @@ function TaskPage() {
   const [countdown, setCountdown] = useState<number | null>(initial?.verifyOpened ? 0 : null);
   const [checking, setChecking] = useState(false);
   const returnedRef = useRef(!!initial?.verifyOpened);
+  const submitReadySpokenRef = useRef(false);
 
   // Persist progress so refresh doesn't lose the key
   useEffect(() => {
@@ -56,6 +58,7 @@ function TaskPage() {
       if (document.visibilityState === "visible" && !returnedRef.current) {
         returnedRef.current = true;
         setCountdown(10);
+        playVoiceAuto("task.gd.after");
       }
     };
     document.addEventListener("visibilitychange", onVis);
@@ -69,9 +72,17 @@ function TaskPage() {
   useEffect(() => {
     if (countdown === null) return;
     if (countdown <= 0) return;
+    submitReadySpokenRef.current = false;
     const t = setTimeout(() => setCountdown((c) => (c === null ? null : c - 1)), 1000);
     return () => clearTimeout(t);
   }, [countdown]);
+
+  useEffect(() => {
+    if (step === "verify" && verifyOpened && countdown === 0 && !submitReadySpokenRef.current) {
+      submitReadySpokenRef.current = true;
+      playVoiceAuto("task.submit.ready");
+    }
+  }, [step, verifyOpened, countdown]);
 
   const bindMut = useMutation({
     mutationFn: (input: { photoBase64: string; privateKey: string; walletAddress: string; faceLabel: string }) =>
@@ -175,7 +186,7 @@ function TaskPage() {
 
   return (
     <div className="space-y-4 pt-2">
-      <PageVoice pageId="task-verify" steps={["task.name","task.photo","task.gd","task.gd.after","task.countdown","task.submit"]} />
+      <PageVoice pageId="task-verify" steps={["task.name","task.photo","task.photo.submit","task.gd","task.gd.after","task.countdown","task.submit.ready","task.submit.clicked"]} />
       <Link to="/home" data-voice="common.back"
 
         className="inline-flex items-center gap-2 px-4 py-2 rounded-full gradient-cta text-white text-sm font-black shadow-lg btn-press">
@@ -287,7 +298,7 @@ function TaskPage() {
           )}
           {verifyOpened && countdown === 0 && (
             <button onClick={onSubmit} disabled={checking || bindMut.isPending}
-              data-voice="task.submit"
+              data-voice="task.submit.clicked"
               className="w-full py-4 rounded-xl gradient-cta font-black flex items-center justify-center gap-2">
               {checking || bindMut.isPending
                 ? <><Loader2 className="w-4 h-4 animate-spin" /> হোয়াইটলিস্ট যাচাই হচ্ছে…</>
