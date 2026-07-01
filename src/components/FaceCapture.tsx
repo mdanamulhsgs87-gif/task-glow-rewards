@@ -136,7 +136,7 @@ export function FaceCapture({ onCapture, onCancel, isUploading, title }: FaceCap
             <button onClick={submit} disabled={isUploading}
               className="flex-1 py-2 rounded-xl gradient-cta text-xs font-black flex items-center justify-center gap-1">
               {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Scan className="w-4 h-4" />}
-              Submit
+              জমা দিন
             </button>
           </div>
         </div>
@@ -159,7 +159,7 @@ export function FaceCapture({ onCapture, onCancel, isUploading, title }: FaceCap
       <canvas ref={canvasRef} className="hidden" />
       <button onClick={onCancel}
         className="w-full py-2 rounded-xl border border-border text-xs text-muted-foreground flex items-center justify-center gap-1">
-        <X className="w-3 h-3" /> Cancel
+        <X className="w-3 h-3" /> বাতিল
       </button>
       <p className="sr-only"><Camera className="w-3 h-3" /></p>
     </div>

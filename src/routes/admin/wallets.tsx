@@ -8,7 +8,7 @@ export const Route = createFileRoute("/admin/wallets")({ component: AdminWallets
 
 function AdminWallets() {
   const { data, isLoading } = useQuery({ queryKey: ["admin-wallets"], queryFn: () => adminListWallets() });
-  const copy = (s: string) => { navigator.clipboard.writeText(s); toast.success("Copied"); };
+  const copy = (s: string) => { navigator.clipboard.writeText(s); toast.success("Copy হয়েছে"); };
   if (isLoading) return <div className="py-10 flex justify-center"><Loader2 className="w-5 h-5 animate-spin text-cyan" /></div>;
 
   return (

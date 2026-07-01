@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { adminListUsers, adminDeleteUser } from "@/lib/admin.functions";
+import { adminListUsers, adminমুছুনUser } from "@/lib/admin.functions";
 import { Loader2, ChevronRight, Trash2 } from "lucide-react";
 import { computeLiveBalance } from "@/lib/mining";
 import { toast } from "sonner";
@@ -12,7 +12,7 @@ function AdminUsers() {
   const { data, isLoading, refetch } = useQuery({ queryKey: ["admin-users"], queryFn: () => adminListUsers() });
   const [q, setQ] = useState("");
   const del = useMutation({
-    mutationFn: (userId: string) => adminDeleteUser({ data: { userId } }),
+    mutationFn: (userId: string) => adminমুছুনUser({ data: { userId } }),
     onSuccess: () => { toast.success("User deleted"); refetch(); },
     onError: (e: any) => toast.error(e.message),
   });
@@ -66,9 +66,9 @@ function AdminUsers() {
               {row.wallet && <span className="px-2 py-0.5 rounded-full bg-surface-2 text-muted-foreground mono-num">{row.wallet.provider}:{row.wallet.number}</span>}
             </div>
             <button
-              onClick={() => { if (confirm("Delete this user FOREVER? Wallets, tasks, faces, withdrawals — all gone.")) del.mutate(row.profile.id); }}
+              onClick={() => { if (confirm("মুছুন this user FOREVER? Wallets, tasks, faces, withdrawals — all gone.")) del.mutate(row.profile.id); }}
               className="text-[10px] text-rose flex items-center gap-1 hover:underline">
-              <Trash2 className="w-3 h-3" /> Delete user
+              <Trash2 className="w-3 h-3" /> মুছুন user
             </button>
           </div>
         );

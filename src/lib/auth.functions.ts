@@ -2,9 +2,9 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 const PhoneSignupInput = z.object({
-  name: z.string().trim().min(2, "Name lagbe").max(80, "Name beshi boro"),
-  phone: z.string().trim().regex(/^01\d{9}$/, "11 digit BD number lagbe"),
-  password: z.string().min(6, "Password minimum 6 character"),
+  name: z.string().trim().min(2, "নাম লাগবে").max(80, "নাম অনেক বড়"),
+  phone: z.string().trim().regex(/^01\d{9}$/, "১১ ডিজিটের BD নম্বর লাগবে"),
+  password: z.string().min(6, "পাসওয়ার্ড কমপক্ষে ৬ অক্ষর"),
   referralCode: z.string().trim().max(20).optional().nullable(),
 });
 
@@ -26,7 +26,7 @@ export const registerWithPhone = createServerFn({ method: "POST" })
         .select("id")
         .eq("referral_code", cleaned)
         .maybeSingle();
-      if (!ref) throw new Error("Referral code thik na");
+      if (!ref) throw new Error("Referral code সঠিক নয়");
       refCode = cleaned;
     }
 
@@ -43,7 +43,7 @@ export const registerWithPhone = createServerFn({ method: "POST" })
 
     if (error) {
       if (error.message.toLowerCase().includes("already")) {
-        throw new Error("Ei number diye already account ache");
+        throw new Error("এই নম্বর দিয়ে ইতোমধ্যে account আছে");
       }
       throw new Error(error.message);
     }

@@ -198,7 +198,7 @@ export const adminListUnverified = createServerFn({ method: "GET" }).handler(asy
   return withUrls;
 });
 
-export const adminDeleteUnverified = createServerFn({ method: "POST" })
+export const adminমুছুনUnverified = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => z.object({ id: z.string().uuid() }).parse(i))
   .handler(async ({ data }) => {
     const supabaseAdmin = await gate();
@@ -275,8 +275,8 @@ export const adminListWallets = createServerFn({ method: "GET" }).handler(async 
   return data ?? [];
 });
 
-// ---------------- Delete user ----------------
-export const adminDeleteUser = createServerFn({ method: "POST" })
+// ---------------- মুছুন user ----------------
+export const adminমুছুনUser = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => z.object({ userId: z.string().uuid() }).parse(i))
   .handler(async ({ data }) => {
     const supabaseAdmin = await gate();

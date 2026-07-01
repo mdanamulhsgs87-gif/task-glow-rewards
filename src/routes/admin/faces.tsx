@@ -13,7 +13,7 @@ function AdminFaces() {
     onSuccess: () => { toast.success("Slot reset"); refetch(); },
     onError: (e: any) => toast.error(e.message),
   });
-  const copy = async (value?: string | null, label = "Copied") => {
+  const copy = async (value?: string | null, label = "Copy হয়েছে") => {
     if (!value) return;
     await navigator.clipboard.writeText(value);
     toast.success(label);

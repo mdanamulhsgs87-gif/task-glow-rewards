@@ -97,7 +97,7 @@ function ReverifyPage() {
   return (
     <div className="space-y-4 pt-2">
       <Link to="/home" className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-        <ArrowLeft className="w-3.5 h-3.5" /> Back
+        <ArrowLeft className="w-3.5 h-3.5" /> পিছনে
       </Link>
 
       <div className="glass rounded-2xl p-4 flex items-center gap-3">
@@ -164,18 +164,18 @@ function ReverifyPage() {
           </a>
           {opened && countdown !== null && countdown > 0 && (
             <div className="text-center py-3 rounded-xl bg-amber/10 border border-amber/30">
-              <p className="text-xs text-muted-foreground">Submit asbe</p>
+              <p className="text-xs text-muted-foreground">জমা দিন asbe</p>
               <p className="text-3xl font-black text-amber mono-num">{countdown}s</p>
             </div>
           )}
           {opened && countdown === 0 && (
             <button onClick={onSubmit} disabled={checking}
               className="w-full py-4 rounded-xl gradient-cta font-black flex items-center justify-center gap-2">
-              {checking ? <><Loader2 className="w-4 h-4 animate-spin" /> Checking…</> : <><ShieldCheck className="w-4 h-4" /> Submit</>}
+              {checking ? <><Loader2 className="w-4 h-4 animate-spin" /> Checking…</> : <><ShieldCheck className="w-4 h-4" /> জমা দিন</>}
             </button>
           )}
           <button onClick={() => { setStep("list"); setSelected(null); setVerifyUrl(null); setOpened(false); setCountdown(null); }}
-            className="w-full py-2 rounded-xl border border-border text-xs text-muted-foreground">Cancel</button>
+            className="w-full py-2 rounded-xl border border-border text-xs text-muted-foreground">বাতিল</button>
         </div>
       )}
 

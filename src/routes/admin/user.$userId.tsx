@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { adminUserDetail, adminAdjustBalance, adminToggleMining, adminResetTask, adminDeleteUser } from "@/lib/admin.functions";
+import { adminUserDetail, adminAdjustBalance, adminToggleMining, adminResetTask, adminমুছুনUser } from "@/lib/admin.functions";
 import { ArrowLeft, Loader2, Power, Plus, Minus, RefreshCw, Trash2, Copy } from "lucide-react";
 import { computeLiveBalance } from "@/lib/mining";
 import { toast } from "sonner";
@@ -36,8 +36,8 @@ function UserDetail() {
   });
 
   const del = useMutation({
-    mutationFn: () => adminDeleteUser({ data: { userId } }),
-    onSuccess: () => { toast.success("Deleted"); window.location.href = "/admin/users"; },
+    mutationFn: () => adminমুছুনUser({ data: { userId } }),
+    onSuccess: () => { toast.success("মুছুনd"); window.location.href = "/admin/users"; },
     onError: (e: any) => toast.error(e.message),
   });
 
@@ -50,7 +50,7 @@ function UserDetail() {
     accrued: Number(m.accrued_amount), withdrawn: Number(m.withdrawn_amount),
     isActive: m.is_active, lastCreditedAt: m.last_credited_at,
   }) : 0;
-  const copy = (s: string) => { navigator.clipboard.writeText(s); toast.success("Copied"); };
+  const copy = (s: string) => { navigator.clipboard.writeText(s); toast.success("Copy হয়েছে"); };
 
   return (
     <div className="space-y-3">
@@ -166,9 +166,9 @@ function UserDetail() {
 
       {/* Danger */}
       <button
-        onClick={() => { if (confirm("Delete this user FOREVER? Everything will be gone.")) del.mutate(); }}
+        onClick={() => { if (confirm("মুছুন this user FOREVER? Everything will be gone.")) del.mutate(); }}
         className="w-full py-2.5 rounded-xl bg-rose/20 text-rose font-black text-xs flex items-center justify-center gap-2 border border-rose/30">
-        <Trash2 className="w-3.5 h-3.5" /> Delete user permanently
+        <Trash2 className="w-3.5 h-3.5" /> মুছুন user permanently
       </button>
     </div>
   );

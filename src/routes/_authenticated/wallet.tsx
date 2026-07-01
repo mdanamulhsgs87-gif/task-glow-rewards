@@ -78,7 +78,7 @@ function WalletPage() {
           <button disabled={mut.isPending || number.length !== 11}
             className="w-full py-3 rounded-xl gradient-cta font-black text-sm flex items-center justify-center gap-2 disabled:opacity-50">
             {mut.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
-            Save & Lock
+            সংরক্ষণ & Lock
           </button>
         </form>
       )}
