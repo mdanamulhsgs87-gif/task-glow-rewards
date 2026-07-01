@@ -44,7 +44,7 @@ function AuthedLayout() {
       <div className="min-h-screen flex items-center justify-center px-4 py-10">
         <div className="glass w-full max-w-sm rounded-2xl p-6 text-center">
           <Loader2 className="mx-auto mb-3 h-6 w-6 animate-spin text-cyan" />
-          <p className="text-sm font-bold">Account check hocche...</p>
+          <p className="text-sm font-bold">একাউন্ট যাচাই করা হচ্ছে…</p>
         </div>
       </div>
     );
@@ -54,10 +54,10 @@ function AuthedLayout() {
     return (
       <div className="min-h-screen flex items-center justify-center px-4 py-10">
         <div className="glass w-full max-w-sm rounded-2xl p-6 text-center">
-          <h1 className="text-lg font-black text-cyan">Login korte hobe</h1>
-          <p className="mt-2 text-xs text-muted-foreground">Task korte age mobile number diye login korun.</p>
+          <h1 className="text-lg font-black text-cyan">লগইন করতে হবে</h1>
+          <p className="mt-2 text-xs text-muted-foreground">টাস্ক করতে হলে আগে মোবাইল নম্বর দিয়ে লগইন করুন।</p>
           <Link to="/auth" className="gradient-cta mt-4 inline-flex rounded-xl px-4 py-2 text-xs font-black">
-            Login page
+            লগইন পেজ
           </Link>
         </div>
       </div>
