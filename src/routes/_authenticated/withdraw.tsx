@@ -105,7 +105,7 @@ function WithdrawPage() {
           {(history ?? []).map((w: any) => (
             <div key={w.id} className="glass rounded-xl p-3 flex items-center justify-between">
               <div>
-                <p className="mono-num font-black">{Number(w.amount).toFixed(2)} ৳</p>
+                <p className="mono-num font-black">{Math.floor(Number(w.amount))} ৳</p>
                 <p className="text-[10px] text-muted-foreground">
                   {new Date(w.created_at).toLocaleString()} • {w.provider === "bkash" ? "বিকাশ" : "নগদ"} • {w.wallet_number}
                 </p>
