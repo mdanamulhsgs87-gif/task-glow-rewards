@@ -7,9 +7,11 @@ import {
   Sparkles, Loader2, ShieldCheck, Check, ArrowRight,
   HandHeart, HelpCircle, ChevronDown, Heart, Users, Gift, Coins,
 } from "lucide-react";
-import { registerWithPhone } from "@/lib/auth.functions";
+import { registerWithPhone, resolveCardUidForLogin } from "@/lib/auth.functions";
 import logo from "@/assets/logo.png";
 import { PageVoice } from "@/components/PageVoice";
+import { QrScanner } from "@/components/QrScanner";
+import { QrCode as QrCodeIcon } from "lucide-react";
 
 
 export const Route = createFileRoute("/auth")({ ssr: false, component: AuthPage });
