@@ -68,15 +68,16 @@ function UnverifiedPage() {
           <p className="text-[10px] text-muted-foreground">
             ⚠️ {r.reason} · {new Date(r.created_at).toLocaleString()}
           </p>
-          <button onClick={() => { if (confirm("মুছুন this attempt?")) del.mutate(r.id); }}
+          <PromoteRow attemptId={r.id} defaultSlot={r.slot} onPromote={(slot) => promote.mutate({ id: r.id, slot })} pending={promote.isPending} />
+          <button onClick={() => { if (confirm("এই attempt মুছে ফেলবেন?")) del.mutate(r.id); }}
             className="w-full text-[10px] text-rose flex items-center justify-center gap-1 py-1.5 rounded bg-rose/10 border border-rose/20">
-            <Trash2 className="w-3 h-3" /> মুছুন attempt
+            <Trash2 className="w-3 h-3" /> attempt মুছুন
           </button>
         </div>
       ))}
       {(!data || data.length === 0) && (
         <div className="glass rounded-xl p-6 text-center text-xs text-muted-foreground">
-          Kono not-whitelisted attempt nai.
+          কোনো not-whitelisted attempt নেই।
         </div>
       )}
     </div>
