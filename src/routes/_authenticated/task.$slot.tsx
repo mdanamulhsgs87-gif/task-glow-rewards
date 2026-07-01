@@ -76,7 +76,7 @@ function TaskPage() {
       bindFirstVerify({ data: { slot: slotNum, ...input } }),
     onSuccess: () => {
       clearProgress();
-      toast.success("Verify হয়েছে! ৩ দিন পর একবার Re-verify লাগবে, পরের বার যেকোনো সময় admin চাইতে পারে।");
+      toast.success("ভেরিফাই সম্পন্ন! ৩ দিন পর একবার রি-ভেরিফাই লাগবে, পরে যেকোনো সময় অ্যাডমিন চাইতে পারেন।");
       refetch();
       nav({ to: "/home" });
     },
