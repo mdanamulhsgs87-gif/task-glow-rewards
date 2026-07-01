@@ -11,8 +11,10 @@ import { NARRATIONS, isNarrationKey } from "@/lib/narrations";
 const BUCKET = "tour-audio";
 const VOICE = "shimmer"; // natural warm female voice
 const MODEL = "openai/gpt-4o-mini-tts";
+const SPEED = 1.15; // slightly faster than default — feels lively, not sluggish
 const SIGN_TTL = 60 * 60 * 24 * 365; // 1 year
-const TTS_INSTRUCTIONS = "You are a warm, friendly young Bangladeshi woman speaking natural, fluent Bengali (Bangla, bn-BD). Pronounce every Bengali word clearly and correctly with proper Bangla intonation — do NOT read it as English or Hindi. Speak at a calm, gentle, conversational pace, like a caring older sister explaining something to a younger sibling. Warm, soft, human tone. Never robotic. Do not mix English pronunciation into Bangla words.";
+const TTS_INSTRUCTIONS =
+  "You are a cheerful, upbeat young Bangladeshi woman (আপা) speaking natural, everyday spoken Bangla the way close friends talk in Dhaka — never bookish, never formal, never like a news reader. Smile in your voice, sound genuinely happy and encouraging. Pronounce every Bangla word crisply and correctly with proper বাংলা intonation — do not use Hindi or English phonemes. When you see স্বাগত / স্বাগতম say it the natural Bangladeshi way (\"sha-goto\" / \"sha-go-tom\"), never robotic. Pace lively and conversational, with warm, playful energy — like a caring older sister excitedly guiding a younger sibling. Absolutely no monotone, no robotic reading.";
 
 export const Route = createFileRoute("/api/public/tour-audio")({
   server: {
@@ -23,7 +25,11 @@ export const Route = createFileRoute("/api/public/tour-audio")({
         const key = String(body?.key ?? "");
         if (!isNarrationKey(key)) return json({ error: "unknown key" }, 400);
         const text = NARRATIONS[key];
-        const hash = createHash("sha256").update(`${VOICE}|${text}`).digest("hex");
+        // Include voice + speed + persona version in hash so any tweak to
+        // voice / speed / instructions automatically invalidates the cache.
+        const hash = createHash("sha256")
+          .update(`${VOICE}|${SPEED}|v2-cheerful|${text}`)
+          .digest("hex");
         const path = `cache/${hash}.mp3`;
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { data: list } = await supabaseAdmin.storage
@@ -37,6 +43,7 @@ export const Route = createFileRoute("/api/public/tour-audio")({
             headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
             body: JSON.stringify({
               model: MODEL, input: text, voice: VOICE, response_format: "mp3",
+              speed: SPEED,
               instructions: TTS_INSTRUCTIONS,
             }),
           });
