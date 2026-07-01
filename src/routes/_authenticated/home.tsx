@@ -52,6 +52,7 @@ function HomePage() {
         </h1>
       </div>
 
+      <div data-tour="mining">
       <MiningCounter
         accrued={Number(data.mining?.accrued_amount ?? 0)}
         withdrawn={Number(data.mining?.withdrawn_amount ?? 0)}
