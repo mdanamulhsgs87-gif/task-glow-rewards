@@ -323,12 +323,26 @@ export function AuthPage() {
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
               {mode === "login" ? "লগইন করুন" : "পরবর্তী ধাপ"}
             </button>
+
+            {mode === "login" && (
+              <button
+                type="button" onClick={() => setScanOpen(true)}
+                data-voice="auth.qr.scan"
+                className="w-full py-3 rounded-xl font-black text-sm flex items-center justify-center gap-2 text-white btn-press shadow-lg"
+                style={{ background: "linear-gradient(120deg,#06b6d4,#8b5cf6,#ef476f)" }}
+              >
+                <QrCodeIcon className="w-4 h-4" /> QR কার্ড স্ক্যান করে লগইন
+              </button>
+            )}
           </form>
 
           <p className="text-[10px] text-center text-muted-foreground mt-5">
             🔒 আপনার সমস্ত তথ্য এনক্রিপ্টেড ও সম্পূর্ণ নিরাপদ
           </p>
         </div>
+
+        {scanOpen && <QrScanner onResult={handleScan} onClose={() => setScanOpen(false)} />}
+
 
         {/* Mission banner */}
         <div className="rounded-3xl p-5 bg-linear-to-br from-emerald/15 via-cyan/10 to-violet/15 border border-border pop-in">
