@@ -6,13 +6,14 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 export const listActiveAnnouncements = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data } = await context.supabase
+    const sb = context.supabase as any;
+    const { data } = await sb
       .from("announcements")
       .select("id, message, created_at")
       .eq("is_active", true)
       .order("created_at", { ascending: false })
       .limit(20);
-    return data ?? [];
+    return (data ?? []) as { id: string; message: string; created_at: string }[];
   });
 
 // Admin-side
@@ -20,13 +21,13 @@ async function gate() {
   const { requireAdminSession } = await import("@/lib/admin-session.server");
   await requireAdminSession();
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  return supabaseAdmin;
+  return supabaseAdmin as any;
 }
 
 export const adminListAnnouncements = createServerFn({ method: "GET" }).handler(async () => {
   const db = await gate();
   const { data } = await db.from("announcements").select("*").order("created_at", { ascending: false });
-  return data ?? [];
+  return (data ?? []) as { id: string; message: string; is_active: boolean; created_at: string }[];
 });
 
 export const adminCreateAnnouncement = createServerFn({ method: "POST" })
