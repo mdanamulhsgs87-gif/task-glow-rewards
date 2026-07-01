@@ -138,7 +138,7 @@ async function playBuffer(buffer: AudioBuffer) {
   const source = ctx.createBufferSource();
   source.buffer = buffer;
   const gain = ctx.createGain();
-  gain.gain.value = 1.8; // boost loudness so voice is clearly audible
+  gain.gain.value = 2.15; // extra loud guide voice for low-volume phones
   source.connect(gain).connect(ctx.destination);
   currentSource = source;
   source.start(Math.max(ctx.currentTime + 0.015, ctx.currentTime));

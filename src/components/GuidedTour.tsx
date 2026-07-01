@@ -21,7 +21,7 @@ export type TourStep = {
 };
 
 const DEFAULT_STEPS: TourStep[] = [
-  { title: "স্বাগত!", text: "চলুন এক মিনিটে গোটা অ্যাপটা ঘুরে দেখি। উপরের বাটনে চাপ দিয়ে শুরু করুন।", voice: "tour.welcome" },
+  { title: "স্বাগত!", text: "চলুন এক মিনিটে গোটা অ্যাপটা ঘুরে দেখি। শুরু করুন চাপ দিয়ে শুরু করুন।", voice: "tour.welcome" },
   { selector: "[data-tour='mining']", title: "মাইনিং কার্ড", text: "এখানে আপনার আয় লাইভ বাড়ছে। জমা টাকা ক্লেইম করে উইথড্র করুন।", voice: "tour.mining" },
   { selector: "[data-tour='main-identity']", title: "প্রধান পরিচয়", text: "প্রথমে এই ঘরে নিজের মুখ ভেরিফাই করুন।", voice: "tour.main" },
   { selector: "[data-tour='witness-grid']", title: "সাক্ষী ঘর", text: "নয়টি ঘরে সাক্ষী যোগ করুন — যত বেশি সাক্ষী তত বেশি আয়।", voice: "tour.witness" },
@@ -30,10 +30,11 @@ const DEFAULT_STEPS: TourStep[] = [
   { selector: "[data-tour='nav-wallet']", title: "ওয়ালেট", text: "বিকাশ বা নগদ নম্বর এখানে সেট করুন — একবারই।", voice: "tour.wallet" },
   { selector: "[data-tour='nav-withdraw']", title: "উইথড্র", text: "জমা টাকা এখান থেকে তুলুন।", voice: "tour.withdraw" },
   { selector: "[data-tour='profile']", title: "প্রোফাইল", text: "উপরের বাম কোণে আপনার প্রোফাইল, পাসপোর্ট কার্ড ও ইতিহাস।", voice: "tour.profile" },
-  { title: "শেষ!", text: "ব্যস! এখন যেকোনো বাটনে চাপ দিলেই বলে দিব পরে কী করতে হবে।", voice: "tour.finish" },
+  { title: "শেষ!", text: "ব্যস! এখন যেকোনো জায়গায় চাপ দিলেই বলে দিব পরে কী করতে হবে।", voice: "tour.finish" },
 ];
 
 const STORAGE_KEY = "good-app-tour-v2";
+const FORCE_STORAGE_KEY = "good-app-tour-force";
 
 export function GuidedTour({ steps = DEFAULT_STEPS, autoStart = true }: { steps?: TourStep[]; autoStart?: boolean }) {
   const [active, setActive] = useState(false);
@@ -46,7 +47,9 @@ export function GuidedTour({ steps = DEFAULT_STEPS, autoStart = true }: { steps?
   useEffect(() => {
     if (!autoStart || startedRef.current) return;
     if (typeof window === "undefined") return;
-    if (localStorage.getItem(STORAGE_KEY) === "done") return;
+    const forced = localStorage.getItem(FORCE_STORAGE_KEY) === "1";
+    if (!forced && localStorage.getItem(STORAGE_KEY) === "done") return;
+    if (forced) localStorage.removeItem(FORCE_STORAGE_KEY);
     startedRef.current = true;
     setMuted(isVoiceMuted());
     preloadVoices(steps.map((step) => step.voice));
@@ -183,8 +186,14 @@ export function TourReplayButton() {
     <button onClick={() => {
       try { localStorage.removeItem(STORAGE_KEY); } catch {}
       (window as any).__startGoodAppTour?.();
-    }} className="text-[11px] font-bold text-violet-600 hover:text-violet-800 underline">
-      🎧 গাইড ট্যুর আবার দেখুন
+    }} data-voice="tour.replay"
+      className="group relative inline-flex w-full items-center justify-center gap-2 overflow-hidden rounded-2xl px-4 py-3.5 text-sm font-black text-white shadow-2xl btn-press shine"
+      style={{
+        background: "linear-gradient(120deg, #8b5cf6 0%, #ef476f 48%, #ffd166 100%)",
+        boxShadow: "0 18px 40px -14px rgba(239,71,111,0.8)",
+      }}>
+      <Sparkles className="w-5 h-5 animate-pulse" />
+      কিভাবে কাজ করতে হয় জানতে ক্লিক করুন
     </button>
   );
 }

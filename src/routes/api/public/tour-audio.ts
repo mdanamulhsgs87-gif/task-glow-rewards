@@ -12,11 +12,11 @@ const BUCKET = "tour-audio";
 const VOICE = "ash"; // brighter, more expressive male voice
 const FALLBACK_VOICE = "onyx";
 const MODEL = "openai/gpt-4o-mini-tts";
-const SPEED = 1.05;
-const CACHE_VERSION = "v9-loud-cheerful-bhaiya";
+const SPEED = 1.08;
+const CACHE_VERSION = "v10-laughing-button-name-bhaiya";
 const SIGN_TTL = 60 * 60 * 24 * 365; // 1 year
 const TTS_INSTRUCTIONS =
-  "Speak ONLY in natural Dhakai/Bangladeshi Bangla (bn-BD). Persona: a real, VERY cheerful, smiling, excited young Bangladeshi bhaiya talking loudly and joyfully to a close friend. Sound genuinely happy — smile audibly through every sentence, laugh a tiny bit naturally where it fits, use big warm energy, playful enthusiasm, and lively ups-and-downs in pitch. Volume must be LOUD, full, and clear — never soft, whispery, ghostly, sleepy, flat, robotic, formal, news-reader, or announcement-style. Push energy and excitement high, like cheering someone on. Keep lines short, conversational, encouraging. Pronounce naturally: সাগতম = sa-go-tom, টাকা = taka, গুডডলার = good-dollar, ভেরিফাই = verify, জমা দিন = joma din, শাকখি = shakkhi.";
+  "Speak ONLY in natural Dhakai/Bangladeshi Bangla (bn-BD). Persona: a real, VERY cheerful, smiling, excited young Bangladeshi bhaiya talking loudly and joyfully to a close friend. Start many lines with a tiny friendly smile-laugh when the text says 'হা হা'; make the laugh sound natural, short, human, and happy. Smile audibly through every sentence, use playful enthusiasm, warm excitement, lively ups-and-downs in pitch, and a louder confident voice. NEVER sound ghostly, soft, sleepy, flat, robotic, formal, news-reader, or announcement-style. When a control has a name, say that exact name, not generic phrases like 'এই বাটন' or 'ওই বাটন'. Keep lines short and conversational. Pronounce naturally: সাগতম = sa-go-tom, টাকা = taka, গুডডলার = good-dollar, ভেরিফাই = verify, জমা দিন = joma din, শাকখি = shakkhi.";
 
 export const Route = createFileRoute("/api/public/tour-audio")({
   server: {
