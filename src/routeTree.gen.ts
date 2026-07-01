@@ -15,6 +15,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as CardUidRouteImport } from './routes/card.$uid'
 import { Route as AdminWithdrawalsRouteImport } from './routes/admin/withdrawals'
 import { Route as AdminWalletsRouteImport } from './routes/admin/wallets'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
@@ -61,6 +62,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const CardUidRoute = CardUidRouteImport.update({
+  id: '/card/$uid',
+  path: '/card/$uid',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminWithdrawalsRoute = AdminWithdrawalsRouteImport.update({
   id: '/withdrawals',
@@ -167,6 +173,7 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AdminUsersRoute
   '/admin/wallets': typeof AdminWalletsRoute
   '/admin/withdrawals': typeof AdminWithdrawalsRoute
+  '/card/$uid': typeof CardUidRoute
   '/admin/': typeof AdminIndexRoute
   '/task/$slot': typeof AuthenticatedTaskSlotRoute
   '/admin/user/$userId': typeof AdminUserUserIdRoute
@@ -190,6 +197,7 @@ export interface FileRoutesByTo {
   '/admin/users': typeof AdminUsersRoute
   '/admin/wallets': typeof AdminWalletsRoute
   '/admin/withdrawals': typeof AdminWithdrawalsRoute
+  '/card/$uid': typeof CardUidRoute
   '/admin': typeof AdminIndexRoute
   '/task/$slot': typeof AuthenticatedTaskSlotRoute
   '/admin/user/$userId': typeof AdminUserUserIdRoute
@@ -216,6 +224,7 @@ export interface FileRoutesById {
   '/admin/users': typeof AdminUsersRoute
   '/admin/wallets': typeof AdminWalletsRoute
   '/admin/withdrawals': typeof AdminWithdrawalsRoute
+  '/card/$uid': typeof CardUidRoute
   '/admin/': typeof AdminIndexRoute
   '/_authenticated/task/$slot': typeof AuthenticatedTaskSlotRoute
   '/admin/user/$userId': typeof AdminUserUserIdRoute
@@ -242,6 +251,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/admin/wallets'
     | '/admin/withdrawals'
+    | '/card/$uid'
     | '/admin/'
     | '/task/$slot'
     | '/admin/user/$userId'
@@ -265,6 +275,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/admin/wallets'
     | '/admin/withdrawals'
+    | '/card/$uid'
     | '/admin'
     | '/task/$slot'
     | '/admin/user/$userId'
@@ -290,6 +301,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/admin/wallets'
     | '/admin/withdrawals'
+    | '/card/$uid'
     | '/admin/'
     | '/_authenticated/task/$slot'
     | '/admin/user/$userId'
@@ -303,6 +315,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   AdminLoginRoute: typeof AdminLoginRoute
   AuthRoute: typeof AuthRoute
+  CardUidRoute: typeof CardUidRoute
   ApiPublicTourAudioRoute: typeof ApiPublicTourAudioRoute
   ApiPublicWhitelistRecheckRoute: typeof ApiPublicWhitelistRecheckRoute
 }
@@ -350,6 +363,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/card/$uid': {
+      id: '/card/$uid'
+      path: '/card/$uid'
+      fullPath: '/card/$uid'
+      preLoaderRoute: typeof CardUidRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/admin/withdrawals': {
       id: '/admin/withdrawals'
@@ -528,6 +548,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   AdminLoginRoute: AdminLoginRoute,
   AuthRoute: AuthRoute,
+  CardUidRoute: CardUidRoute,
   ApiPublicTourAudioRoute: ApiPublicTourAudioRoute,
   ApiPublicWhitelistRecheckRoute: ApiPublicWhitelistRecheckRoute,
 }
