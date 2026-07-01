@@ -18,12 +18,34 @@ function ProfilePage() {
 
   const upload = useMutation({
     mutationFn: async (file: File) => {
-      const buf = await file.arrayBuffer();
-      const base64 = btoa(String.fromCharCode(...new Uint8Array(buf)));
-      return uploadAvatar({ data: { base64, contentType: file.type || "image/jpeg" } });
+      if (!file.type.startsWith("image/")) throw new Error("শুধু ছবি আপলোড করা যাবে");
+      // Client-side resize to keep payload well under limits (any MB in → ~150KB out)
+      const dataUrl: string = await new Promise((res, rej) => {
+        const reader = new FileReader();
+        reader.onload = () => res(reader.result as string);
+        reader.onerror = () => rej(new Error("ফাইল পড়া যায়নি"));
+        reader.readAsDataURL(file);
+      });
+      const img = new Image();
+      await new Promise<void>((res, rej) => {
+        img.onload = () => res();
+        img.onerror = () => rej(new Error("ছবি লোড করা যায়নি"));
+        img.src = dataUrl;
+      });
+      const MAX = 800;
+      const scale = Math.min(1, MAX / Math.max(img.width, img.height));
+      const w = Math.round(img.width * scale);
+      const h = Math.round(img.height * scale);
+      const canvas = document.createElement("canvas");
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext("2d")!;
+      ctx.drawImage(img, 0, 0, w, h);
+      const jpeg = canvas.toDataURL("image/jpeg", 0.85);
+      const base64 = jpeg.split(",")[1];
+      return uploadAvatar({ data: { base64, contentType: "image/jpeg" } });
     },
-    onSuccess: () => { toast.success("প্রোফাইল ছবি আপডেট হয়েছে"); refetch(); },
-    onError: (e: any) => toast.error(e.message),
+    onSuccess: () => { toast.success("প্রোফাইল ছবি আপডেট হয়েছে ✨"); refetch(); },
+    onError: (e: any) => toast.error(e.message ?? "আপলোড ব্যর্থ হয়েছে"),
   });
 
   if (isLoading || !data) {
