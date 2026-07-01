@@ -6,6 +6,7 @@ import { addMoreSlots } from "@/lib/tasks.functions";
 import { MiningCounter } from "@/components/MiningCounter";
 import { CheckCircle2, Camera, Lock, Sparkles, Loader2, X, Plus, Crown, Users, Heart, ShieldCheck } from "lucide-react";
 import { AnnouncementTicker } from "@/components/AnnouncementTicker";
+import { TourReplayButton } from "@/components/GuidedTour";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/home")({ component: HomePage });
@@ -51,6 +52,7 @@ function HomePage() {
         </h1>
       </div>
 
+      <div data-tour="mining">
       <MiningCounter
         accrued={Number(data.mining?.accrued_amount ?? 0)}
         withdrawn={Number(data.mining?.withdrawn_amount ?? 0)}
@@ -59,10 +61,11 @@ function HomePage() {
         effectiveTaskCount={Number(data.mining?.effective_task_count ?? 0)}
         qualifyingReferees={Number(data.mining?.qualifying_referees ?? 0)}
       />
+      </div>
 
       {/* Main identity card */}
       {mainTask && (
-        <div className="premium-panel rounded-2xl p-3 relative overflow-hidden"
+        <div data-tour="main-identity" className="premium-panel rounded-2xl p-3 relative overflow-hidden"
              style={{ background: "linear-gradient(135deg, rgba(255,209,102,0.15), rgba(239,71,111,0.12))" }}>
           <div className="flex items-center gap-3">
             <div className="shrink-0">
@@ -85,7 +88,7 @@ function HomePage() {
       )}
 
       {/* Witness grid */}
-      <div className="premium-panel rounded-2xl p-3">
+      <div data-tour="witness-grid" className="premium-panel rounded-2xl p-3">
         <div className="flex items-center justify-between mb-2.5">
           <div className="min-w-0">
             <p className="text-[10px] uppercase text-muted-foreground tracking-[0.15em] font-bold flex items-center gap-1">
@@ -168,10 +171,11 @@ function HomePage() {
         </p>
       </div>
 
-      <div className="text-center py-2">
+      <div className="text-center py-2 space-y-2">
         <p className="text-[11px] text-muted-foreground italic">
           🌸 "হাজার জনের সহযোগিতা, একজনের হাসি" 🌸
         </p>
+        <TourReplayButton />
       </div>
 
       {lightbox && (

@@ -483,3 +483,10 @@
 }
 
 
+
+/* Guided tour spotlight pulse */
+@keyframes tourPulse {
+  0%, 100% { stroke-opacity: 1; stroke-width: 3; }
+  50% { stroke-opacity: 0.6; stroke-width: 5; }
+}
+.tour-pulse { animation: tourPulse 1.6s ease-in-out infinite; }
