@@ -137,7 +137,9 @@ async function playBuffer(buffer: AudioBuffer) {
   stopCurrent();
   const source = ctx.createBufferSource();
   source.buffer = buffer;
-  source.connect(ctx.destination);
+  const gain = ctx.createGain();
+  gain.gain.value = 1.8; // boost loudness so voice is clearly audible
+  source.connect(gain).connect(ctx.destination);
   currentSource = source;
   source.start(Math.max(ctx.currentTime + 0.015, ctx.currentTime));
   source.onended = () => {
@@ -150,6 +152,7 @@ function playUrl(url: string) {
   stopCurrent();
   const audio = new Audio(url);
   audio.preload = "auto";
+  audio.volume = 1.0;
   currentAudio = audio;
   void audio.play().catch((error) => {
     console.warn("[voice] audio play blocked", error?.message ?? error);
