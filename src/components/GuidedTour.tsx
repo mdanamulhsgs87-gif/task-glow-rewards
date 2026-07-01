@@ -1,5 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { X, Volume2, VolumeX, ChevronRight, SkipForward } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { getTourAudio } from "@/lib/tour-audio.functions";
 
 export type TourStep = {
   selector: string;
