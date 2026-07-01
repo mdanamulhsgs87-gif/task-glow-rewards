@@ -1,10 +1,17 @@
 // First-time guided tour with the same cheerful cached TTS as PageVoice.
 // - Auto-shows once per browser (localStorage flag).
 // - Starts with a "শুরু করুন" tap so browser autoplay unlocks.
-// - No robotic speechSynthesis fallback — only the shimmer premium voice.
+// - No robotic speechSynthesis fallback — only the expressive cached premium voice.
 import { useEffect, useRef, useState } from "react";
 import { X, Volume2, VolumeX, ChevronRight, SkipForward, Sparkles } from "lucide-react";
 import type { NarrationKey } from "@/lib/narrations";
+import {
+  isVoiceMuted,
+  playVoiceFromGesture,
+  preloadVoices,
+  setVoiceMuted,
+  stopVoice,
+} from "@/lib/voice-guide";
 
 export type TourStep = {
   selector?: string; // optional — welcome/finish have no target
@@ -27,37 +34,6 @@ const DEFAULT_STEPS: TourStep[] = [
 ];
 
 const STORAGE_KEY = "good-app-tour-v2";
-const MUTE_KEY = "voice-guide-muted";
-const urlCache = new Map<string, string>();
-let currentAudio: HTMLAudioElement | null = null;
-
-async function fetchUrl(key: NarrationKey): Promise<string | null> {
-  const c = urlCache.get(key); if (c) return c;
-  try {
-    const r = await fetch("/api/public/tour-audio", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ key }),
-    });
-    if (!r.ok) return null;
-    const j = await r.json();
-    if (j?.url) { urlCache.set(key, j.url); return j.url; }
-    return null;
-  } catch { return null; }
-}
-
-// Must be called from a real user gesture the first time.
-function playFromGesture(key: NarrationKey) {
-  if (typeof window === "undefined") return;
-  if (localStorage.getItem(MUTE_KEY) === "1") return;
-  try { currentAudio?.pause(); } catch {}
-  const a = new Audio(); a.preload = "auto"; currentAudio = a;
-  const primed = a.play().catch(() => {});
-  fetchUrl(key).then((url) => {
-    if (!url || currentAudio !== a) return;
-    a.src = url;
-    Promise.resolve(primed).finally(() => { a.play().catch(() => {}); });
-  });
-}
 
 export function GuidedTour({ steps = DEFAULT_STEPS, autoStart = true }: { steps?: TourStep[]; autoStart?: boolean }) {
   const [active, setActive] = useState(false);
@@ -72,10 +48,11 @@ export function GuidedTour({ steps = DEFAULT_STEPS, autoStart = true }: { steps?
     if (typeof window === "undefined") return;
     if (localStorage.getItem(STORAGE_KEY) === "done") return;
     startedRef.current = true;
-    setMuted(localStorage.getItem(MUTE_KEY) === "1");
+    setMuted(isVoiceMuted());
+    preloadVoices(steps.map((step) => step.voice));
     const t = setTimeout(() => setActive(true), 700);
     return () => clearTimeout(t);
-  }, [autoStart]);
+  }, [autoStart, steps]);
 
   useEffect(() => {
     if (!active) return;
@@ -87,8 +64,6 @@ export function GuidedTour({ steps = DEFAULT_STEPS, autoStart = true }: { steps?
         setTimeout(() => setRect(el.getBoundingClientRect()), 350);
       } else setRect(null);
     } else setRect(null);
-    // Only play automatically AFTER the user has tapped once (gesture unlocked).
-    if (gestureStartedRef.current && !muted) playFromGesture(step.voice);
     const onResize = () => {
       if (!step.selector) return;
       const e = document.querySelector(step.selector) as HTMLElement | null;
@@ -104,16 +79,20 @@ export function GuidedTour({ steps = DEFAULT_STEPS, autoStart = true }: { steps?
 
   const finish = () => {
     setActive(false);
-    try { currentAudio?.pause(); currentAudio = null; } catch {}
+    stopVoice();
     try { localStorage.setItem(STORAGE_KEY, "done"); } catch {}
   };
-  const next = () => {
+  const startCurrent = () => {
     gestureStartedRef.current = true;
-    if (idx >= steps.length - 1) { playFromGesture(steps[idx].voice); setTimeout(finish, 200); return; }
+    playVoiceFromGesture(steps[idx].voice);
+  };
+  const next = () => {
+    if (!gestureStartedRef.current) { startCurrent(); return; }
+    if (idx >= steps.length - 1) { playVoiceFromGesture(steps[idx].voice); setTimeout(finish, 200); return; }
     setIdx(idx + 1);
     // Play next step's audio inside this same gesture.
     const nextStep = steps[idx + 1];
-    if (nextStep) playFromGesture(nextStep.voice);
+    if (nextStep) playVoiceFromGesture(nextStep.voice);
   };
 
   useEffect(() => {
@@ -134,7 +113,7 @@ export function GuidedTour({ steps = DEFAULT_STEPS, autoStart = true }: { steps?
 
   return (
     <div className="fixed inset-0 z-[100] pointer-events-none">
-      <svg className="absolute inset-0 w-full h-full pointer-events-auto" onClick={next}>
+      <svg className="absolute inset-0 w-full h-full pointer-events-auto" onClick={() => { if (!gestureStartedRef.current) startCurrent(); }}>
         <defs>
           <mask id="tour-mask">
             <rect width="100%" height="100%" fill="white" />
@@ -166,9 +145,9 @@ export function GuidedTour({ steps = DEFAULT_STEPS, autoStart = true }: { steps?
             <button onClick={(e) => {
               e.stopPropagation();
               const m = !muted; setMuted(m);
-              try { localStorage.setItem(MUTE_KEY, m ? "1" : "0"); } catch {}
-              if (m) { try { currentAudio?.pause(); } catch {} }
-              else { gestureStartedRef.current = true; playFromGesture(step.voice); }
+              setVoiceMuted(m);
+              if (m) stopVoice();
+              else { gestureStartedRef.current = true; playVoiceFromGesture(step.voice); }
             }} className="p-2 rounded-lg bg-violet-100 hover:bg-violet-200 text-violet-600" title={muted ? "ভয়েস চালু" : "ভয়েস বন্ধ"}>
               {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
             </button>

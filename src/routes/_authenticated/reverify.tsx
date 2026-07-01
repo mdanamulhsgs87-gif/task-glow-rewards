@@ -99,7 +99,7 @@ function ReverifyPage() {
   return (
     <div className="space-y-4 pt-2">
       <PageVoice pageId="reverify" steps={["reverify.intro","reverify.search","reverify.button"]} />
-      <Link to="/home"
+      <Link to="/home" data-voice="common.back"
 
         className="inline-flex items-center gap-2 px-4 py-2 rounded-full gradient-cta text-white text-sm font-black shadow-lg btn-press">
         <ArrowLeft className="w-4 h-4" /> পিছনে যান
@@ -134,7 +134,7 @@ function ReverifyPage() {
                 const due = c.reverify_due_at ? new Date(c.reverify_due_at).getTime() : 0;
                 const ready = due <= Date.now();
                 return (
-                  <button key={c.id} disabled={!ready} onClick={() => onSelect(c)}
+                  <button key={c.id} disabled={!ready} onClick={() => onSelect(c)} data-voice={ready ? "reverify.button" : "common.saved"}
                     className={`w-full flex items-center gap-3 p-2 rounded-xl border text-left transition ${
                       ready ? "border-amber/40 bg-amber/5 hover:bg-amber/10" : "border-border bg-surface-2 opacity-60"
                     }`}>
@@ -174,7 +174,7 @@ function ReverifyPage() {
             </div>
           )}
           {opened && countdown === 0 && (
-            <button onClick={onSubmit} disabled={checking}
+            <button onClick={onSubmit} disabled={checking} data-voice="task.submit"
               className="w-full py-4 rounded-xl gradient-cta font-black flex items-center justify-center gap-2">
               {checking ? <><Loader2 className="w-4 h-4 animate-spin" /> যাচাই হচ্ছে…</> : <><ShieldCheck className="w-4 h-4" /> জমা দিন</>}
             </button>

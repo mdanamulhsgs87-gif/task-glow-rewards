@@ -45,7 +45,7 @@ function HomePage() {
 
   return (
     <div className="space-y-3 pt-2 pb-6">
-      <PageVoice pageId="home" steps={["home.welcome","home.mining","home.claim","home.main","home.witness","home.tap.slot"]} />
+      <PageVoice pageId="home" steps={["home.welcome","home.mining","home.claim","home.main","home.witness","home.tap.slot","home.open.photo","reverify.button"]} />
       <AnnouncementTicker />
 
 
@@ -223,7 +223,7 @@ function MainIdentityCell({ task, onStart, onReverify, onOpenPhoto }: { task: an
     const d = Math.floor(totalSec / 86400);
     const h = Math.floor((totalSec % 86400) / 3600);
     return (
-      <button onClick={() => faceUrl && onOpenPhoto(faceUrl)}
+      <button onClick={() => faceUrl && onOpenPhoto(faceUrl)} data-voice="home.open.photo"
         className="relative w-24 h-24 rounded-2xl overflow-hidden border-2 shadow-[0_10px_24px_-6px_rgba(255,209,102,0.7)] active:scale-95 transition"
         style={{ borderColor: "var(--color-amber)" }}>
         {faceUrl ? <img src={faceUrl} className="absolute inset-0 h-full w-full object-cover" alt="main" />
@@ -241,7 +241,7 @@ function MainIdentityCell({ task, onStart, onReverify, onOpenPhoto }: { task: an
 
   if (isVerified && readyToReverify) {
     return (
-      <button onClick={onReverify}
+      <button onClick={onReverify} data-voice="reverify.button"
         className="relative w-24 h-24 rounded-2xl overflow-hidden border-2 shadow-[0_10px_28px_-6px_rgba(139,92,246,0.75)] active:scale-95 transition pulse-glow"
         style={{ borderColor: "var(--color-violet)" }}>
         {faceUrl ? <img src={faceUrl} className="absolute inset-0 h-full w-full object-cover" alt="main" />
@@ -263,7 +263,7 @@ function MainIdentityCell({ task, onStart, onReverify, onOpenPhoto }: { task: an
   else if (readyToReverify) { cellClass = "task-cell-reverify pulse-glow"; icon = <Sparkles className="w-8 h-8 text-white drop-shadow" />; }
 
   return (
-    <button onClick={onStart}
+    <button onClick={onStart} data-voice="home.main"
       className={`relative w-24 h-24 rounded-2xl ${cellClass} flex items-center justify-center btn-press overflow-hidden border-2`}
       style={{ borderColor: "var(--color-amber)" }}>
       <span className="absolute top-1 right-1 rounded-full p-1 shadow" style={{ background: "var(--color-amber)" }}>
@@ -290,7 +290,7 @@ function TaskCell({ task, onStart, onReverify, onOpenPhoto }: { task: any; onSta
     const h = Math.floor((totalSec % 86400) / 3600);
     const m = Math.floor((totalSec % 3600) / 60);
     return (
-      <button onClick={() => faceUrl && onOpenPhoto(faceUrl)}
+      <button onClick={() => faceUrl && onOpenPhoto(faceUrl)} data-voice="home.open.photo"
         className="relative aspect-square rounded-xl overflow-hidden border border-rose/60 shadow-[0_6px_14px_-4px_rgba(239,71,111,0.5)] active:scale-95 transition">
         {faceUrl ? <img src={faceUrl} className="absolute inset-0 h-full w-full object-cover" alt="" />
                  : <div className="absolute inset-0 bg-surface-2" />}
@@ -311,7 +311,7 @@ function TaskCell({ task, onStart, onReverify, onOpenPhoto }: { task: any; onSta
 
   if (isVerified && readyToReverify) {
     return (
-      <button onClick={onReverify}
+      <button onClick={onReverify} data-voice="reverify.button"
         className="relative aspect-square rounded-xl overflow-hidden border border-violet/70 shadow-[0_8px_18px_-5px_rgba(139,92,246,0.75)] active:scale-95 transition pulse-glow">
         {faceUrl ? <img src={faceUrl} className="absolute inset-0 h-full w-full object-cover" alt="" />
                  : <div className="absolute inset-0 task-cell-reverify" />}
@@ -334,7 +334,7 @@ function TaskCell({ task, onStart, onReverify, onOpenPhoto }: { task: any; onSta
   else if (readyToReverify) { cellClass = "task-cell-reverify pulse-glow"; icon = <Sparkles className="w-5 h-5 text-white drop-shadow" />; label = "রি-ভেরিফাই"; }
 
   return (
-    <button onClick={onStart}
+    <button onClick={onStart} data-voice="home.tap.slot"
       className={`relative aspect-square rounded-xl ${cellClass} flex flex-col items-center justify-center gap-0.5 btn-press overflow-hidden`}>
       <span className="absolute top-1 left-1 text-[10px] font-black text-white mono-num leading-none px-1.5 py-0.5 rounded-md bg-black/45 backdrop-blur-[2px]">#{task.slot}</span>
       <span>{icon}</span>

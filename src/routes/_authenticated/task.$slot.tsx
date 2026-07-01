@@ -176,7 +176,7 @@ function TaskPage() {
   return (
     <div className="space-y-4 pt-2">
       <PageVoice pageId="task-verify" steps={["task.name","task.photo","task.gd","task.gd.after","task.countdown","task.submit"]} />
-      <Link to="/home"
+      <Link to="/home" data-voice="common.back"
 
         className="inline-flex items-center gap-2 px-4 py-2 rounded-full gradient-cta text-white text-sm font-black shadow-lg btn-press">
         <ArrowLeft className="w-4 h-4" /> পিছনে যান
@@ -234,7 +234,7 @@ function TaskPage() {
               setCountdown(null);
               returnedRef.current = false;
               setStep("name");
-            }} className="w-full py-3 rounded-xl gradient-cta font-black flex items-center justify-center gap-2">
+            }} data-voice="task.name" className="w-full py-3 rounded-xl gradient-cta font-black flex items-center justify-center gap-2">
             <Sparkles className="w-4 h-4" /> শুরু করুন
           </button>
         </div>
@@ -247,7 +247,7 @@ function TaskPage() {
             placeholder="যেমন: রহিম, করিম..." autoFocus data-voice="task.name"
             className="w-full px-3 py-2.5 rounded-xl bg-surface-2 border border-border text-sm font-bold outline-none focus:border-cyan" />
           <p className="text-[10px] text-muted-foreground">Re-verify এর সময় এই নাম দিয়ে খুঁজবেন।</p>
-          <button onClick={() => setStep("photo")} disabled={faceLabel.trim().length < 2}
+          <button onClick={() => setStep("photo")} disabled={faceLabel.trim().length < 2} data-voice="task.photo"
             className="w-full py-3 rounded-xl gradient-cta font-black disabled:opacity-50">
             এগিয়ে যান
           </button>
@@ -304,10 +304,10 @@ function TaskPage() {
                 toast.success("নতুন কী তৈরি হয়েছে");
               } catch (e: any) { toast.error("কী তৈরি হয়নি: " + e.message); }
             }}
-            className="w-full py-3 rounded-xl border border-amber/40 bg-amber/10 text-amber text-xs font-bold">
+            data-voice="task.gd" className="w-full py-3 rounded-xl border border-amber/40 bg-amber/10 text-amber text-xs font-bold">
             🔄 নতুন কী তৈরি করুন
           </button>
-          <button onClick={() => { clearProgress(); setStep("intro"); setIdentity(null); setPhotoB64(null); setFaceLabel(""); setVerifyOpened(false); setCountdown(null); returnedRef.current = false; }}
+          <button onClick={() => { clearProgress(); setStep("intro"); setIdentity(null); setPhotoB64(null); setFaceLabel(""); setVerifyOpened(false); setCountdown(null); returnedRef.current = false; }} data-voice="common.back"
             className="w-full py-2 rounded-xl border border-border text-xs text-muted-foreground">
             বাতিল ও সব মুছে ফেলুন
           </button>
