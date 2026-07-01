@@ -149,49 +149,49 @@ function TaskCell({ task, onClick, onOpenPhoto }: { task: any; onClick: () => vo
     const s = totalSec % 60;
     return (
       <button onClick={() => faceUrl && onOpenPhoto(faceUrl)}
-        className="relative aspect-square rounded-2xl overflow-hidden border-[3px] border-rose/70 shadow-[0_16px_36px_-10px_rgba(239,71,111,0.7)] active:scale-95 transition">
+        className="relative aspect-square rounded-xl overflow-hidden border-2 border-rose/70 shadow-[0_8px_18px_-6px_rgba(239,71,111,0.7)] active:scale-95 transition">
         {faceUrl ? (
           <img src={faceUrl} alt={`Slot ${task.slot}`} className="absolute inset-0 h-full w-full object-cover" />
         ) : (
           <div className="absolute inset-0 bg-surface-2" />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/45" />
-        <div className="absolute top-2 left-2 right-2 flex items-center justify-between">
-          <span className="text-xs font-black text-white drop-shadow">#{task.slot}</span>
-          <span className="rounded-full bg-rose p-1 shadow"><Lock className="w-3 h-3 text-white" /></span>
+        <div className="absolute top-0.5 left-1 right-1 flex items-center justify-between">
+          <span className="text-[9px] font-black text-white drop-shadow">#{task.slot}</span>
+          <span className="rounded-full bg-rose p-0.5 shadow"><Lock className="w-2 h-2 text-white" /></span>
         </div>
-        <div className="absolute bottom-1.5 left-0 right-0 px-1">
-          <div className="flex items-end justify-center gap-0.5 mono-num leading-none text-white drop-shadow">
-            <span className="text-lg font-black">{d}</span><span className="text-[10px] mb-1 opacity-80">d</span>
-            <span className="text-lg font-black ml-1">{String(h).padStart(2,"0")}</span><span className="text-[10px] mb-1 opacity-80">h</span>
-            <span className="text-lg font-black ml-1">{String(m).padStart(2,"0")}</span><span className="text-[10px] mb-1 opacity-80">m</span>
-          </div>
-          <p className="mono-num text-xs text-white text-center mt-0.5 drop-shadow font-bold">{String(s).padStart(2,"0")}s</p>
+        <div className="absolute bottom-0.5 left-0 right-0 px-0.5">
+          <p className="mono-num text-[10px] font-black text-white text-center drop-shadow leading-tight">
+            {d}d {String(h).padStart(2,"0")}h
+          </p>
+          <p className="mono-num text-[9px] text-white/90 text-center drop-shadow font-bold leading-tight">
+            {String(m).padStart(2,"0")}m {String(s).padStart(2,"0")}s
+          </p>
         </div>
       </button>
     );
   }
 
   let cellClass = "task-cell-empty";
-  let icon = <Camera className="w-8 h-8 text-white drop-shadow-lg" />;
+  let icon = <Camera className="w-5 h-5 text-white drop-shadow-lg" />;
   let label = "শুরু";
 
   if (isDone) {
     cellClass = "task-cell-done";
-    icon = <CheckCircle2 className="w-8 h-8 text-white drop-shadow-lg bounce-soft" />;
+    icon = <CheckCircle2 className="w-5 h-5 text-white drop-shadow-lg bounce-soft" />;
     label = "সম্পন্ন";
   } else if (readyToReverify) {
     cellClass = "task-cell-reverify pulse-glow";
-    icon = <Sparkles className="w-8 h-8 text-white drop-shadow-lg spin-slow" />;
+    icon = <Sparkles className="w-5 h-5 text-white drop-shadow-lg spin-slow" />;
     label = "রি-ভেরিফাই";
   }
 
   return (
     <button onClick={onClick}
-      className={`relative aspect-square rounded-2xl ${cellClass} flex flex-col items-center justify-center gap-2 btn-press overflow-hidden`}>
-      <span className="absolute top-1.5 left-2 text-xs font-black text-white/90 mono-num drop-shadow">#{task.slot}</span>
+      className={`relative aspect-square rounded-xl ${cellClass} flex flex-col items-center justify-center gap-0.5 btn-press overflow-hidden`}>
+      <span className="absolute top-0.5 left-1 text-[9px] font-black text-white/90 mono-num drop-shadow">#{task.slot}</span>
       <span className="relative">{icon}</span>
-      <span className="text-xs font-black text-white drop-shadow">{label}</span>
+      <span className="text-[9px] font-black text-white drop-shadow leading-none">{label}</span>
     </button>
   );
 }
