@@ -1,17 +1,14 @@
 // Click-driven voice guide.
 //
-// ✨ NEW behaviour (July 2026): the app no longer auto-plays narration from
-// the top of every page. Instead, the user taps any element that carries
-// `data-voice="some.key"` and ONLY that one contextual hint plays —
-// "you just tapped this, so here's what to do next".
+// Behaviour: user taps any element carrying `data-voice="some.key"` and the
+// matching narration plays ONCE (contextual "here's what to do next").
 //
-// - `<PageVoice />` mounts a single global click listener on the document.
-// - Every click walks up to the closest `[data-voice]`. If none, nothing plays.
-// - A small floating chip lets the user mute/unmute the whole feature.
-// - Audio is fetched from /api/public/tour-audio which serves the same cached
-//   MP3 to every user on every browser (0 credits after first play).
-// - `pageId` and `steps` props are accepted for backward-compat but ignored.
-//   They no longer trigger any sequential auto-play.
+// Autoplay policy notes:
+//   Browsers only let us play <audio> during a real user gesture. If we `await`
+//   before creating the Audio element, the gesture is lost and .play() rejects.
+//   So we create the Audio element SYNCHRONOUSLY inside the click handler, then
+//   set .src after the fetch resolves. First tap "unlocks" playback for the
+//   whole session.
 import { useEffect, useRef, useState } from "react";
 import { Volume2, VolumeX } from "lucide-react";
 import type { NarrationKey } from "@/lib/narrations";
@@ -29,25 +26,48 @@ async function fetchAudioUrl(key: NarrationKey): Promise<string | null> {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ key }),
     });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      console.warn("[voice] tour-audio HTTP", res.status);
+      return null;
+    }
     const j = await res.json();
     if (j?.url) { urlCache.set(key, j.url as string); return j.url as string; }
+    console.warn("[voice] tour-audio response missing url", j);
     return null;
-  } catch { return null; }
+  } catch (e) {
+    console.warn("[voice] tour-audio fetch failed", e);
+    return null;
+  }
 }
 
-// Shared audio slot so a new click always cancels the previous line.
 let currentAudio: HTMLAudioElement | null = null;
-function playKey(key: NarrationKey) {
+
+// Play by key. MUST be called from inside a real user-gesture handler so the
+// audio element is constructed synchronously — otherwise mobile browsers
+// reject .play() with NotAllowedError.
+function playFromGesture(key: NarrationKey) {
   if (typeof window === "undefined") return;
-  const muted = localStorage.getItem(MUTE_KEY) === "1";
-  if (muted) return;
+  if (localStorage.getItem(MUTE_KEY) === "1") return;
+
+  try { currentAudio?.pause(); } catch {}
+  const a = new Audio();
+  a.preload = "auto";
+  currentAudio = a;
+
+  // Try to prime playback immediately (some browsers accept a play() call
+  // on an empty element to reserve the gesture, then swapping src works).
+  const primed = a.play().catch(() => { /* expected on empty src */ });
+
   fetchAudioUrl(key).then((url) => {
-    if (!url) return;
-    try { currentAudio?.pause(); } catch {}
-    const a = new Audio(url);
-    currentAudio = a;
-    a.play().catch(() => {});
+    if (!url || currentAudio !== a) return;
+    a.src = url;
+    // If primed already resolved (rare), we can play again; else, primed
+    // may be pending — either way calling play again is safe.
+    Promise.resolve(primed).finally(() => {
+      a.play().catch((err) => {
+        console.warn("[voice] play blocked", err?.message ?? err);
+      });
+    });
   });
 }
 
@@ -74,11 +94,23 @@ export function PageVoice(_props: PageVoiceProps = {}) {
       const holder = target.closest<HTMLElement>("[data-voice]");
       if (!holder) return;
       const key = holder.getAttribute("data-voice") ?? "";
-      if (!isNarrationKey(key)) return;
-      playKey(key);
+      if (!isNarrationKey(key)) {
+        console.warn("[voice] unknown key on element:", key);
+        return;
+      }
+      playFromGesture(key);
     };
     document.addEventListener("click", onClick, { capture: true });
-    return () => document.removeEventListener("click", onClick, { capture: true } as any);
+
+    // Expose for debugging: window.__voice("home.mining") from devtools.
+    (window as any).__voice = (k: string) => {
+      if (isNarrationKey(k)) playFromGesture(k);
+      else console.warn("[voice] unknown key", k);
+    };
+
+    return () => {
+      document.removeEventListener("click", onClick, { capture: true } as any);
+    };
   }, []);
 
   const toggleMute = () => {
@@ -108,17 +140,12 @@ export function PageVoice(_props: PageVoiceProps = {}) {
 // Inline speaker button — plays one specific hint on demand.
 export function SpeakChip({ narrationKey, label }: { narrationKey: NarrationKey; label?: string }) {
   const [busy, setBusy] = useState(false);
-  const onClick = async () => {
+  const onClick = () => {
     if (busy) return;
     setBusy(true);
-    const url = await fetchAudioUrl(narrationKey);
-    if (!url) { setBusy(false); return; }
-    try { currentAudio?.pause(); } catch {}
-    const a = new Audio(url);
-    currentAudio = a;
-    a.onended = () => setBusy(false);
-    a.onerror = () => setBusy(false);
-    a.play().catch(() => setBusy(false));
+    playFromGesture(narrationKey);
+    // Reset busy after a short window (audio duration is unknown until loaded).
+    setTimeout(() => setBusy(false), 4000);
   };
   return (
     <button type="button" onClick={onClick}
