@@ -102,7 +102,7 @@ export function MiningCounter({
         </p>
 
         {qualifyingReferees > 0 && (
-          <p className="mt-3 inline-block rounded-full px-4 py-1.5 text-xs font-black bounce-soft"
+          <p className="mt-2 inline-block rounded-full px-3 py-1 text-[11px] font-black bounce-soft"
              style={{
                background: "color-mix(in oklch, var(--color-emerald) 32%, transparent)",
                border: "1px solid color-mix(in oklch, var(--color-emerald) 55%, transparent)",
@@ -115,14 +115,14 @@ export function MiningCounter({
         {live && claimable > 0 && (
           <button
             onClick={() => navigate({ to: "/withdraw" })}
-            className="mt-5 w-full rounded-2xl py-4 font-black text-base flex items-center justify-center gap-2 btn-press shine"
+            className="mt-3 w-full rounded-2xl py-3 font-black text-sm flex items-center justify-center gap-2 btn-press shine"
             style={{
               background: "linear-gradient(120deg, #ffd166, #ef476f 50%, #ffb86b)",
               color: "#3a0a1a",
               boxShadow: "0 18px 40px -12px rgba(239,71,111,0.6)",
             }}
           >
-            <Wallet className="w-5 h-5" />
+            <Wallet className="w-4 h-4" />
             💰 {claimable}৳ ক্লেইম ও উইথড্র
           </button>
         )}
