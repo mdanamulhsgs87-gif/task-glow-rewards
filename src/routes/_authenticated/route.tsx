@@ -1,6 +1,8 @@
 import { createFileRoute, Outlet, Link, useRouter } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { Home, Wallet, ArrowDownToLine, LogOut, Loader2, RefreshCcw, Gift } from "lucide-react";
+import { Home, Wallet, ArrowDownToLine, LogOut, Loader2, RefreshCcw, Gift, User } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getProfileHistory } from "@/lib/profile.functions";
 import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -66,10 +68,13 @@ function AuthedLayout() {
     <div className="min-h-screen pb-24">
       <header className="sticky top-0 z-30 glass">
         <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
-          <Link to="/home" className="font-black text-cyan tracking-tight">good-app</Link>
+          <Link to="/home" className="font-black text-lg tracking-tight bg-gradient-to-r from-violet-400 via-cyan-400 to-yellow-300 bg-clip-text text-transparent">
+            good-app
+          </Link>
           <div className="flex items-center gap-2">
+            <ProfileButton />
             <button onClick={logout}
-              className="p-2 rounded-lg bg-surface-2 border border-border text-muted-foreground hover:text-rose">
+              className="btn-press p-2 rounded-lg bg-surface-2 border border-border text-muted-foreground hover:text-rose">
               <LogOut className="w-4 h-4" />
             </button>
           </div>
@@ -80,7 +85,7 @@ function AuthedLayout() {
         <Outlet />
       </main>
 
-      <nav className="fixed bottom-0 inset-x-0 z-30 glass border-t border-cyan/15">
+      <nav className="fixed bottom-0 inset-x-0 z-30 glass border-t border-violet/20">
         <div className="max-w-md mx-auto px-2 py-2 grid grid-cols-5 gap-1">
           <NavItem to="/home" icon={<Home className="w-5 h-5" />} label="হোম" />
           <NavItem to="/reverify" icon={<RefreshCcw className="w-5 h-5" />} label="রি-ভেরিফাই" />
@@ -90,6 +95,17 @@ function AuthedLayout() {
         </div>
       </nav>
     </div>
+  );
+}
+
+function ProfileButton() {
+  const { data } = useQuery({ queryKey: ["profile-history"], queryFn: () => getProfileHistory(), staleTime: 60_000 });
+  return (
+    <Link to="/profile" className="btn-press w-9 h-9 rounded-full overflow-hidden border-2 border-gold/60 glow-gold bg-surface-2 flex items-center justify-center">
+      {data?.avatar_signed
+        ? <img src={data.avatar_signed} className="w-full h-full object-cover" alt="me" />
+        : <User className="w-4 h-4 text-gold" />}
+    </Link>
   );
 }
 
