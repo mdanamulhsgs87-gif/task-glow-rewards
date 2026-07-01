@@ -15,7 +15,7 @@ export const requestWithdraw = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
 
     // Whole-taka only — no poisha.
-    const amount = Math.floor(amount);
+    const amount = Math.floor(data.amount);
 
     if (amount < MIN_WITHDRAW_BDT) {
       throw new Error(`সর্বনিম্ন উইথড্র ${MIN_WITHDRAW_BDT}৳`);
