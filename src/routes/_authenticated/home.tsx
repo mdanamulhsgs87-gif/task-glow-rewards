@@ -61,6 +61,9 @@ function HomePage() {
         effectiveTaskCount={Number(data.mining?.effective_task_count ?? 0)}
         qualifyingReferees={Number(data.mining?.qualifying_referees ?? 0)}
       />
+      </div>
+
+      {/* Main identity card */}
 
       {/* Main identity card */}
       {mainTask && (
