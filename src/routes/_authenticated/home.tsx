@@ -81,7 +81,7 @@ function HomePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-3.5">
+        <div className={`grid gap-3.5 ${total === 10 ? "grid-cols-2" : "grid-cols-3"}`}>
           {tasks.map((t: any) => (
             <TaskCell key={t.slot} task={t}
               onClick={() => router.navigate({ to: "/task/$slot", params: { slot: String(t.slot) } })}
