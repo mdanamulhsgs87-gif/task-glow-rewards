@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { getDashboard } from "@/lib/dashboard.functions";
 import { addMoreSlots } from "@/lib/tasks.functions";
 import { MiningCounter } from "@/components/MiningCounter";
-import { CheckCircle2, Camera, Lock, Sparkles, Loader2, X, Plus } from "lucide-react";
+import { CheckCircle2, Camera, Lock, Sparkles, Loader2, X, Plus, Crown, Users, Heart, ShieldCheck } from "lucide-react";
 import { AnnouncementTicker } from "@/components/AnnouncementTicker";
 import { toast } from "sonner";
 
@@ -21,7 +21,7 @@ function HomePage() {
 
   const addSlots = useMutation({
     mutationFn: () => addMoreSlots(),
-    onSuccess: (r: any) => { toast.success(`✨ আরও ${r.added} টি ঘর খুলেছে`); refetch(); },
+    onSuccess: (r: any) => { toast.success(`✨ আরও ${r.added} জন সাক্ষী যোগ হয়েছে`); refetch(); },
     onError: (e: any) => toast.error(e.message),
   });
 
@@ -29,20 +29,24 @@ function HomePage() {
     return <div className="py-20 flex justify-center"><Loader2 className="w-6 h-6 animate-spin text-cyan" /></div>;
   }
 
-  const tasks = data.tasks;
+  const tasks = data.tasks as any[];
   const total = tasks.length;
-  const doneCount = tasks.filter((t: any) => t.status === "done").length;
-  const verifiedCount = tasks.filter((t: any) => t.status === "verified").length;
+  const doneCount = tasks.filter((t) => t.status === "done").length;
+  const verifiedCount = tasks.filter((t) => t.status === "verified").length;
   const allDone = total > 0 && doneCount === total;
   const pct = total ? Math.round((doneCount / total) * 100) : 0;
 
+  // Split: slot #1 = main identity, rest = witnesses
+  const mainTask = tasks.find((t) => t.slot === 1);
+  const witnessTasks = tasks.filter((t) => t.slot !== 1);
+
   return (
-    <div className="space-y-4 pt-3 pb-6">
+    <div className="space-y-3 pt-2 pb-6">
       <AnnouncementTicker />
 
       <div className="text-center">
-        <p className="text-xs text-muted-foreground">স্বাগতম,</p>
-        <h1 className="text-2xl font-black mt-1">
+        <p className="text-[11px] text-muted-foreground">স্বাগতম,</p>
+        <h1 className="text-xl font-black mt-0.5">
           {data.profile?.display_name ?? "ইউজার"} 👋
         </h1>
       </div>
@@ -56,58 +60,117 @@ function HomePage() {
         qualifyingReferees={Number(data.mining?.qualifying_referees ?? 0)}
       />
 
-      <div className="premium-panel rounded-2xl p-4">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <p className="text-[11px] uppercase text-muted-foreground tracking-[0.15em] font-bold">টাস্ক প্রগ্রেস</p>
-            <p className="text-2xl font-black mt-1 text-navy">
-              {doneCount}<span className="text-muted-foreground text-base">/{total}</span>
-              <span className="text-sm font-bold text-emerald ml-2">সম্পন্ন</span>
+      {/* Main identity card */}
+      {mainTask && (
+        <div className="premium-panel rounded-2xl p-3 relative overflow-hidden"
+             style={{ background: "linear-gradient(135deg, rgba(255,209,102,0.15), rgba(239,71,111,0.12))" }}>
+          <div className="flex items-center gap-3">
+            <div className="shrink-0">
+              <MainIdentityCell task={mainTask}
+                onClick={() => router.navigate({ to: "/task/$slot", params: { slot: "1" } })}
+                onOpenPhoto={(url) => setLightbox({ url, label: `প্রধান পরিচয় · ${mainTask.face_label || "আপনি"}` })} />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-bold flex items-center gap-1" style={{ color: "var(--color-amber)" }}>
+                <Crown className="w-3 h-3" /> প্রধান পরিচয়
+              </p>
+              <p className="text-sm font-black text-navy mt-0.5 leading-tight">আপনার নিজের মুখ</p>
+              <p className="text-[11px] text-muted-foreground mt-1 leading-snug">
+                এটি আপনার মূল পরিচয় — নিচের সাক্ষীরা আপনার হয়ে সাক্ষ্য দিচ্ছেন যে আপনি সত্যিই একজন সুবিধাবঞ্চিত।
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Witness grid */}
+      <div className="premium-panel rounded-2xl p-3">
+        <div className="flex items-center justify-between mb-2.5">
+          <div className="min-w-0">
+            <p className="text-[10px] uppercase text-muted-foreground tracking-[0.15em] font-bold flex items-center gap-1">
+              <Users className="w-3 h-3" /> সাক্ষী প্রগ্রেস
+            </p>
+            <p className="text-lg font-black mt-0.5 text-navy leading-none">
+              {doneCount}<span className="text-muted-foreground text-sm">/{total}</span>
+              <span className="text-[11px] font-bold text-emerald ml-2">সম্পন্ন</span>
             </p>
             {verifiedCount > 0 && (
-              <p className="text-[11px] text-violet mt-1 font-bold">{verifiedCount} টি রি-ভেরিফাইয়ের অপেক্ষায়</p>
+              <p className="text-[10px] text-violet mt-0.5 font-bold">{verifiedCount} জন রি-ভেরিফাইয়ের অপেক্ষায়</p>
             )}
           </div>
-          <div className="relative w-16 h-16">
-            <svg viewBox="0 0 36 36" className="w-16 h-16 -rotate-90">
-              <circle cx="18" cy="18" r="15" stroke="currentColor" strokeWidth="3" fill="none" className="text-surface-2" />
-              <circle cx="18" cy="18" r="15" stroke="currentColor" strokeWidth="3" fill="none"
+          <div className="relative w-12 h-12 shrink-0">
+            <svg viewBox="0 0 36 36" className="w-12 h-12 -rotate-90">
+              <circle cx="18" cy="18" r="15" stroke="currentColor" strokeWidth="3.5" fill="none" className="text-surface-2" />
+              <circle cx="18" cy="18" r="15" stroke="currentColor" strokeWidth="3.5" fill="none"
                 strokeDasharray={`${(pct / 100) * 94.2} 94.2`}
                 strokeLinecap="round" className="text-rose transition-all" />
             </svg>
-            <div className="absolute inset-0 flex items-center justify-center text-xs font-black text-rose">
+            <div className="absolute inset-0 flex items-center justify-center text-[10px] font-black text-rose">
               {pct}%
             </div>
           </div>
         </div>
 
-        <div className={`grid gap-2.5 ${total === 10 ? "grid-cols-2" : total <= 12 ? "grid-cols-3" : "grid-cols-4"}`}>
-          {tasks.map((t: any) => (
+        <div className={`grid gap-1.5 ${witnessTasks.length <= 9 ? "grid-cols-3" : witnessTasks.length <= 12 ? "grid-cols-4" : "grid-cols-5"}`}>
+          {witnessTasks.map((t) => (
             <TaskCell key={t.slot} task={t}
               onClick={() => router.navigate({ to: "/task/$slot", params: { slot: String(t.slot) } })}
-              onOpenPhoto={(url) => setLightbox({ url, label: `ঘর #${t.slot} · ${t.face_label || "ফেস"}` })} />
+              onOpenPhoto={(url) => setLightbox({ url, label: `সাক্ষী #${t.slot} · ${t.face_label || "মুখ"}` })} />
           ))}
         </div>
 
-
         {allDone && (
           <button onClick={() => addSlots.mutate()} disabled={addSlots.isPending}
-            className="mt-3 w-full gradient-cta rounded-xl py-2.5 font-black text-sm flex items-center justify-center gap-2 disabled:opacity-60 active:scale-[0.98] transition">
+            className="mt-2.5 w-full gradient-cta rounded-xl py-2 font-black text-xs flex items-center justify-center gap-2 disabled:opacity-60 active:scale-[0.98] transition">
             {addSlots.isPending
-              ? <><Loader2 className="w-4 h-4 animate-spin" /> খোলা হচ্ছে…</>
-              : <><Plus className="w-4 h-4" /> আরও ১০টি ঘর যোগ করুন</>}
+              ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> যোগ হচ্ছে…</>
+              : <><Plus className="w-3.5 h-3.5" /> আরও ১০ জন সাক্ষী যোগ করুন</>}
           </button>
         )}
       </div>
 
       {!data.wallet && (
-        <Link to="/wallet" className="block premium-panel rounded-2xl p-5 border-l-4" style={{ borderLeftColor: "var(--color-amber)" }}>
-          <p className="text-base font-black text-amber">⚠️ ওয়ালেট সেট করুন</p>
-          <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-            টাকা তোলার আগে bKash / Nagad নম্বর সেট করতে হবে — শুধু একবারই সেট করা যাবে, পরে আর পরিবর্তন করা যাবে না।
+        <Link to="/wallet" className="block premium-panel rounded-2xl p-3 border-l-4" style={{ borderLeftColor: "var(--color-amber)" }}>
+          <p className="text-sm font-black text-amber">⚠️ ওয়ালেট সেট করুন</p>
+          <p className="text-[11px] text-muted-foreground mt-0.5 leading-snug">
+            টাকা তোলার আগে bKash / Nagad নম্বর সেট করতে হবে — একবার সেট করলে আর পরিবর্তন হবে না।
           </p>
         </Link>
       )}
+
+      {/* Motivational filler */}
+      <div className="grid grid-cols-2 gap-2">
+        <div className="premium-panel rounded-2xl p-3 text-center"
+             style={{ background: "linear-gradient(135deg, rgba(6,182,212,0.10), rgba(139,92,246,0.08))" }}>
+          <Heart className="w-5 h-5 mx-auto text-rose" />
+          <p className="text-[11px] font-black text-navy mt-1 leading-tight">যত বেশি সাক্ষী,<br/>তত বেশি আয়</p>
+        </div>
+        <div className="premium-panel rounded-2xl p-3 text-center"
+             style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.10), rgba(255,209,102,0.10))" }}>
+          <ShieldCheck className="w-5 h-5 mx-auto text-emerald" />
+          <p className="text-[11px] font-black text-navy mt-1 leading-tight">সাক্ষী = আপনার<br/>সততার প্রমাণ</p>
+        </div>
+      </div>
+
+      <div className="premium-panel rounded-2xl p-4 relative overflow-hidden"
+           style={{ background: "linear-gradient(135deg, rgba(139,92,246,0.10), rgba(6,182,212,0.08))" }}>
+        <p className="text-[10px] uppercase tracking-[0.15em] font-bold text-violet">💡 কেন সাক্ষী?</p>
+        <p className="text-[12px] text-navy mt-2 leading-relaxed font-medium">
+          স্কুলে উপবৃত্তি পেতে যেমন বাবা-মায়ের NID, প্রমাণপত্র লাগে —
+          আমাদের এই আর্থিক সহায়ক প্ল্যাটফর্মেও তেমনই <span className="font-black text-violet">১০ জন সাক্ষীর মুখ</span> লাগে।
+          প্রত্যেক সাক্ষী প্রমাণ করছেন যে আপনি সত্যিই সাহায্যের যোগ্য।
+        </p>
+        <p className="text-[12px] text-navy mt-2 leading-relaxed font-medium">
+          <span className="font-black text-rose">যত বেশি সাক্ষী যোগ করবেন, তত বেশি মাসিক আয় হবে।</span>
+          ১০ জন সম্পন্ন হলে আরও ১০ জন যোগ করার সুযোগ পাবেন।
+        </p>
+      </div>
+
+      <div className="text-center py-2">
+        <p className="text-[11px] text-muted-foreground italic">
+          🌸 "একজনের সাহায্য, হাজারের হাসি" 🌸
+        </p>
+      </div>
 
       {lightbox && (
         <div onClick={() => setLightbox(null)}
@@ -127,13 +190,64 @@ function HomePage() {
   );
 }
 
-function TaskCell({ task, onClick, onOpenPhoto }: { task: any; onClick: () => void; onOpenPhoto: (url: string) => void }) {
+function useTick() {
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
+  return now;
+}
 
+function MainIdentityCell({ task, onClick, onOpenPhoto }: { task: any; onClick: () => void; onOpenPhoto: (url: string) => void }) {
+  const now = useTick();
+  const isVerified = task.status === "verified";
+  const dueMs = task.reverify_due_at ? new Date(task.reverify_due_at).getTime() : 0;
+  const whitelistLost = task.whitelist_ok === false;
+  const readyToReverify = isVerified && (whitelistLost || dueMs <= now);
+  const remainingMs = Math.max(0, dueMs - now);
+  const faceUrl: string | undefined = task.signed_face_url;
+
+  if (isVerified && !readyToReverify) {
+    const totalSec = Math.floor(remainingMs / 1000);
+    const d = Math.floor(totalSec / 86400);
+    const h = Math.floor((totalSec % 86400) / 3600);
+    return (
+      <button onClick={() => faceUrl && onOpenPhoto(faceUrl)}
+        className="relative w-24 h-24 rounded-2xl overflow-hidden border-2 shadow-[0_10px_24px_-6px_rgba(255,209,102,0.7)] active:scale-95 transition"
+        style={{ borderColor: "var(--color-amber)" }}>
+        {faceUrl ? <img src={faceUrl} className="absolute inset-0 h-full w-full object-cover" alt="main" />
+                 : <div className="absolute inset-0 bg-surface-2" />}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+        <span className="absolute top-1 right-1 rounded-full p-1 shadow" style={{ background: "var(--color-amber)" }}>
+          <Crown className="w-3 h-3 text-white" />
+        </span>
+        <p className="absolute bottom-1 left-0 right-0 text-[10px] font-black text-white text-center mono-num drop-shadow">
+          {d}d {String(h).padStart(2,"0")}h
+        </p>
+      </button>
+    );
+  }
+
+  let icon = <Camera className="w-8 h-8 text-white drop-shadow" />;
+  let cellClass = "task-cell-empty";
+  if (task.status === "done") { cellClass = "task-cell-done"; icon = <CheckCircle2 className="w-8 h-8 text-white drop-shadow" />; }
+  else if (readyToReverify) { cellClass = "task-cell-reverify pulse-glow"; icon = <Sparkles className="w-8 h-8 text-white drop-shadow" />; }
+
+  return (
+    <button onClick={onClick}
+      className={`relative w-24 h-24 rounded-2xl ${cellClass} flex items-center justify-center btn-press overflow-hidden border-2`}
+      style={{ borderColor: "var(--color-amber)" }}>
+      <span className="absolute top-1 right-1 rounded-full p-1 shadow" style={{ background: "var(--color-amber)" }}>
+        <Crown className="w-3 h-3 text-white" />
+      </span>
+      {icon}
+    </button>
+  );
+}
+
+function TaskCell({ task, onClick, onOpenPhoto }: { task: any; onClick: () => void; onOpenPhoto: (url: string) => void }) {
+  const now = useTick();
   const isDone = task.status === "done";
   const isVerified = task.status === "verified";
   const dueMs = task.reverify_due_at ? new Date(task.reverify_due_at).getTime() : 0;
@@ -147,26 +261,20 @@ function TaskCell({ task, onClick, onOpenPhoto }: { task: any; onClick: () => vo
     const d = Math.floor(totalSec / 86400);
     const h = Math.floor((totalSec % 86400) / 3600);
     const m = Math.floor((totalSec % 3600) / 60);
-    const s = totalSec % 60;
     return (
       <button onClick={() => faceUrl && onOpenPhoto(faceUrl)}
-        className="relative aspect-square rounded-2xl overflow-hidden border-2 border-rose/70 shadow-[0_14px_28px_-8px_rgba(239,71,111,0.7)] active:scale-95 transition">
-        {faceUrl ? (
-          <img src={faceUrl} alt={`Slot ${task.slot}`} className="absolute inset-0 h-full w-full object-cover" />
-        ) : (
-          <div className="absolute inset-0 bg-surface-2" />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/45" />
-        <div className="absolute top-2 left-2 right-2 flex items-center justify-between">
-          <span className="text-sm font-black text-white drop-shadow">#{task.slot}</span>
-          <span className="rounded-full bg-rose p-1.5 shadow"><Lock className="w-4 h-4 text-white" /></span>
-        </div>
-        <div className="absolute bottom-2 left-0 right-0 px-2">
-          <p className="mono-num text-xl font-black text-white text-center drop-shadow leading-tight">
+        className="relative aspect-square rounded-xl overflow-hidden border border-rose/60 shadow-[0_6px_14px_-4px_rgba(239,71,111,0.5)] active:scale-95 transition">
+        {faceUrl ? <img src={faceUrl} className="absolute inset-0 h-full w-full object-cover" alt="" />
+                 : <div className="absolute inset-0 bg-surface-2" />}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/30" />
+        <span className="absolute top-1 left-1 text-[9px] font-black text-white drop-shadow">#{task.slot}</span>
+        <span className="absolute top-1 right-1 rounded-full bg-rose p-0.5 shadow"><Lock className="w-2.5 h-2.5 text-white" /></span>
+        <div className="absolute bottom-0.5 left-0 right-0 px-1">
+          <p className="mono-num text-[11px] font-black text-white text-center drop-shadow leading-none">
             {d}d {String(h).padStart(2,"0")}h
           </p>
-          <p className="mono-num text-sm text-white/90 text-center drop-shadow font-bold leading-tight">
-            {String(m).padStart(2,"0")}m {String(s).padStart(2,"0")}s
+          <p className="mono-num text-[8px] text-white/90 text-center drop-shadow font-bold leading-tight">
+            {String(m).padStart(2,"0")}m{String(s(totalSec)).padStart(2,"0")}s
           </p>
         </div>
       </button>
@@ -174,26 +282,19 @@ function TaskCell({ task, onClick, onOpenPhoto }: { task: any; onClick: () => vo
   }
 
   let cellClass = "task-cell-empty";
-  let icon = <Camera className="w-10 h-10 text-white drop-shadow-lg" />;
+  let icon = <Camera className="w-5 h-5 text-white drop-shadow" />;
   let label = "শুরু";
-
-  if (isDone) {
-    cellClass = "task-cell-done";
-    icon = <CheckCircle2 className="w-10 h-10 text-white drop-shadow-lg bounce-soft" />;
-    label = "সম্পন্ন";
-  } else if (readyToReverify) {
-    cellClass = "task-cell-reverify pulse-glow";
-    icon = <Sparkles className="w-10 h-10 text-white drop-shadow-lg spin-slow" />;
-    label = "রি-ভেরিফাই";
-  }
+  if (isDone) { cellClass = "task-cell-done"; icon = <CheckCircle2 className="w-5 h-5 text-white drop-shadow" />; label = "সম্পন্ন"; }
+  else if (readyToReverify) { cellClass = "task-cell-reverify pulse-glow"; icon = <Sparkles className="w-5 h-5 text-white drop-shadow" />; label = "রি-ভেরিফাই"; }
 
   return (
     <button onClick={onClick}
-      className={`relative aspect-square rounded-2xl ${cellClass} flex flex-col items-center justify-center gap-2 btn-press overflow-hidden`}>
-      <span className="absolute top-2 left-2 text-sm font-black text-white/90 mono-num drop-shadow">#{task.slot}</span>
-      <span className="relative">{icon}</span>
-      <span className="text-sm font-black text-white drop-shadow leading-none">{label}</span>
+      className={`relative aspect-square rounded-xl ${cellClass} flex flex-col items-center justify-center gap-0.5 btn-press overflow-hidden`}>
+      <span className="absolute top-0.5 left-1 text-[9px] font-black text-white/90 mono-num drop-shadow">#{task.slot}</span>
+      <span>{icon}</span>
+      <span className="text-[9px] font-black text-white drop-shadow leading-none">{label}</span>
     </button>
   );
 }
 
+function s(totalSec: number) { return totalSec % 60; }
