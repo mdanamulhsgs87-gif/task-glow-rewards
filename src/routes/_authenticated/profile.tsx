@@ -278,6 +278,11 @@ function IdCardFace({ side, p, uid, cardUrl, avatarUrl, details, stats }: { side
           <div className="good-id-front-main">
             <div className="good-id-photo">
               {avatarUrl ? <img src={avatarUrl} alt="প্রোফাইল ছবি" crossOrigin="anonymous" /> : <User className="w-12 h-12" />}
+              {(p as any).kyc_verified && (
+                <span style={{ position: "absolute", top: -6, right: -6, background: "#fff", borderRadius: 999, padding: 2, boxShadow: "0 2px 6px rgba(0,0,0,.2)" }}>
+                  <BadgeCheck style={{ width: 22, height: 22, color: "#1d9bf0" }} />
+                </span>
+              )}
             </div>
             <div className="good-id-info">
               <SmallRow k="নাম" v={p.display_name ?? "-"} />
@@ -285,6 +290,7 @@ function IdCardFace({ side, p, uid, cardUrl, avatarUrl, details, stats }: { side
               <SmallRow k="UID" v={formattedUid ?? uid} mono strong />
               <SmallRow k="NID" v={details.nid_number || "-"} mono />
               <SmallRow k="যোগদান" v={new Date(p.created_at).toLocaleDateString("bn-BD")} />
+              {(p as any).kyc_verified && <SmallRow k="স্ট্যাটাস" v="✔ KYC ভেরিফাইড" />}
             </div>
           </div>
           <div className="good-id-stats">
