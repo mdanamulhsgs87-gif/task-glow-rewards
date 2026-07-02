@@ -105,15 +105,6 @@ function PublicCardPage() {
   );
 }
 
-function PublicStat({ icon, label, value, c }: { icon: ReactNode; label: string; value: string; c: string }) {
-  return (
-    <div className="rounded-2xl p-3 text-white shadow-lg" style={{ background: `linear-gradient(135deg, ${c}CC, ${c}77)` }}>
-      <div className="flex items-center gap-1.5 text-[10px] font-bold opacity-95">{icon}{label}</div>
-      <p className="text-lg font-black mt-1 mono-num">{value}</p>
-    </div>
-  );
-}
-
 function Info({ label, value }: { label: string; value: string }) {
   return <p className="grid grid-cols-[92px_1fr] gap-2"><span className="text-slate-500">{label}</span><b className="text-slate-950 break-words">{value}</b></p>;
 }
