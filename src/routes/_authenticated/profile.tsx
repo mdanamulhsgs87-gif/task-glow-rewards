@@ -146,6 +146,11 @@ function ProfilePage() {
           <div className="w-24 h-24 rounded-2xl overflow-hidden shimmer-border bg-surface-2 flex items-center justify-center">
             {data.avatar_signed ? <img src={data.avatar_signed} className="w-full h-full object-cover" alt="avatar" /> : <User className="w-10 h-10 text-muted-foreground" />}
           </div>
+          {(p as any).kyc_verified && (
+            <div className="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-white shadow-lg flex items-center justify-center" title="KYC ভেরিফাইড">
+              <BadgeCheck className="w-7 h-7" style={{ color: "#1d9bf0" }} />
+            </div>
+          )}
           <label data-voice="profile.avatar" className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full gradient-cta flex items-center justify-center cursor-pointer btn-press glow-violet">
             {upload.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
             <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) upload.mutate(f); }} />
@@ -162,8 +167,21 @@ function ProfilePage() {
           <span className="text-[10px]">📋</span>
         </button>
         <div className="text-center min-w-0 w-full">
-          <p className="text-lg font-black truncate">{p.display_name ?? "ইউজার"}</p>
+          <p className="text-lg font-black truncate flex items-center justify-center gap-1.5">
+            {p.display_name ?? "ইউজার"}
+            {(p as any).kyc_verified && <BadgeCheck className="w-4 h-4" style={{ color: "#1d9bf0" }} />}
+          </p>
           <p className="text-xs text-muted-foreground mono-num">{p.phone_number ?? "-"}</p>
+          {(p as any).kyc_verified ? (
+            <span className="inline-flex items-center gap-1 mt-2 px-2.5 py-1 rounded-full bg-sky-100 text-sky-700 text-[10px] font-black">
+              <BadgeCheck className="w-3 h-3" /> Verified
+            </span>
+          ) : (
+            <Link to="/kyc" className="inline-flex items-center gap-1 mt-2 px-2.5 py-1 rounded-full text-white text-[10px] font-black btn-press"
+                  style={{ background: "linear-gradient(120deg,#f43f5e,#f59e0b)" }}>
+              <ShieldCheck className="w-3 h-3" /> KYC করুন
+            </Link>
+          )}
         </div>
       </div>
 
