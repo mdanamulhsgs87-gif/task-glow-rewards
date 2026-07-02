@@ -114,6 +114,11 @@ export type Database = {
           father_name: string | null
           full_address: string | null
           id: string
+          kyc_nid_back_url: string | null
+          kyc_nid_front_url: string | null
+          kyc_photo_url: string | null
+          kyc_verified: boolean
+          kyc_verified_at: string | null
           mother_name: string | null
           nid_number: string | null
           phone_number: string | null
@@ -133,6 +138,11 @@ export type Database = {
           father_name?: string | null
           full_address?: string | null
           id: string
+          kyc_nid_back_url?: string | null
+          kyc_nid_front_url?: string | null
+          kyc_photo_url?: string | null
+          kyc_verified?: boolean
+          kyc_verified_at?: string | null
           mother_name?: string | null
           nid_number?: string | null
           phone_number?: string | null
@@ -152,6 +162,11 @@ export type Database = {
           father_name?: string | null
           full_address?: string | null
           id?: string
+          kyc_nid_back_url?: string | null
+          kyc_nid_front_url?: string | null
+          kyc_photo_url?: string | null
+          kyc_verified?: boolean
+          kyc_verified_at?: string | null
           mother_name?: string | null
           nid_number?: string | null
           phone_number?: string | null
