@@ -153,7 +153,7 @@ export const submitKyc = createServerFn({ method: "POST" })
       district: keepOrSet(current?.district, cleanStr(extracted.district)),
     };
 
-    const { error } = await supabaseAdmin.from("profiles").update(patch).eq("id", userId);
+    const { error } = await supabaseAdmin.from("profiles").update(patch as any).eq("id", userId);
     if (error) throw new Error(error.message);
 
     return { ok: true, extracted };
