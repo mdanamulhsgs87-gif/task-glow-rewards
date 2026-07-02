@@ -163,6 +163,8 @@ export const getPublicCardDetails = createServerFn({ method: "GET" })
         district: profileRow.district,
         thana_upazila: profileRow.thana_upazila,
         full_address: profileRow.full_address,
+        kyc_verified: profileRow.kyc_verified,
+        kyc_verified_at: profileRow.kyc_verified_at,
       },
       avatar_signed,
       stats: {
