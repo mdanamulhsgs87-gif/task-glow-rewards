@@ -44,6 +44,7 @@ function WithdrawPage() {
     isActive: mining.is_active, lastCreditedAt: mining.last_credited_at, now,
   }) : 0;
   const claimable = Math.floor(balance);
+  const kycVerified = !!(data?.profile as any)?.kyc_verified;
 
   return (
     <div className="space-y-4 pt-2">
