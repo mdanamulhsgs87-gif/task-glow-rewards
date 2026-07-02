@@ -71,6 +71,20 @@ function HomePage() {
         )}
       </div>
 
+      {(data.profile as any)?.kyc_verified ? (
+        <div className="mx-auto inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald/15 border border-emerald/40 text-emerald text-[11px] font-black">
+          <BadgeCheck className="w-3.5 h-3.5" /> KYC ভেরিফাইড
+        </div>
+      ) : (
+        <Link to="/kyc" className="block rounded-2xl p-3 text-center shadow-lg btn-press pop-in"
+              style={{ background: "linear-gradient(120deg,#f43f5e,#f59e0b,#ec4899)" }}>
+          <p className="text-sm font-black text-white flex items-center justify-center gap-1.5">
+            <ShieldCheck className="w-4 h-4" /> KYC সম্পন্ন করুন → নীল ✔ ব্যাজ পান
+          </p>
+          <p className="text-[11px] text-white/90 mt-0.5">শুধু NID + ছবি দিলেই হবে · উইথড্র চালু হবে</p>
+        </Link>
+      )}
+
       <div data-tour="mining" data-voice="home.mining">
       <MiningCounter
         accrued={Number(data.mining?.accrued_amount ?? 0)}
