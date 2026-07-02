@@ -1,9 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import type { ReactNode } from "react";
 import { getPublicCardDetails } from "@/lib/profile.functions";
 import { QrCode } from "@/components/QrCode";
-import { User, Sparkles, ShieldCheck, Wallet, Users, TrendingUp, MapPin, IdCard } from "lucide-react";
+import { User, Sparkles, MapPin, IdCard, BadgeCheck } from "lucide-react";
 
 export const Route = createFileRoute("/card/$uid")({ component: PublicCardPage });
 
@@ -47,19 +46,32 @@ function PublicCardPage() {
           </div>
 
           <div className="relative mt-4 flex gap-3">
-            <div className="w-24 h-28 rounded-xl overflow-hidden border-4 border-white bg-white/70 flex items-center justify-center shrink-0 shadow-lg text-slate-500">
+            <div className="relative w-24 h-28 rounded-xl overflow-hidden border-4 border-white bg-white/70 flex items-center justify-center shrink-0 shadow-lg text-slate-500">
               {data.avatar_signed
                 ? <img src={data.avatar_signed} className="w-full h-full object-cover" alt="" />
                 : <User className="w-10 h-10" />}
+              {(p as any).kyc_verified && (
+                <span className="absolute -top-2 -right-2 bg-white rounded-full p-0.5 shadow-lg">
+                  <BadgeCheck className="w-6 h-6" style={{ color: "#1d9bf0" }} />
+                </span>
+              )}
             </div>
             <div className="flex-1 min-w-0 space-y-1.5 text-[12px] font-black text-slate-950">
-              <p><span className="text-slate-500">নাম:</span> {p.display_name ?? "-"}</p>
+              <p className="flex items-center gap-1">
+                <span className="text-slate-500">নাম:</span> {p.display_name ?? "-"}
+                {(p as any).kyc_verified && <BadgeCheck className="w-3.5 h-3.5" style={{ color: "#1d9bf0" }} />}
+              </p>
               <p><span className="text-slate-500">রেফার:</span> {p.referral_code}</p>
               <p><span className="text-slate-500">জেলা:</span> {p.district ?? "-"}</p>
               <p><span className="text-slate-500">যোগদান:</span> {new Date(p.created_at).toLocaleDateString("bn-BD")}</p>
               <p className="mono-num tracking-widest text-[11px] pt-1 text-rose-700">
                 UID {uidCompact.match(/.{1,4}/g)?.join(" ")}
               </p>
+              {(p as any).kyc_verified && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 text-[10px] font-black">
+                  <BadgeCheck className="w-3 h-3" /> KYC Verified
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -84,26 +96,11 @@ function PublicCardPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <PublicStat icon={<ShieldCheck className="w-4 h-4" />} label="ভেরিফাই সাক্ষী" value={`${data.stats.verified}/${data.stats.totalTasks}`} c="#10b981" />
-          <PublicStat icon={<Wallet className="w-4 h-4" />} label="ব্যালান্স" value={`${data.stats.balance.toFixed(2)}৳`} c="#f59e0b" />
-          <PublicStat icon={<TrendingUp className="w-4 h-4" />} label="মোট উইথড্র" value={`${data.stats.totalWithdrawn.toFixed(0)}৳ (${data.stats.withdrawCount}x)`} c="#06b6d4" />
-          <PublicStat icon={<Users className="w-4 h-4" />} label="রেফার" value={`${data.stats.referrals} জন`} c="#8b5cf6" />
-        </div>
 
         <div className="text-center text-slate-600 text-[11px] font-bold flex items-center justify-center gap-1">
           <Sparkles className="w-3 h-3" /> good-app · সমাজের সুবিধাবঞ্চিতদের পাশে
         </div>
       </div>
-    </div>
-  );
-}
-
-function PublicStat({ icon, label, value, c }: { icon: ReactNode; label: string; value: string; c: string }) {
-  return (
-    <div className="rounded-2xl p-3 text-white shadow-lg" style={{ background: `linear-gradient(135deg, ${c}CC, ${c}77)` }}>
-      <div className="flex items-center gap-1.5 text-[10px] font-bold opacity-95">{icon}{label}</div>
-      <p className="text-lg font-black mt-1 mono-num">{value}</p>
     </div>
   );
 }

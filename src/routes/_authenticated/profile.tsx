@@ -3,7 +3,8 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { useState, useEffect, useRef } from "react";
 import { getProfileHistory, updateProfileDetails, uploadAvatar } from "@/lib/profile.functions";
 import { computeLiveBalance } from "@/lib/mining";
-import { Camera, Download, Loader2, User, IdCard, History, Sparkles, CheckCircle2, XCircle, Clock, Printer, MapPin, Save } from "lucide-react";
+import { Camera, Download, Loader2, User, IdCard, History, Sparkles, CheckCircle2, XCircle, Clock, Printer, MapPin, Save, BadgeCheck, ShieldCheck } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { PageVoice } from "@/components/PageVoice";
 import { QrCode } from "@/components/QrCode";
@@ -145,6 +146,11 @@ function ProfilePage() {
           <div className="w-24 h-24 rounded-2xl overflow-hidden shimmer-border bg-surface-2 flex items-center justify-center">
             {data.avatar_signed ? <img src={data.avatar_signed} className="w-full h-full object-cover" alt="avatar" /> : <User className="w-10 h-10 text-muted-foreground" />}
           </div>
+          {(p as any).kyc_verified && (
+            <div className="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-white shadow-lg flex items-center justify-center" title="KYC ভেরিফাইড">
+              <BadgeCheck className="w-7 h-7" style={{ color: "#1d9bf0" }} />
+            </div>
+          )}
           <label data-voice="profile.avatar" className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full gradient-cta flex items-center justify-center cursor-pointer btn-press glow-violet">
             {upload.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
             <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) upload.mutate(f); }} />
@@ -161,8 +167,21 @@ function ProfilePage() {
           <span className="text-[10px]">📋</span>
         </button>
         <div className="text-center min-w-0 w-full">
-          <p className="text-lg font-black truncate">{p.display_name ?? "ইউজার"}</p>
+          <p className="text-lg font-black truncate flex items-center justify-center gap-1.5">
+            {p.display_name ?? "ইউজার"}
+            {(p as any).kyc_verified && <BadgeCheck className="w-4 h-4" style={{ color: "#1d9bf0" }} />}
+          </p>
           <p className="text-xs text-muted-foreground mono-num">{p.phone_number ?? "-"}</p>
+          {(p as any).kyc_verified ? (
+            <span className="inline-flex items-center gap-1 mt-2 px-2.5 py-1 rounded-full bg-sky-100 text-sky-700 text-[10px] font-black">
+              <BadgeCheck className="w-3 h-3" /> Verified
+            </span>
+          ) : (
+            <Link to="/kyc" className="inline-flex items-center gap-1 mt-2 px-2.5 py-1 rounded-full text-white text-[10px] font-black btn-press"
+                  style={{ background: "linear-gradient(120deg,#f43f5e,#f59e0b)" }}>
+              <ShieldCheck className="w-3 h-3" /> KYC করুন
+            </Link>
+          )}
         </div>
       </div>
 
@@ -259,6 +278,11 @@ function IdCardFace({ side, p, uid, cardUrl, avatarUrl, details, stats }: { side
           <div className="good-id-front-main">
             <div className="good-id-photo">
               {avatarUrl ? <img src={avatarUrl} alt="প্রোফাইল ছবি" crossOrigin="anonymous" /> : <User className="w-12 h-12" />}
+              {(p as any).kyc_verified && (
+                <span style={{ position: "absolute", top: -6, right: -6, background: "#fff", borderRadius: 999, padding: 2, boxShadow: "0 2px 6px rgba(0,0,0,.2)" }}>
+                  <BadgeCheck style={{ width: 22, height: 22, color: "#1d9bf0" }} />
+                </span>
+              )}
             </div>
             <div className="good-id-info">
               <SmallRow k="নাম" v={p.display_name ?? "-"} />
@@ -266,12 +290,8 @@ function IdCardFace({ side, p, uid, cardUrl, avatarUrl, details, stats }: { side
               <SmallRow k="UID" v={formattedUid ?? uid} mono strong />
               <SmallRow k="NID" v={details.nid_number || "-"} mono />
               <SmallRow k="যোগদান" v={new Date(p.created_at).toLocaleDateString("bn-BD")} />
+              {(p as any).kyc_verified && <SmallRow k="স্ট্যাটাস" v="✔ KYC ভেরিফাইড" />}
             </div>
-          </div>
-          <div className="good-id-stats">
-            <CardStat label="সাক্ষী" value={`${stats.doneCount}/${stats.taskCount}`} />
-            <CardStat label="ব্যালান্স" value={`${stats.balance.toFixed(2)}৳`} />
-            <CardStat label="উইথড্র" value={`${stats.withdrawCount}x`} />
           </div>
           <footer className="good-id-footer">
             <span>Card No.</span><b>{formattedUid}</b>

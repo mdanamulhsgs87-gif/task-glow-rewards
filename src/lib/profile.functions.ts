@@ -114,7 +114,7 @@ export const getPublicCardDetails = createServerFn({ method: "GET" })
     if (/^[0-9a-f-]{32,}$/i.test(raw)) {
       const { data: p } = await supabaseAdmin
         .from("profiles")
-        .select("id,display_name,referral_code,avatar_url,created_at,nid_number,date_of_birth,father_name,mother_name,village_area,post_office,thana_upazila,district,full_address")
+        .select("id,display_name,referral_code,avatar_url,created_at,nid_number,date_of_birth,father_name,mother_name,village_area,post_office,thana_upazila,district,full_address,kyc_verified,kyc_verified_at")
         .eq("id", raw)
         .maybeSingle();
       profileRow = p;
@@ -122,7 +122,7 @@ export const getPublicCardDetails = createServerFn({ method: "GET" })
       const compact = raw.replace(/[^0-9a-f]/gi, "").toLowerCase();
       const { data: rows } = await supabaseAdmin
         .from("profiles")
-        .select("id,display_name,referral_code,avatar_url,created_at,nid_number,date_of_birth,father_name,mother_name,village_area,post_office,thana_upazila,district,full_address")
+        .select("id,display_name,referral_code,avatar_url,created_at,nid_number,date_of_birth,father_name,mother_name,village_area,post_office,thana_upazila,district,full_address,kyc_verified,kyc_verified_at")
         .limit(500);
       profileRow = (rows ?? []).find((r: any) =>
         String(r.id).replace(/-/g, "").toLowerCase().startsWith(compact),
@@ -163,6 +163,8 @@ export const getPublicCardDetails = createServerFn({ method: "GET" })
         district: profileRow.district,
         thana_upazila: profileRow.thana_upazila,
         full_address: profileRow.full_address,
+        kyc_verified: profileRow.kyc_verified,
+        kyc_verified_at: profileRow.kyc_verified_at,
       },
       avatar_signed,
       stats: {
