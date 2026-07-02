@@ -97,12 +97,6 @@ function PublicCardPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <PublicStat icon={<ShieldCheck className="w-4 h-4" />} label="ভেরিফাই সাক্ষী" value={`${data.stats.verified}/${data.stats.totalTasks}`} c="#10b981" />
-          <PublicStat icon={<Wallet className="w-4 h-4" />} label="ব্যালান্স" value={`${data.stats.balance.toFixed(2)}৳`} c="#f59e0b" />
-          <PublicStat icon={<TrendingUp className="w-4 h-4" />} label="মোট উইথড্র" value={`${data.stats.totalWithdrawn.toFixed(0)}৳ (${data.stats.withdrawCount}x)`} c="#06b6d4" />
-          <PublicStat icon={<Users className="w-4 h-4" />} label="রেফার" value={`${data.stats.referrals} জন`} c="#8b5cf6" />
-        </div>
 
         <div className="text-center text-slate-600 text-[11px] font-bold flex items-center justify-center gap-1">
           <Sparkles className="w-3 h-3" /> good-app · সমাজের সুবিধাবঞ্চিতদের পাশে
