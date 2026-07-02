@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { getDashboard } from "@/lib/dashboard.functions";
 import { addMoreSlots } from "@/lib/tasks.functions";
 import { MiningCounter } from "@/components/MiningCounter";
-import { CheckCircle2, Camera, Lock, Sparkles, Loader2, X, Plus, Crown, Users, Heart, ShieldCheck } from "lucide-react";
+import { CheckCircle2, Camera, Lock, Sparkles, Loader2, X, Plus, Crown, Users, Heart, ShieldCheck, BadgeCheck } from "lucide-react";
 import { AnnouncementTicker } from "@/components/AnnouncementTicker";
 import { TourReplayButton } from "@/components/GuidedTour";
 import { PageVoice } from "@/components/PageVoice";
