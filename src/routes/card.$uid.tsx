@@ -1,9 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import type { ReactNode } from "react";
 import { getPublicCardDetails } from "@/lib/profile.functions";
 import { QrCode } from "@/components/QrCode";
-import { User, Sparkles, ShieldCheck, Wallet, Users, TrendingUp, MapPin, IdCard, BadgeCheck } from "lucide-react";
+import { User, Sparkles, MapPin, IdCard, BadgeCheck } from "lucide-react";
 
 export const Route = createFileRoute("/card/$uid")({ component: PublicCardPage });
 
