@@ -114,7 +114,7 @@ export const getPublicCardDetails = createServerFn({ method: "GET" })
     if (/^[0-9a-f-]{32,}$/i.test(raw)) {
       const { data: p } = await supabaseAdmin
         .from("profiles")
-        .select("id,display_name,referral_code,avatar_url,created_at,nid_number,date_of_birth,father_name,mother_name,village_area,post_office,thana_upazila,district,full_address")
+        .select("id,display_name,referral_code,avatar_url,created_at,nid_number,date_of_birth,father_name,mother_name,village_area,post_office,thana_upazila,district,full_address,kyc_verified,kyc_verified_at")
         .eq("id", raw)
         .maybeSingle();
       profileRow = p;
