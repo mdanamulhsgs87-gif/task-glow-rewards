@@ -47,19 +47,32 @@ function PublicCardPage() {
           </div>
 
           <div className="relative mt-4 flex gap-3">
-            <div className="w-24 h-28 rounded-xl overflow-hidden border-4 border-white bg-white/70 flex items-center justify-center shrink-0 shadow-lg text-slate-500">
+            <div className="relative w-24 h-28 rounded-xl overflow-hidden border-4 border-white bg-white/70 flex items-center justify-center shrink-0 shadow-lg text-slate-500">
               {data.avatar_signed
                 ? <img src={data.avatar_signed} className="w-full h-full object-cover" alt="" />
                 : <User className="w-10 h-10" />}
+              {(p as any).kyc_verified && (
+                <span className="absolute -top-2 -right-2 bg-white rounded-full p-0.5 shadow-lg">
+                  <BadgeCheck className="w-6 h-6" style={{ color: "#1d9bf0" }} />
+                </span>
+              )}
             </div>
             <div className="flex-1 min-w-0 space-y-1.5 text-[12px] font-black text-slate-950">
-              <p><span className="text-slate-500">নাম:</span> {p.display_name ?? "-"}</p>
+              <p className="flex items-center gap-1">
+                <span className="text-slate-500">নাম:</span> {p.display_name ?? "-"}
+                {(p as any).kyc_verified && <BadgeCheck className="w-3.5 h-3.5" style={{ color: "#1d9bf0" }} />}
+              </p>
               <p><span className="text-slate-500">রেফার:</span> {p.referral_code}</p>
               <p><span className="text-slate-500">জেলা:</span> {p.district ?? "-"}</p>
               <p><span className="text-slate-500">যোগদান:</span> {new Date(p.created_at).toLocaleDateString("bn-BD")}</p>
               <p className="mono-num tracking-widest text-[11px] pt-1 text-rose-700">
                 UID {uidCompact.match(/.{1,4}/g)?.join(" ")}
               </p>
+              {(p as any).kyc_verified && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 text-[10px] font-black">
+                  <BadgeCheck className="w-3 h-3" /> KYC Verified
+                </span>
+              )}
             </div>
           </div>
         </div>
