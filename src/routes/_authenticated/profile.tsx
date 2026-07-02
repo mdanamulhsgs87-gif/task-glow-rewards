@@ -293,11 +293,6 @@ function IdCardFace({ side, p, uid, cardUrl, avatarUrl, details, stats }: { side
               {(p as any).kyc_verified && <SmallRow k="স্ট্যাটাস" v="✔ KYC ভেরিফাইড" />}
             </div>
           </div>
-          <div className="good-id-stats">
-            <CardStat label="সাক্ষী" value={`${stats.doneCount}/${stats.taskCount}`} />
-            <CardStat label="ব্যালান্স" value={`${stats.balance.toFixed(2)}৳`} />
-            <CardStat label="উইথড্র" value={`${stats.withdrawCount}x`} />
-          </div>
           <footer className="good-id-footer">
             <span>Card No.</span><b>{formattedUid}</b>
           </footer>
